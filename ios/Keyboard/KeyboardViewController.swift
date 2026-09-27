@@ -11,6 +11,9 @@ final class KeyboardViewController: UIInputViewController {
     private let orb = OrbView()
     /// The visible "Hold to talk" button.
     private let pill = UIView()
+    private var delete = UIButton()
+    private let keys = UIStackView()
+    private var placement: [NSLayoutConstraint] = []
     /// The whole keyboard except the three keys: press anywhere to talk.
     private let hold = UIControl()
     private var pressedAt: Date?
@@ -64,10 +67,11 @@ final class KeyboardViewController: UIInputViewController {
         hold.accessibilityLabel = "Hold to talk"
         hold.accessibilityTraits = .button
 
-        let delete = key("delete.left", #selector(deleteBackward))
+        delete = key("delete.left", #selector(deleteBackward))
         delete.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(delete)
-        let keys = UIStackView(arrangedSubviews: [globe, key("return", #selector(insertReturn))])
+        keys.addArrangedSubview(globe)
+        keys.addArrangedSubview(key("return", #selector(insertReturn)))
         keys.spacing = 8
         keys.alignment = .center
         keys.translatesAutoresizingMaskIntoConstraints = false
@@ -86,8 +90,8 @@ final class KeyboardViewController: UIInputViewController {
             keys.topAnchor.constraint(equalTo: view.topAnchor),
             keys.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             // The visible button spans everything between the keys; the whole strip still listens.
-            pill.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8),
-            pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8),
+            pill.leadingAnchor.constraint(greaterThanOrEqualTo: delete.trailingAnchor, constant: 8),
+            pill.trailingAnchor.constraint(lessThanOrEqualTo: keys.leadingAnchor, constant: -8),
             pill.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             pill.heightAnchor.constraint(equalToConstant: 36),
             inside.centerXAnchor.constraint(equalTo: pill.centerXAnchor),
@@ -97,8 +101,27 @@ final class KeyboardViewController: UIInputViewController {
         ])
     }
 
+    /// iPhone: the button fills the space between the keys. iPad: a fixed-width button docked left, centre or right.
+    private func placeButton() {
+        NSLayoutConstraint.deactivate(placement)
+        let width = pill.widthAnchor.constraint(equalToConstant: 420)
+        width.priority = UILayoutPriority(999) // shrinks in narrow windows (Slide Over, split view)
+        placement = if traitCollection.userInterfaceIdiom == .pad {
+            switch KeyboardHandoff.buttonPosition() {
+            case .left: [width, pill.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8)]
+            case .center: [width, pill.centerXAnchor.constraint(equalTo: view.centerXAnchor)]
+            case .right: [width, pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8)]
+            }
+        } else {
+            [pill.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8),
+             pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8)]
+        }
+        NSLayoutConstraint.activate(placement)
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        placeButton()
         log.notice("appear: full access \(self.hasFullAccess), status \(KeyboardHandoff.status().rawValue, privacy: .public)")
         update()
         orb.resume()

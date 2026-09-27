@@ -19,6 +19,7 @@ struct WipprApp: App {
 private struct SetupView: View {
     @State private var problems: [String]?
     @AppStorage("mic") private var micOn = false
+    @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -48,6 +49,17 @@ private struct SetupView: View {
                         }
                     }
                 }
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                Picker("Keyboard button", selection: $buttonPosition) {
+                    Text("Left").tag(KeyboardHandoff.ButtonPosition.left.rawValue)
+                    Text("Center").tag(KeyboardHandoff.ButtonPosition.center.rawValue)
+                    Text("Right").tag(KeyboardHandoff.ButtonPosition.right.rawValue)
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: buttonPosition, initial: true) { _, position in
+                    KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
+                }
+            }
             Spacer()
         }
         .padding()

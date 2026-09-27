@@ -63,6 +63,15 @@ enum KeyboardHandoff {
         return status.phase
     }
 
+    /// Where the keyboard's button sits on iPad, where the keyboard is too wide for a full-width button.
+    enum ButtonPosition: String, Codable, CaseIterable {
+        case left, center, right
+    }
+
+    static func setButtonPosition(_ position: ButtonPosition) { write(position, to: "button-position") }
+
+    static func buttonPosition() -> ButtonPosition { read(ButtonPosition.self, from: "button-position") ?? .center }
+
     // Keyboard → app
 
     static func sendCommand(record: Bool, mode: Mode = .dictate, text: String? = nil) {
