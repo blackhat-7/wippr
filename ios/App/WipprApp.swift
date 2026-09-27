@@ -1,4 +1,3 @@
-import AppIntents
 import SwiftUI
 
 @main
@@ -17,54 +16,37 @@ struct WipprApp: App {
     }
 }
 
-/// "Hey Siri, dictate with wippr" — Siri owns the wake word, so wippr needs none.
-struct WipprShortcuts: AppShortcutsProvider {
-    static var appShortcuts: [AppShortcut] {
-        AppShortcut(
-            intent: ToggleDictationIntent(),
-            phrases: ["Dictate with \(.applicationName)", "Toggle \(.applicationName)"],
-            shortTitle: "Dictate",
-            systemImageName: "mic.fill"
-        )
-    }
-}
-
 private struct SetupView: View {
     @State private var problems: [String]?
-    @AppStorage("listen") private var listen = false
+    @AppStorage("mic") private var micOn = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("wippr").font(.largeTitle.bold())
             Text("""
-            1. Long-press the Dynamic Island and tap the mic.
-            2. Speak.
-            3. Long-press again and tap stop.
-            4. Tap a text field and paste.
-
-            Also works from Control Center, the Action Button, and "Hey Siri, dictate with wippr".
-
-            To type straight into the field, add the wippr keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → wippr.
+            1. Add the keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → wippr, then turn on Allow Full Access.
+            2. Turn the mic on below. It stays on in the background (orange dot) until you turn it off.
+            3. In any app, switch to the wippr keyboard, tap the mic, speak, and tap it again. The text is typed for you.
             """)
-            Toggle("Listen for “wipper”", isOn: $listen)
-                .onChange(of: listen) { _, on in
-                    Task {
-                        do { try await DictationController.shared.setListening(on) } catch {
-                            listen = false
-                            problems = ["Listening failed: \(error.localizedDescription)"]
-                        }
-                    }
-                }
             Button(problems == nil ? "Set up" : "Check again") {
                 Task { problems = await DictationController.shared.setUp() }
             }
             .buttonStyle(.borderedProminent)
             if let problems {
                 if problems.isEmpty {
-                    Label("Ready. The mic is in the Dynamic Island.", systemImage: "checkmark.circle")
+                    Label("Ready.", systemImage: "checkmark.circle")
                 }
                 ForEach(problems, id: \.self) { Label($0, systemImage: "exclamationmark.triangle") }
             }
+            Toggle("Mic on for the wippr keyboard", isOn: $micOn)
+                .onChange(of: micOn) { _, on in
+                    Task {
+                        do { try await DictationController.shared.setMic(on) } catch {
+                            micOn = false
+                            problems = ["Mic failed: \(error.localizedDescription)"]
+                        }
+                    }
+                }
             Spacer()
         }
         .padding()

@@ -20,7 +20,6 @@ targets:
     platform: iOS
     sources: [App, Shared]
     dependencies:
-      - target: WipprWidgets
       - target: WipprKeyboard
     entitlements:
       path: App/Wippr.entitlements
@@ -34,31 +33,15 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSMicrophoneUsageDescription: wippr records your voice and turns it into text on this iPhone. Audio never leaves the device.
         NSSpeechRecognitionUsageDescription: wippr transcribes your voice on this iPhone.
-        NSSupportsLiveActivities: true
         UIBackgroundModes: [audio]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr
 
-  WipprWidgets:
-    type: app-extension
-    platform: iOS
-    sources: [Widgets, Shared]
-    info:
-      path: Widgets/Info.plist
-      properties:
-        CFBundleDisplayName: wippr
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr.widgets
-        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) WIDGET_EXTENSION
-
   WipprKeyboard:
     type: app-extension
     platform: iOS
-    sources: [Keyboard, Shared/KeyboardHandoff.swift]
+    sources: [Keyboard, Shared]
     entitlements:
       path: Keyboard/WipprKeyboard.entitlements
       properties:
@@ -74,7 +57,7 @@ targets:
             IsASCIICapable: false
             PrefersRightToLeft: false
             PrimaryLanguage: en-US
-            RequestsOpenAccess: false
+            RequestsOpenAccess: true # writes start/stop to the App Group
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr.keyboard

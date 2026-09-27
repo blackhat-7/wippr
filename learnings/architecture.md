@@ -1,6 +1,10 @@
 # wippr architecture (v0.1)
 
-> **Changed 2026-09-27 (user decision after first device run):** delivery now also goes through a minimal one-row **wippr keyboard** that types the text into the focused field, and there is an opt-in **always-on "wipper" wake word**. The clipboard stays as a fallback. The rows below marked *(superseded)* are kept for the reasoning.
+> **Changed 2026-09-27 (user decisions after the first device runs):** wippr is now **keyboard-driven**. The Live Activity, the island/Control/Siri intent and the wake word are gone.
+> - The app turns the mic on once in the foreground (mixable `.playAndRecord` session, `audio` background mode), and it stays on in the background (orange dot).
+> - The one-row wippr keyboard (36 pt, Full Access) has a mic button. Tapping it writes start/stop to the App Group. The app polls every 0.2 s, runs a fresh `SpeechAnalyzer` per dictation, cleans the text, and writes it back. The keyboard polls every 0.25 s and types it into the field. Darwin notifications never reached the keyboard on iOS 27, which is why both sides poll.
+> - The clipboard stays as a fallback. The wake word worked ("Whipper"/"Viper" spellings), but the user dropped it in favour of the button.
+> The text below describes v0.1 and is kept for the reasoning.
 
 **TL;DR (2026-09-26)**
 - One App Intent (`ToggleDictationIntent`: `AudioRecordingIntent` + `LiveActivityIntent`, `supportedModes = .background`) is the trigger for everything: the expanded Dynamic Island button, the Lock Screen button, the Control Center / Action Button control, and a Siri phrase.

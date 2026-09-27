@@ -39,10 +39,11 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 
 - [x] Compile check in CI (GitHub Actions `macos-26`, Xcode 26.6, `.github/workflows/ios-build.yml`) — app + widget build clean for the simulator, no code warnings (2026-09-27). Xcode 27 SDK not yet tested.
 - [x] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device (iPhone 18 Pro Max, iOS 27.0, Xcode 27 SDK — `learnings/device-testing.md`)
-- [ ] wippr keyboard types the dictation into the focused field (added 2026-09-27 at user request)
-- [ ] Always-on "wipper" wake word: detection, end-of-speech, survives background / lock / calls, battery
-- [ ] Island button starts the mic with the app suspended / killed / phone locked (iOS 26 and 27)
-- [ ] No "Target is not foreground" when the island was dismissed and the Control/Siri path must start a new Live Activity
+- [ ] Keyboard mic button → app (mic kept on in the background) → text typed into the focused field (2026-09-27 redesign)
+- [ ] Background mic survives app switching, screen lock, a phone call; restarts after interruption
+- [-] Always-on "wipper" wake word: detection, end-of-speech, survives background / lock / calls, battery — dropped 2026-09-27: keyboard-driven design, no Live Activity / wake word
+- [-] Island button starts the mic with the app suspended / killed / phone locked (iOS 26 and 27) — dropped 2026-09-27: keyboard-driven design, no Live Activity / wake word
+- [-] No "Target is not foreground" when the island was dismissed and the Control/Siri path must start a new Live Activity — dropped 2026-09-27: keyboard-driven design, no Live Activity / wake word
 - [ ] Clipboard write from the background succeeds; "Paste from wippr" chip appears; no paste prompt
 - [ ] SpeechTranscriber + Foundation Models work in the background on iOS 27 (ANE rule, `rateLimited`) — if SpeechTranscriber fails backgrounded, try the `continued-processing.inference` entitlement (docs scope it to Core AI/Core ML/MPSGraph; see `ios-api-verification.md`)
 - [ ] Latency: stop tap → text on clipboard (target < 1.5 s for a 15 s dictation)
