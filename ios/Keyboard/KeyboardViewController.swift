@@ -1,13 +1,22 @@
 import os
 import UIKit
 
-/// A one-row keyboard: tap the mic, speak, tap again, and the text is typed into the focused field.
+/// A one-row keyboard: hold the orb, speak, let go, and the text is typed into the focused field.
 /// Keyboards can't use the mic, so the wippr app records and hands the text over (`KeyboardHandoff`).
 final class KeyboardViewController: UIInputViewController {
     private let status = UILabel()
     private let globe = UIButton(configuration: .plain())
-    private let micButton = UIButton(configuration: .plain())
-    private var phase = KeyboardHandoff.Phase.off
+    private let orb = OrbView()
+    /// The whole keyboard except the three keys: press anywhere to talk.
+    private let hold = UIControl()
+    private var pressedAt: Date?
+    private let press = UIImpactFeedbackGenerator(style: .medium)
+    private let letGo = UIImpactFeedbackGenerator(style: .soft)
+    private let notify = UINotificationFeedbackGenerator()
+    /// What's drawn; nil until the first update so it always draws once.
+    private var phase: KeyboardHandoff.Phase?
+    /// A start or stop the app hasn't confirmed yet, shown optimistically until it does or it expires.
+    private var pending: (record: Bool, until: Date)?
     private var lastID = UserDefaults.standard.string(forKey: "lastID")
     private var poll: Timer?
     private let log = Logger(subsystem: "cx.immortal.wippr", category: "keyboard")
@@ -23,30 +32,52 @@ final class KeyboardViewController: UIInputViewController {
 
         globe.setImage(UIImage(systemName: "globe"), for: .normal)
         globe.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
-        micButton.addTarget(self, action: #selector(toggleMic), for: .touchUpInside)
+        orb.setContentHuggingPriority(.required, for: .horizontal)
+        let inside = UIStackView(arrangedSubviews: [orb, status])
+        inside.spacing = 8
+        inside.alignment = .center
+        inside.isUserInteractionEnabled = false
+        inside.translatesAutoresizingMaskIntoConstraints = false
+        hold.translatesAutoresizingMaskIntoConstraints = false
+        hold.addSubview(inside)
+        view.addSubview(hold)
+        hold.addTarget(self, action: #selector(pressDown), for: .touchDown)
+        hold.addTarget(self, action: #selector(release), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        hold.isAccessibilityElement = true
+        hold.accessibilityLabel = "Hold to talk"
+        hold.accessibilityTraits = .button
         let delete = key("delete.left", #selector(deleteBackward))
         let newline = key("return", #selector(insertReturn))
 
-        let row = UIStackView(arrangedSubviews: [globe, micButton, status, delete, newline])
-        row.spacing = 8
-        row.alignment = .center
-        row.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(row)
+        let keys = UIStackView(arrangedSubviews: [globe, delete, newline])
+        keys.spacing = 8
+        keys.alignment = .center
+        keys.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(keys)
         let height = view.heightAnchor.constraint(equalToConstant: 36)
         height.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
             height,
-            row.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            row.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-            row.topAnchor.constraint(equalTo: view.topAnchor),
-            row.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hold.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hold.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hold.topAnchor.constraint(equalTo: view.topAnchor),
+            hold.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            keys.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            keys.topAnchor.constraint(equalTo: view.topAnchor),
+            keys.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            inside.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            inside.trailingAnchor.constraint(lessThanOrEqualTo: keys.leadingAnchor, constant: -8),
+            inside.topAnchor.constraint(equalTo: view.topAnchor),
+            inside.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        log.notice("appear: full access \(self.hasFullAccess)")
+        log.notice("appear: full access \(self.hasFullAccess), status \(KeyboardHandoff.status().rawValue, privacy: .public)")
         update()
+        orb.resume()
+        if hasFullAccess { [press, letGo].forEach { $0.prepare() }; notify.prepare() }
         poll = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in self?.update() }
     }
 
@@ -61,21 +92,28 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     private func update() {
-        let phase = KeyboardHandoff.status()
-        if phase != self.phase {
-            self.phase = phase
-            micButton.setImage(UIImage(systemName: phase == .recording ? "stop.circle.fill" : "mic.circle.fill"), for: .normal)
-            micButton.tintColor = phase == .recording ? .systemRed : nil
-            micButton.isEnabled = phase == .ready || phase == .recording
-            status.text = switch phase {
-            case .off: hasFullAccess ? "Open wippr and turn the mic on" : "Allow Full Access for wippr in Settings"
-            case .ready: "Tap the mic to dictate"
-            case .recording: "Listening… tap to stop"
-            case .processing: "Writing…"
-            }
+        let real = KeyboardHandoff.status()
+        if let pending, Date.now > pending.until || (real == .recording) == pending.record {
+            self.pending = nil
+            draw(real)
+        } else if pending == nil, real != phase {
+            draw(real)
         }
         insertLatest()
     }
+
+    private func draw(_ phase: KeyboardHandoff.Phase) {
+        self.phase = phase
+        orb.phase = phase
+        status.text = switch phase {
+        case .off: offHint
+        case .ready: "Hold to talk"
+        case .recording: "Listening…"
+        case .processing: "Writing…"
+        }
+    }
+
+    private var offHint: String { hasFullAccess ? "Open wippr and turn the mic on" : "Allow Full Access for wippr in Settings" }
 
     private func insertLatest() {
         guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != lastID else { return }
@@ -84,6 +122,8 @@ final class KeyboardViewController: UIInputViewController {
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let space = before.last.map { !$0.isWhitespace } ?? false
         textDocumentProxy.insertText(space ? " " + latest.text : latest.text)
+        buzz { notify.notificationOccurred(.success) }
+        orb.flash()
         log.notice("inserted \(latest.text.count) chars")
     }
 
@@ -94,7 +134,43 @@ final class KeyboardViewController: UIInputViewController {
         return button
     }
 
-    @objc private func toggleMic() { KeyboardHandoff.sendCommand(record: phase != .recording) }
+    @objc private func pressDown() {
+        guard let phase, phase != .off else {
+            log.notice("press while off")
+            buzz { notify.notificationOccurred(.error) }
+            orb.shake()
+            status.text = offHint
+            status.alpha = 0.2
+            UIView.animate(withDuration: 0.4) { self.status.alpha = 1 }
+            return
+        }
+        pressedAt = .now
+        buzz { press.impactOccurred() }
+        send(record: true)
+    }
+
+    @objc private func release() {
+        guard let pressedAt else { return }
+        self.pressedAt = nil
+        buzz { letGo.impactOccurred() }
+        send(record: false)
+        if Date.now.timeIntervalSince(pressedAt) < 0.25 { status.text = "Hold to talk" }
+    }
+
+    /// Sends start or stop and shows its result straight away; `update()` falls back to the real phase
+    /// once the app confirms, or after 3 s if it never does.
+    private func send(record: Bool) {
+        let before = KeyboardHandoff.command()?.id
+        KeyboardHandoff.sendCommand(record: record)
+        let after = KeyboardHandoff.command()?.id
+        log.notice("record \(record, privacy: .public) from \(self.phase?.rawValue ?? "nil", privacy: .public), command written \(after != nil && after != before, privacy: .public)")
+        pending = (record, .now + 3)
+        draw(record ? .recording : .processing)
+    }
+
+    /// Haptics need Full Access in a keyboard.
+    private func buzz(_ haptic: () -> Void) { if hasFullAccess { haptic() } }
+
     @objc private func deleteBackward() { textDocumentProxy.deleteBackward() }
     @objc private func insertReturn() { textDocumentProxy.insertText("\n") }
 }

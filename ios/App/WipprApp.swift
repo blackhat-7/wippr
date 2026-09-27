@@ -25,6 +25,7 @@ private struct SetupView: View {
             Text("wippr").font(.largeTitle.bold())
             Text("""
             1. Add the keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → wippr, then turn on Allow Full Access.
+               Why Full Access: iOS doesn't let keyboards use the microphone, so the wippr app records and the keyboard tells it when to start and stop. Without Full Access, iOS lets a keyboard read wippr's shared files but not write to them, so it can't send that tap. The wippr keyboard has no network code and doesn't store anything you type; iOS shows the same warning for every keyboard that asks.
             2. Turn the mic on below. It stays on in the background (orange dot) until you turn it off.
             3. In any app, switch to the wippr keyboard, tap the mic, speak, and tap it again. The text is typed for you.
             """)
