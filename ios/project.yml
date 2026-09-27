@@ -34,9 +34,11 @@ targets:
         NSMicrophoneUsageDescription: wippr records your voice and turns it into text on this iPhone. Audio never leaves the device.
         NSSpeechRecognitionUsageDescription: wippr transcribes your voice on this iPhone.
         UIBackgroundModes: [audio]
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   WipprKeyboard:
     type: app-extension
