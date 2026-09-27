@@ -1,6 +1,6 @@
 name: Wippr
 options:
-  bundleIdPrefix: cx.immortal
+  bundleIdPrefix: com.satuke.noboard
   deploymentTarget:
     iOS: "26.0"
   createIntermediateGroups: true
@@ -24,20 +24,20 @@ targets:
     entitlements:
       path: App/Wippr.entitlements
       properties:
-        com.apple.security.application-groups: [group.cx.immortal.wippr]
+        com.apple.security.application-groups: [group.com.satuke.noboard]
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: wippr
+        CFBundleDisplayName: noboard
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
-        NSMicrophoneUsageDescription: wippr records your voice and turns it into text on this iPhone. Audio never leaves the device.
-        NSSpeechRecognitionUsageDescription: wippr transcribes your voice on this iPhone.
+        NSMicrophoneUsageDescription: noboard records your voice and turns it into text on this iPhone. Audio never leaves the device.
+        NSSpeechRecognitionUsageDescription: noboard transcribes your voice on this iPhone.
         UIBackgroundModes: [audio]
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr
+        PRODUCT_BUNDLE_IDENTIFIER: com.satuke.noboard
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   WipprKeyboard:
@@ -47,11 +47,11 @@ targets:
     entitlements:
       path: Keyboard/WipprKeyboard.entitlements
       properties:
-        com.apple.security.application-groups: [group.cx.immortal.wippr]
+        com.apple.security.application-groups: [group.com.satuke.noboard]
     info:
       path: Keyboard/Info.plist
       properties:
-        CFBundleDisplayName: wippr
+        CFBundleDisplayName: noboard
         NSExtension:
           NSExtensionPointIdentifier: com.apple.keyboard-service
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
@@ -62,4 +62,4 @@ targets:
             RequestsOpenAccess: true # writes start/stop to the App Group
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr.keyboard
+        PRODUCT_BUNDLE_IDENTIFIER: com.satuke.noboard.keyboard

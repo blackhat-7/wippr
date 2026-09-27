@@ -138,7 +138,7 @@ final class KeyboardViewController: UIInputViewController {
         }
     }
 
-    private var offHint: String { hasFullAccess ? "Open wippr and turn the mic on" : "Allow Full Access for wippr in Settings" }
+    private var offHint: String { hasFullAccess ? "Open noboard and turn the mic on" : "Allow Full Access for noboard in Settings" }
 
     private func insertLatest() {
         guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != lastID else { return }

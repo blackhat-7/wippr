@@ -22,12 +22,12 @@ private struct SetupView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("wippr").font(.largeTitle.bold())
+            Text("noboard").font(.largeTitle.bold())
             Text("""
-            1. Add the keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → wippr, then turn on Allow Full Access.
-               Why Full Access: iOS doesn't let keyboards use the microphone, so the wippr app records and the keyboard tells it when to start and stop. Without Full Access, iOS lets a keyboard read wippr's shared files but not write to them, so it can't send that tap. The wippr keyboard has no network code and doesn't store anything you type; iOS shows the same warning for every keyboard that asks.
+            1. Add the keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → noboard, then turn on Allow Full Access.
+               Why Full Access: iOS doesn't let keyboards use the microphone, so the noboard app records and the keyboard tells it when to start and stop. Without Full Access, iOS lets a keyboard read noboard's shared files but not write to them, so it can't send that tap. The noboard keyboard has no network code and doesn't store anything you type; iOS shows the same warning for every keyboard that asks.
             2. Turn the mic on below. It stays on in the background (orange dot) until you turn it off.
-            3. In any app, switch to the wippr keyboard, tap the mic, speak, and tap it again. The text is typed for you.
+            3. In any app, switch to the noboard keyboard, hold the button, speak, and let go. The text is typed for you. Slide up while holding to give an edit instruction instead.
             """)
             Button(problems == nil ? "Set up" : "Check again") {
                 Task { problems = await DictationController.shared.setUp() }
@@ -39,7 +39,7 @@ private struct SetupView: View {
                 }
                 ForEach(problems, id: \.self) { Label($0, systemImage: "exclamationmark.triangle") }
             }
-            Toggle("Mic on for the wippr keyboard", isOn: $micOn)
+            Toggle("Mic on for the noboard keyboard", isOn: $micOn)
                 .onChange(of: micOn) { _, on in
                     Task {
                         do { try await DictationController.shared.setMic(on) } catch {
