@@ -8,7 +8,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    TARGETED_DEVICE_FAMILY: "1"
+    TARGETED_DEVICE_FAMILY: "1,2" # iPhone and iPad
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: CRH6P5D9K2
     MARKETING_VERSION: "0.1"
@@ -31,6 +31,7 @@ targets:
         CFBundleDisplayName: noboard
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         NSMicrophoneUsageDescription: noboard records your voice and turns it into text on this iPhone. Audio never leaves the device.
         NSSpeechRecognitionUsageDescription: noboard transcribes your voice on this iPhone.
         UIBackgroundModes: [audio]
