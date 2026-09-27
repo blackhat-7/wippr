@@ -22,6 +22,7 @@ Shared memory for every agent and session working on wippr. Read this folder bef
 
 <!-- Add a line per file: - [file.md](file.md) — one-line summary -->
 - [wispr-flow-product.md](wispr-flow-product.md) — Wispr Flow features, iOS internals (keyboard + main-app mic session, Live Activity, Action Button/intents, clipboard fallback), cloud stack, pricing, privacy, Reddit/X sentiment, implications for wippr
+- [wispr-onboarding-android.md](wispr-onboarding-android.md) — how Wispr Flow Android onboards: step order, try-it-first reps, real PiP Settings guide video, auto-return polling; what maps to iOS (AVPictureInPictureController, app Settings page has Keyboards + Full Access)
 - [oss-alternatives.md](oss-alternatives.md) — ranked OSS phone dictation apps (iOS: KeyVox, OpenWhispr mobile, Diction; Android: FUTO, WhisperIME, notune Parakeet), keyboard-less iOS attempts + blockers, reusable libs with licenses
 - [ios-platform-constraints.md](ios-platform-constraints.md) — what iOS allows (Apple-doc-cited): island buttons + AudioRecordingIntent/LiveActivityIntent background mic start, 8 h Live Activity, text delivery (clipboard + iOS 27 "Paste from" chip vs keyboard), wake word, triggers, ASR/LLM options, iOS 27 background ANE/GPU rules, memory caps, recommended architecture
 - [architecture.md](architecture.md) — wippr v0.1 design: one toggle intent for all triggers, persistent ready island, Apple SpeechTranscriber + Foundation Models, clipboard delivery, no keyboard, Siri instead of wake word
