@@ -78,7 +78,7 @@ final class KeyboardViewController: UIInputViewController {
         keys.alignment = .center
         keys.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(keys)
-        let height = view.heightAnchor.constraint(equalToConstant: 44)
+        let height = view.heightAnchor.constraint(equalToConstant: 56) // 10 pt above and below the 36 pt button
         height.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
             height,
