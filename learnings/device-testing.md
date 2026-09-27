@@ -2,7 +2,7 @@
 
 **TL;DR (2026-09-27)**
 - Device: iPhone 18 Pro Max (iPhone19,3), iOS 27.0 (24A437). Built with Xcode 27.0 (27A266a), iOS 27.0 SDK, Swift 6.4.
-- Signs and installs with automatic signing (team `CRH6P5D9K2`) via `xcodebuild -allowProvisioningUpdates`.
+- Signs and installs with automatic signing via `xcodebuild -allowProvisioningUpdates`.
 - Results per test are below. Test steps are in `../TODO.md` → Phase 4.
 
 ## Build

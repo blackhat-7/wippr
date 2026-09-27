@@ -7,7 +7,7 @@
 - The user **tries dictation in-app before any system Settings trip**: a mock bubble, then "reps" dictating into fake Gmail, Notes and WhatsApp cards. Mic permission is asked in context there.
 - A progress bar, checkpoints to resume where the user left off, an exit confirmation, and a plain-language privacy/legal screen before the scary permission.
 
-Source: decompiled APK (jadx + apktool) of `/Users/aayushmanchoudhary/wpflow/com.wispr.flowapp_2.5.2-166_…apkm`. Key files: `com/wispr/ui/onboarding/order/*StepOrder`, `flowapp/activity/AccessibilitySettingsPipActivity.java`, `flowapp/service/OnboardingService.java`, `res/raw/vid_pip_access_perm.mp4`.
+Source: decompiled APK (jadx + apktool) of the Wispr Flow Android APK (v2.5.2). Key files: `com/wispr/ui/onboarding/order/*StepOrder`, `flowapp/activity/AccessibilitySettingsPipActivity.java`, `flowapp/service/OnboardingService.java`, `res/raw/vid_pip_access_perm.mp4`.
 
 ## Step order (A/B "tiy_ptt_revamp")
 1. Value props → "How it works" → "What is Flow".
