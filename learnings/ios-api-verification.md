@@ -88,3 +88,7 @@ Checks run:
 
 - `Transcriber.makeModule()` now builds the module for both `installAssets()` and live use, so asset install and recording use identical options (closes unverified item 4).
 - `makeModule()` checks `SpeechTranscriber.isAvailable` first and throws `unsupportedDevice` (closes the `isAvailable` item). The setup screen shows the error.
+
+## Real compile (2026-09-27)
+
+GitHub Actions `macos-26` with Xcode 26.6 (build 17F113), iOS 26 simulator SDK, unsigned: **app + widget extension build succeeded with no code warnings** on the first try. The only warnings were about `ONLY_ACTIVE_ARCH` build settings. Every run on a push to `ios/` repeats this check. Not yet tested with the Xcode 27 SDK, where `GenerationOptions(sampling:)` is deprecated.

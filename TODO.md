@@ -34,7 +34,7 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 
 ## Phase 4 — Verify
 
-- [~] Compile check in CI (GitHub Actions macOS runner, `.github/workflows/ios-build.yml`) — simulator build, unsigned
+- [x] Compile check in CI (GitHub Actions `macos-26`, Xcode 26.6, `.github/workflows/ios-build.yml`) — app + widget build clean for the simulator, no code warnings (2026-09-27). Xcode 27 SDK not yet tested.
 - [ ] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device
 - [ ] Island button starts the mic with the app suspended / killed / phone locked (iOS 26 and 27)
 - [ ] No "Target is not foreground" when the island was dismissed and the Control/Siri path must start a new Live Activity
