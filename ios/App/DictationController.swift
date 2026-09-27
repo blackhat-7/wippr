@@ -40,7 +40,7 @@ final class DictationController {
     func setUp() async -> [String] {
         var problems: [String] = []
         if !(await AVAudioApplication.requestRecordPermission()) {
-            problems.append("Microphone access is off. Turn it on in Settings → wippr.")
+            problems.append("Microphone access is off. Turn it on in Settings → noboard.")
         }
         do {
             try await Transcriber.installAssets()
