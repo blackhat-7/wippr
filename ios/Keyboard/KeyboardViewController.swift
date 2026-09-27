@@ -46,11 +46,12 @@ final class KeyboardViewController: UIInputViewController {
 
         globe.setImage(UIImage(systemName: "globe"), for: .normal)
         globe.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
-        orb.setContentHuggingPriority(.required, for: .horizontal)
-        let inside = UIStackView(arrangedSubviews: [orb, status])
-        inside.spacing = 8
+        let inside = UIStackView(arrangedSubviews: [status])
         inside.alignment = .center
         inside.translatesAutoresizingMaskIntoConstraints = false
+        // The orb sits just left of the button, as tall as it.
+        orb.isUserInteractionEnabled = false
+        orb.translatesAutoresizingMaskIntoConstraints = false
         pill.backgroundColor = .systemBlue.withAlphaComponent(0.12)
         pill.layer.cornerRadius = 18
         pill.layer.cornerCurve = .continuous
@@ -59,6 +60,7 @@ final class KeyboardViewController: UIInputViewController {
         pill.addSubview(inside)
         hold.translatesAutoresizingMaskIntoConstraints = false
         hold.addSubview(pill)
+        hold.addSubview(orb)
         view.addSubview(hold)
         hold.addTarget(self, action: #selector(pressDown), for: .touchDown)
         hold.addTarget(self, action: #selector(pressUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
@@ -90,7 +92,11 @@ final class KeyboardViewController: UIInputViewController {
             keys.topAnchor.constraint(equalTo: view.topAnchor),
             keys.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             // The visible button spans everything between the keys; the whole strip still listens.
-            pill.leadingAnchor.constraint(greaterThanOrEqualTo: delete.trailingAnchor, constant: 8),
+            orb.leadingAnchor.constraint(greaterThanOrEqualTo: delete.trailingAnchor, constant: 8),
+            orb.trailingAnchor.constraint(equalTo: pill.leadingAnchor, constant: -8),
+            orb.centerYAnchor.constraint(equalTo: pill.centerYAnchor),
+            orb.heightAnchor.constraint(equalTo: pill.heightAnchor),
+            orb.widthAnchor.constraint(equalTo: orb.heightAnchor),
             pill.trailingAnchor.constraint(lessThanOrEqualTo: keys.leadingAnchor, constant: -8),
             pill.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             pill.heightAnchor.constraint(equalToConstant: 36),
@@ -108,12 +114,12 @@ final class KeyboardViewController: UIInputViewController {
         width.priority = UILayoutPriority(999) // shrinks in narrow windows (Slide Over, split view)
         placement = if traitCollection.userInterfaceIdiom == .pad {
             switch KeyboardHandoff.buttonPosition() {
-            case .left: [width, pill.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8)]
+            case .left: [width, orb.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8)]
             case .center: [width, pill.centerXAnchor.constraint(equalTo: view.centerXAnchor)]
             case .right: [width, pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8)]
             }
         } else {
-            [pill.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8),
+            [orb.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8),
              pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8)]
         }
         NSLayoutConstraint.activate(placement)
