@@ -22,3 +22,11 @@ xcrun devicectl device install app --device <UDID> ../.build/dd/Build/Products/D
 
 | Test | Result | Notes |
 |---|---|---|
+| Keyboard-driven flow (2026-09-27, iPhone 18 Pro Max, iOS 27.0) | **Works** | Mic on in the app, then hold the button in the wippr keyboard → text typed into the field. User-confirmed; latency not measured yet. |
+
+## Findings on the way
+
+- **Wake word (dropped):** SpeechTranscriber spelled "wipper" as "Whipper" and "Viper". Results arrived in bursts about every 4 s while listening continuously.
+- **Darwin notifications app → keyboard never arrived** on iOS 27, with Full Access off. Both sides now poll App Group files (0.1 s in the app, 0.25 s in the keyboard).
+- **Keyboard launch crash:** an `@objc func release()` handler overrode NSObject `-release`, causing infinite recursion (from the crash log in `devicectl device copy from --domain-type systemCrashLogs`). Never name ObjC-exposed methods after NSObject selectors.
+- **Device logs:** `log collect --device-udid <UDID>` needs sudo. `.info`/`.debug` os_log lines aren't persisted, so use `.notice`. Crash reports copy without sudo (command above).
