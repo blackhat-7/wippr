@@ -132,6 +132,7 @@ final class KeyboardViewController: UIInputViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         poll?.invalidate()
+        orb.pauseRendering()
     }
 
     override func viewWillLayoutSubviews() {

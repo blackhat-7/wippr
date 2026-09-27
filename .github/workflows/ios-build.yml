@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: xcodebuild -version
+      - name: Metal toolchain (the keyboard orb is a Metal shader)
+        run: xcodebuild -downloadComponent MetalToolchain
       - name: Generate project
         run: brew install xcodegen && cd ios && xcodegen
       - name: Build app + widget extension (simulator, unsigned)
