@@ -169,7 +169,7 @@ final class KeyboardViewController: UIInputViewController {
         }
     }
 
-    private var offHint: String { hasFullAccess ? "Open noboard and turn the mic on" : "Allow Full Access for noboard in Settings" }
+    private var offHint: String { hasFullAccess ? "Mic is off · tap to turn it on" : "Tap to finish setting up noboard" }
 
     private func insertLatest() {
         guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != lastID else { return }
@@ -228,6 +228,8 @@ final class KeyboardViewController: UIInputViewController {
     @objc private func pressDown() {
         guard let phase, phase != .off else {
             log.notice("press while off")
+            // Take them straight to the fix: the app turns the mic on (or shows keyboard setup) by itself.
+            openApp(URL(string: hasFullAccess ? "noboard://mic" : "noboard://keyboard")!)
             buzz { notify.notificationOccurred(.error) }
             orb.shake()
             status.text = offHint
@@ -293,6 +295,22 @@ final class KeyboardViewController: UIInputViewController {
             self.pill.transform = down ? CGAffineTransform(scaleX: 0.97, y: 0.94) : .identity
             self.pill.backgroundColor = (self.editMode ? UIColor.systemPurple : .systemBlue).withAlphaComponent(down ? 0.25 : 0.12)
         }
+    }
+
+    /// Keyboards have no public way to open their app. `UIApplication.open(_:options:completionHandler:)` is marked
+    /// unavailable in extensions, so find the application object on the responder chain and call it by selector.
+    private func openApp(_ url: URL) {
+        typealias Open = @convention(c) (NSObject, Selector, NSURL, NSDictionary, Any?) -> Void
+        let selector = NSSelectorFromString("openURL:options:completionHandler:")
+        var responder: UIResponder? = self
+        while let current = responder {
+            if current.isKind(of: NSClassFromString("UIApplication")!), let method = current.method(for: selector) {
+                unsafeBitCast(method, to: Open.self)(current, selector, url as NSURL, [:] as NSDictionary, nil)
+                return
+            }
+            responder = current.next
+        }
+        log.error("no application on the responder chain")
     }
 
     /// Haptics need Full Access in a keyboard.

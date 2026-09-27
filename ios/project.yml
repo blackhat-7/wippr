@@ -40,6 +40,9 @@ targets:
         NSMicrophoneUsageDescription: noboard records your voice and turns it into text on this iPhone. Audio never leaves the device.
         NSSpeechRecognitionUsageDescription: noboard transcribes your voice on this iPhone.
         UIBackgroundModes: [audio]
+        CFBundleURLTypes:
+          - CFBundleURLName: com.satuke.noboard
+            CFBundleURLSchemes: [noboard]
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:
