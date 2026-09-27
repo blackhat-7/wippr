@@ -1,7 +1,9 @@
 import os
 import UIKit
 
-/// A one-row keyboard: hold the orb, speak, let go, and the text is typed into the focused field.
+/// A one-row keyboard: hold the button, speak, let go, and the text is typed into the focused field.
+/// Slide up while holding for edit mode: the speech becomes an instruction that rewrites the selection
+/// (or the text before the cursor), or writes something new in an empty field. A quick tap right after undoes an edit.
 /// Keyboards can't use the mic, so the wippr app records and hands the text over (`KeyboardHandoff`).
 final class KeyboardViewController: UIInputViewController {
     private let status = UILabel()
@@ -15,6 +17,13 @@ final class KeyboardViewController: UIInputViewController {
     private let press = UIImpactFeedbackGenerator(style: .medium)
     private let letGo = UIImpactFeedbackGenerator(style: .soft)
     private let notify = UINotificationFeedbackGenerator()
+    private let tick = UISelectionFeedbackGenerator()
+    /// Slid up into edit mode during the current press.
+    private var editMode = false
+    /// The text sent for editMode: the selection, or else everything before the cursor.
+    private var target: (selected: String?, before: String)?
+    /// The last edit, undoable with a quick tap for a few seconds.
+    private var undo: (inserted: String, original: String, until: Date)?
     /// What's drawn; nil until the first update so it always draws once.
     private var phase: KeyboardHandoff.Phase?
     /// A start or stop the app hasn't confirmed yet, shown optimistically until it does or it expires.
@@ -50,6 +59,7 @@ final class KeyboardViewController: UIInputViewController {
         view.addSubview(hold)
         hold.addTarget(self, action: #selector(pressDown), for: .touchDown)
         hold.addTarget(self, action: #selector(pressUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        hold.addTarget(self, action: #selector(dragged(_:_:)), for: [.touchDragInside, .touchDragOutside])
         hold.isAccessibilityElement = true
         hold.accessibilityLabel = "Hold to talk"
         hold.accessibilityTraits = .button
@@ -92,7 +102,7 @@ final class KeyboardViewController: UIInputViewController {
         log.notice("appear: full access \(self.hasFullAccess), status \(KeyboardHandoff.status().rawValue, privacy: .public)")
         update()
         orb.resume()
-        if hasFullAccess { [press, letGo].forEach { $0.prepare() }; notify.prepare() }
+        if hasFullAccess { [press, letGo].forEach { $0.prepare() }; notify.prepare(); tick.prepare() }
         poll = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in self?.update() }
     }
 
@@ -123,8 +133,8 @@ final class KeyboardViewController: UIInputViewController {
         status.text = switch phase {
         case .off: offHint
         case .ready: "Hold to talk"
-        case .recording: "Listening…"
-        case .processing: "Writing…"
+        case .recording: editMode ? "Edit: say what to change" : "Listening…  ↑ slide up to edit"
+        case .processing: target != nil ? "Editing…" : "Writing…"
         }
     }
 
@@ -134,12 +144,47 @@ final class KeyboardViewController: UIInputViewController {
         guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != lastID else { return }
         lastID = latest.id.uuidString
         UserDefaults.standard.set(lastID, forKey: "lastID")
+        if latest.edit == true { return applyEdit(latest.text) }
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let space = before.last.map { !$0.isWhitespace } ?? false
         textDocumentProxy.insertText(space ? " " + latest.text : latest.text)
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
         log.notice("inserted \(latest.text.count) chars")
+    }
+
+    /// Replaces the edited text if the field still holds it; otherwise just types the result.
+    private func applyEdit(_ result: String) {
+        let target = self.target
+        self.target = nil
+        guard let target, !result.isEmpty else {
+            buzz { notify.notificationOccurred(.error) }
+            orb.shake()
+            status.text = "Couldn't edit that"
+            return
+        }
+        var original = ""
+        if let selected = target.selected, textDocumentProxy.selectedText == selected {
+            original = selected // typing replaces the selection
+        } else if target.selected == nil, textDocumentProxy.documentContextBeforeInput ?? "" == target.before {
+            original = target.before
+            for _ in original { textDocumentProxy.deleteBackward() }
+        }
+        textDocumentProxy.insertText(result)
+        undo = (result, original, .now + 5)
+        buzz { notify.notificationOccurred(.success) }
+        orb.flash()
+        status.text = "Edited · tap to undo"
+        log.notice("edited \(original.count) → \(result.count) chars")
+    }
+
+    private func undoEdit() {
+        guard let undo else { return }
+        self.undo = nil
+        for _ in undo.inserted { textDocumentProxy.deleteBackward() }
+        textDocumentProxy.insertText(undo.original)
+        buzz { letGo.impactOccurred() }
+        status.text = "Undone"
     }
 
     private func key(_ symbol: String, _ action: Selector) -> UIButton {
@@ -160,6 +205,7 @@ final class KeyboardViewController: UIInputViewController {
             return
         }
         pressedAt = .now
+        editMode = false
         pressed(true)
         buzz { press.impactOccurred() }
         send(record: true)
@@ -170,15 +216,41 @@ final class KeyboardViewController: UIInputViewController {
         self.pressedAt = nil
         pressed(false)
         buzz { letGo.impactOccurred() }
-        send(record: false)
-        if Date.now.timeIntervalSince(pressedAt) < 0.25 { status.text = "Hold to talk" }
+        let tap = Date.now.timeIntervalSince(pressedAt) < 0.3
+        if tap, let undo, undo.until > .now {
+            send(record: false, mode: .cancel)
+            undoEdit()
+            return
+        }
+        if editMode {
+            let selected = textDocumentProxy.selectedText.flatMap { $0.isEmpty ? nil : $0 }
+            let before = textDocumentProxy.documentContextBeforeInput ?? ""
+            target = (selected, before)
+            send(record: false, mode: .edit, text: selected ?? before)
+        } else {
+            target = nil
+            send(record: false)
+        }
+        editMode = false
+        if tap { status.text = "Hold to talk" }
+    }
+
+    /// Sliding up out of the keyboard switches the press to edit mode; sliding back down returns to dictation.
+    @objc private func dragged(_ control: UIControl, _ event: UIEvent) {
+        guard pressedAt != nil, let y = event.allTouches?.first?.location(in: view).y else { return }
+        let wantsEdit = editMode ? y < -10 : y < -30
+        guard wantsEdit != editMode else { return }
+        editMode = wantsEdit
+        buzz { tick.selectionChanged() }
+        pressed(true)
+        if pending?.record == true || phase == .recording { draw(.recording) }
     }
 
     /// Sends start or stop and shows its result straight away; `update()` falls back to the real phase
     /// once the app confirms, or after 3 s if it never does.
-    private func send(record: Bool) {
+    private func send(record: Bool, mode: KeyboardHandoff.Mode = .dictate, text: String? = nil) {
         let before = KeyboardHandoff.command()?.id
-        KeyboardHandoff.sendCommand(record: record)
+        KeyboardHandoff.sendCommand(record: record, mode: mode, text: text)
         let after = KeyboardHandoff.command()?.id
         log.notice("record \(record, privacy: .public) from \(self.phase?.rawValue ?? "nil", privacy: .public), command written \(after != nil && after != before, privacy: .public)")
         pending = (record, .now + 3)
@@ -188,7 +260,7 @@ final class KeyboardViewController: UIInputViewController {
     private func pressed(_ down: Bool) {
         UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0) {
             self.pill.transform = down ? CGAffineTransform(scaleX: 0.97, y: 0.94) : .identity
-            self.pill.backgroundColor = .systemBlue.withAlphaComponent(down ? 0.25 : 0.12)
+            self.pill.backgroundColor = (self.editMode ? UIColor.systemPurple : .systemBlue).withAlphaComponent(down ? 0.25 : 0.12)
         }
     }
 

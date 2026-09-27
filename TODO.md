@@ -40,6 +40,7 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 - [x] Compile check in CI (GitHub Actions `macos-26`, Xcode 26.6, `.github/workflows/ios-build.yml`) — app + widget build clean for the simulator, no code warnings (2026-09-27). Xcode 27 SDK not yet tested.
 - [x] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device (iPhone 18 Pro Max, iOS 27.0, Xcode 27 SDK — `learnings/device-testing.md`)
 - [x] Keyboard mic button → app (mic kept on in the background) → text typed into the focused field (2026-09-27 redesign; hold-to-talk works on device)
+- [ ] Edit mode (slide up while holding): rewrite selection / text before cursor, generate into empty field, terminal commands, undo — test on device
 - [ ] Background mic survives app switching, screen lock, a phone call; restarts after interruption
 - [-] Always-on "wipper" wake word: detection, end-of-speech, survives background / lock / calls, battery — dropped 2026-09-27: keyboard-driven design, no Live Activity / wake word
 - [-] Island button starts the mic with the app suspended / killed / phone locked (iOS 26 and 27) — dropped 2026-09-27: keyboard-driven design, no Live Activity / wake word

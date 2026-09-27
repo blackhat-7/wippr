@@ -2,7 +2,9 @@
 
 Dictation from a one-row keyboard.
 
-Open wippr once and turn the mic on (it stays on in the background). Then, in any app, switch to the wippr keyboard, tap the mic, speak, and tap again. The text is typed into the field.
+Open wippr once and turn the mic on (it stays on in the background). Then, in any app, switch to the wippr keyboard, hold the button, speak, and let go. The text is typed into the field.
+
+Edit mode: while holding, slide up out of the keyboard (the button turns purple) and say an instruction — "make it more formal", "turn this into bullets", or in an empty field "git command to undo the last commit". It rewrites the selection, or the text before the cursor. Tap the button within 5 s to undo.
 
 ## Build (needs a Mac)
 
@@ -29,6 +31,7 @@ Requirements:
 | `App/Mic.swift` | Always-on `AVAudioEngine` input. Keeps a 3 s pre-roll so a dictation starts from the moment the key went down. |
 | `App/Transcriber.swift` | One dictation with Apple `SpeechTranscriber` (on-device). |
 | `App/Cleaner.swift` | Apple Foundation Models cleanup prompt. |
+| `App/Editor.swift` | Edit mode: applies a spoken instruction to the selection / text before the cursor, or writes what it asks for (e.g. a terminal command). On-device only. |
 | `App/WipprApp.swift` | Setup screen and the mic on/off toggle. |
 
 Design and the reasons behind it: `../learnings/architecture.md`.
