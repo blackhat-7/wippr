@@ -42,7 +42,7 @@ final class KeyboardViewController: UIInputViewController {
         hold.addSubview(inside)
         view.addSubview(hold)
         hold.addTarget(self, action: #selector(pressDown), for: .touchDown)
-        hold.addTarget(self, action: #selector(release), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        hold.addTarget(self, action: #selector(pressUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         hold.isAccessibilityElement = true
         hold.accessibilityLabel = "Hold to talk"
         hold.accessibilityTraits = .button
@@ -149,7 +149,7 @@ final class KeyboardViewController: UIInputViewController {
         send(record: true)
     }
 
-    @objc private func release() {
+    @objc private func pressUp() {
         guard let pressedAt else { return }
         self.pressedAt = nil
         buzz { letGo.impactOccurred() }
