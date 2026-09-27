@@ -6,7 +6,7 @@ struct WipprApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SetupView()
+            RootView()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
@@ -16,52 +16,28 @@ struct WipprApp: App {
     }
 }
 
-private struct SetupView: View {
-    @State private var problems: [String]?
-    @AppStorage("mic") private var micOn = false
-    @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
+/// Onboarding until it's finished once, then Home. Home's "Re-check setup" can send the user back
+/// to the keyboard step.
+private struct RootView: View {
+    @AppStorage("onboarded") private var onboarded = false
+    @AppStorage("onboardingStep") private var onboardingStep = 0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("noboard").font(.largeTitle.bold())
-            Text("""
-            1. Add the keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → noboard, then turn on Allow Full Access.
-               Why Full Access: iOS doesn't let keyboards use the microphone, so the noboard app records and the keyboard tells it when to start and stop. Without Full Access, iOS lets a keyboard read noboard's shared files but not write to them, so it can't send that tap. The noboard keyboard has no network code and doesn't store anything you type; iOS shows the same warning for every keyboard that asks.
-            2. Turn the mic on below. It stays on in the background (orange dot) until you turn it off.
-            3. In any app, switch to the noboard keyboard, hold the button, speak, and let go. The text is typed for you. Slide up while holding to give an edit instruction instead.
-            """)
-            Button(problems == nil ? "Set up" : "Check again") {
-                Task { problems = await DictationController.shared.setUp() }
-            }
-            .buttonStyle(.borderedProminent)
-            if let problems {
-                if problems.isEmpty {
-                    Label("Ready.", systemImage: "checkmark.circle")
-                }
-                ForEach(problems, id: \.self) { Label($0, systemImage: "exclamationmark.triangle") }
-            }
-            Toggle("Mic on for the noboard keyboard", isOn: $micOn)
-                .onChange(of: micOn) { _, on in
-                    Task {
-                        do { try await DictationController.shared.setMic(on) } catch {
-                            micOn = false
-                            problems = ["Mic failed: \(error.localizedDescription)"]
-                        }
+        AdaptiveRoot {
+            ZStack {
+                if onboarded {
+                    HomeView {
+                        onboardingStep = OnboardingStep.keyboard.rawValue
+                        withAnimation { onboarded = false }
                     }
-                }
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                Picker("Keyboard button", selection: $buttonPosition) {
-                    Text("Left").tag(KeyboardHandoff.ButtonPosition.left.rawValue)
-                    Text("Center").tag(KeyboardHandoff.ButtonPosition.center.rawValue)
-                    Text("Right").tag(KeyboardHandoff.ButtonPosition.right.rawValue)
-                }
-                .pickerStyle(.segmented)
-                .onChange(of: buttonPosition, initial: true) { _, position in
-                    KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
+                    .transition(.opacity)
+                } else {
+                    OnboardingView { withAnimation { onboarded = true } }
+                        .transition(.opacity)
                 }
             }
-            Spacer()
         }
-        .padding()
+        .preferredColorScheme(.dark)
+        .background(Theme.background.ignoresSafeArea())
     }
 }

@@ -18,7 +18,12 @@ targets:
   Wippr:
     type: application
     platform: iOS
-    sources: [App, Shared]
+    sources:
+      - path: App
+        excludes: ["Resources/.gitkeep"] # guide videos go in App/Resources (see Onboarding/GuidePlayer.swift)
+      - Shared
+      - Keyboard/OrbView.swift
+      - Keyboard/Orb.metal
     dependencies:
       - target: WipprKeyboard
     entitlements:
