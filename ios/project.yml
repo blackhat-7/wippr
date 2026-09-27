@@ -21,6 +21,11 @@ targets:
     sources: [App, Shared]
     dependencies:
       - target: WipprWidgets
+      - target: WipprKeyboard
+    entitlements:
+      path: App/Wippr.entitlements
+      properties:
+        com.apple.security.application-groups: [group.cx.immortal.wippr]
     info:
       path: App/Info.plist
       properties:
@@ -49,3 +54,27 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr.widgets
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) WIDGET_EXTENSION
+
+  WipprKeyboard:
+    type: app-extension
+    platform: iOS
+    sources: [Keyboard, Shared/KeyboardHandoff.swift]
+    entitlements:
+      path: Keyboard/WipprKeyboard.entitlements
+      properties:
+        com.apple.security.application-groups: [group.cx.immortal.wippr]
+    info:
+      path: Keyboard/Info.plist
+      properties:
+        CFBundleDisplayName: wippr
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+          NSExtensionAttributes:
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+            PrimaryLanguage: en-US
+            RequestsOpenAccess: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr.keyboard

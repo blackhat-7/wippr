@@ -6,6 +6,8 @@ struct DictationAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         enum Phase: String, Codable, Hashable {
             case ready, recording, processing
+            /// Always-on: waiting for "wipper".
+            case listening
         }
 
         var phase: Phase

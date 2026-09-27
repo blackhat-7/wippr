@@ -31,6 +31,7 @@ struct WipprShortcuts: AppShortcutsProvider {
 
 private struct SetupView: View {
     @State private var problems: [String]?
+    @AppStorage("listen") private var listen = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -42,7 +43,18 @@ private struct SetupView: View {
             4. Tap a text field and paste.
 
             Also works from Control Center, the Action Button, and "Hey Siri, dictate with wippr".
+
+            To type straight into the field, add the wippr keyboard: Settings → General → Keyboard → Keyboards → Add New Keyboard → wippr.
             """)
+            Toggle("Listen for “wipper”", isOn: $listen)
+                .onChange(of: listen) { _, on in
+                    Task {
+                        do { try await DictationController.shared.setListening(on) } catch {
+                            listen = false
+                            problems = ["Listening failed: \(error.localizedDescription)"]
+                        }
+                    }
+                }
             Button(problems == nil ? "Set up" : "Check again") {
                 Task { problems = await DictationController.shared.setUp() }
             }

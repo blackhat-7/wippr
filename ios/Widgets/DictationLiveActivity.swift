@@ -48,6 +48,7 @@ private struct PhaseIcon: View {
         case .ready: Image(systemName: "mic").foregroundStyle(.secondary)
         case .recording: Image(systemName: "waveform").foregroundStyle(.red)
         case .processing: Image(systemName: "sparkles").foregroundStyle(.yellow)
+        case .listening: Image(systemName: "ear").foregroundStyle(.green)
         }
     }
 }
@@ -57,7 +58,7 @@ private struct ToggleButton: View {
 
     var body: some View {
         Button(intent: ToggleDictationIntent()) {
-            Image(systemName: phase == .recording ? "stop.fill" : "mic.fill")
+            Image(systemName: phase == .recording ? "stop.fill" : phase == .listening ? "ear.slash" : "mic.fill")
                 .font(.title2)
                 .frame(width: 44, height: 44)
         }
@@ -84,6 +85,7 @@ private struct StatusText: View {
         case .processing: "Cleaning up…"
         case .ready where state.text.isEmpty: "Tap the mic to dictate"
         case .ready: state.copied ? "Copied — paste anywhere" : "Tap to open wippr and copy"
+        case .listening: "Say “wipper” then speak"
         }
     }
 }

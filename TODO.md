@@ -35,7 +35,9 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 ## Phase 4 — Verify
 
 - [x] Compile check in CI (GitHub Actions `macos-26`, Xcode 26.6, `.github/workflows/ios-build.yml`) — app + widget build clean for the simulator, no code warnings (2026-09-27). Xcode 27 SDK not yet tested.
-- [ ] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device
+- [x] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device (iPhone 18 Pro Max, iOS 27.0, Xcode 27 SDK — `learnings/device-testing.md`)
+- [ ] wippr keyboard types the dictation into the focused field (added 2026-09-27 at user request)
+- [ ] Always-on "wipper" wake word: detection, end-of-speech, survives background / lock / calls, battery
 - [ ] Island button starts the mic with the app suspended / killed / phone locked (iOS 26 and 27)
 - [ ] No "Target is not foreground" when the island was dismissed and the Control/Siri path must start a new Live Activity
 - [ ] Clipboard write from the background succeeds; "Paste from wippr" chip appears; no paste prompt

@@ -26,10 +26,12 @@ Requirements:
 |---|---|
 | `Shared/ToggleDictationIntent.swift` | The one intent every trigger runs. `AudioRecordingIntent` + `LiveActivityIntent`, background mode. |
 | `Shared/DictationAttributes.swift` | Live Activity state: ready / recording / processing. |
-| `App/DictationController.swift` | Island → mic → transcript → cleanup → clipboard. |
+| `App/DictationController.swift` | Island → mic → transcript → cleanup → clipboard + keyboard. Always-on "wipper" listening. |
 | `App/Transcriber.swift` | Mic → Apple `SpeechTranscriber` (on-device). |
 | `App/Cleaner.swift` | Apple Foundation Models cleanup prompt. |
 | `App/WipprApp.swift` | Setup screen + Siri phrase. |
+| `Keyboard/` | One-row keyboard (36 pt) that types the latest dictation into the focused field. |
+| `Shared/KeyboardHandoff.swift` | App → keyboard text handoff: App Group file + Darwin notification. |
 | `Widgets/` | Dynamic Island / Lock Screen UI and the Control Center control. |
 
 Design and the reasons behind it: `../learnings/architecture.md`.

@@ -1,5 +1,7 @@
 # wippr architecture (v0.1)
 
+> **Changed 2026-09-27 (user decision after first device run):** delivery now also goes through a minimal one-row **wippr keyboard** that types the text into the focused field, and there is an opt-in **always-on "wipper" wake word**. The clipboard stays as a fallback. The rows below marked *(superseded)* are kept for the reasoning.
+
 **TL;DR (2026-09-26)**
 - One App Intent (`ToggleDictationIntent`: `AudioRecordingIntent` + `LiveActivityIntent`, `supportedModes = .background`) is the trigger for everything: the expanded Dynamic Island button, the Lock Screen button, the Control Center / Action Button control, and a Siri phrase.
 - A "ready" Live Activity stays in the island between dictations. iOS lets the app update an existing activity from the background at any time, even where starting a new one might fail.
@@ -24,11 +26,11 @@ tap stop
 
 | Decision | Why | Rejected |
 |---|---|---|
-| No keyboard | The project's whole point. iOS 27's "Paste from <App>" suggestion makes clipboard delivery nearly one tap. | Thin keyboard strip: it is still a keyboard, and needs Full Access plus App Group IPC. Revisit only if device testing shows paste is too slow. |
+| No keyboard *(superseded: 36 pt one-row keyboard, see `ios/Keyboard/`)* | The project's whole point. iOS 27's "Paste from <App>" suggestion makes clipboard delivery nearly one tap. | Thin keyboard strip: it is still a keyboard, and needs Full Access plus App Group IPC. Revisit only if device testing shows paste is too slow. |
 | Apple SpeechTranscriber | Runs on device, streams, ships no weights, and is managed by the system. | Parakeet/WhisperKit in-process: accuracy compared in `bench-asr.md`; needs the iOS 27 background ANE entitlement plus model loading (3.4 s cold). |
 | Apple Foundation Models | Runs out of process, so GPU background rules don't apply. Needs no download. | llama.cpp / MLX small model: Metal is blocked in the background, and CPU-only is slower. See `bench-cleanup-llm.md` for the non-Apple-Intelligence fallback. |
 | One toggle intent | Every trigger behaves the same way, with one code path. | Separate start/stop/cancel intents. |
-| Siri phrase instead of a wake word | Apple bears the battery and indicator cost, with no App Review 2.5.4 risk. | Porcupine / openWakeWord with an always-on mic. |
+| Siri phrase instead of a wake word *(superseded: opt-in always-on "wipper", spotted in the SpeechTranscriber transcript, mixable session)* | Apple bears the battery and indicator cost, with no App Review 2.5.4 risk. | Porcupine / openWakeWord with an always-on mic. |
 
 ## Known gaps (verify on device)
 

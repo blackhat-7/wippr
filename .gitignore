@@ -6,3 +6,5 @@ ios/*.xcodeproj/
 ios/App/Info.plist
 ios/Widgets/Info.plist
 bench/asr/data/
+ios/Keyboard/Info.plist
+ios/*/*.entitlements
