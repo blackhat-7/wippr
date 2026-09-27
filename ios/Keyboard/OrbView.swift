@@ -18,7 +18,7 @@ final class OrbView: UIView {
     private var suspended = false
 
     /// The drawing is larger than the orb's layout box: the open body fills ~66–75 % of the canvas, as in
-    /// the source, so a 40 pt canvas gives a ~26–30 pt body inside the 30 pt slot (and 36 pt pill).
+    /// the source, so the open body spans ~88–100 % of the orb's box (the box is as tall as the keyboard's button).
     private static let canvasRatio: CGFloat = 4 / 3
 
     override init(frame: CGRect) {
