@@ -39,3 +39,17 @@ Design and the reasons behind it: `../learnings/architecture.md`.
 ## Test on device first
 
 The steps are in `../TODO.md` → Phase 4.
+
+## TestFlight
+
+App Store Connect app "noboard – voice keyboard" (Apple ID 6816687461, bundle `com.satuke.noboard`). The internal group "Internal" has automatic distribution on.
+
+```sh
+cd ios && xcodegen
+xcodebuild archive -project Wippr.xcodeproj -scheme Wippr -configuration Release -destination 'generic/platform=iOS' \
+  -archivePath ../.build/Wippr.xcarchive -allowProvisioningUpdates CURRENT_PROJECT_VERSION=$(date +%Y%m%d%H%M)
+xcodebuild -exportArchive -archivePath ../.build/Wippr.xcarchive -exportOptionsPlist ExportOptions.plist \
+  -exportPath ../.build/export -allowProvisioningUpdates   # uploads
+```
+
+Creating the app was blocked until the Account Holder accepted the updated Program License Agreement and renewed the expired **Paid Apps** agreement (App Store Connect → Business). Apple requires this even for a free app.
