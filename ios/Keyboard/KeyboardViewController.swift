@@ -7,6 +7,8 @@ final class KeyboardViewController: UIInputViewController {
     private let status = UILabel()
     private let globe = UIButton(configuration: .plain())
     private let orb = OrbView()
+    /// The visible "Hold to talk" button.
+    private let pill = UIView()
     /// The whole keyboard except the three keys: press anywhere to talk.
     private let hold = UIControl()
     private var pressedAt: Date?
@@ -25,8 +27,8 @@ final class KeyboardViewController: UIInputViewController {
         super.viewDidLoad()
         inputView?.allowsSelfSizing = true
 
-        status.font = .preferredFont(forTextStyle: .footnote)
-        status.textColor = .secondaryLabel
+        status.font = .systemFont(ofSize: 15, weight: .semibold)
+        status.textColor = .label
         status.lineBreakMode = .byTruncatingHead
         status.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
@@ -36,25 +38,31 @@ final class KeyboardViewController: UIInputViewController {
         let inside = UIStackView(arrangedSubviews: [orb, status])
         inside.spacing = 8
         inside.alignment = .center
-        inside.isUserInteractionEnabled = false
         inside.translatesAutoresizingMaskIntoConstraints = false
+        pill.backgroundColor = .systemBlue.withAlphaComponent(0.12)
+        pill.layer.cornerRadius = 18
+        pill.layer.cornerCurve = .continuous
+        pill.isUserInteractionEnabled = false
+        pill.translatesAutoresizingMaskIntoConstraints = false
+        pill.addSubview(inside)
         hold.translatesAutoresizingMaskIntoConstraints = false
-        hold.addSubview(inside)
+        hold.addSubview(pill)
         view.addSubview(hold)
         hold.addTarget(self, action: #selector(pressDown), for: .touchDown)
         hold.addTarget(self, action: #selector(pressUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         hold.isAccessibilityElement = true
         hold.accessibilityLabel = "Hold to talk"
         hold.accessibilityTraits = .button
-        let delete = key("delete.left", #selector(deleteBackward))
-        let newline = key("return", #selector(insertReturn))
 
-        let keys = UIStackView(arrangedSubviews: [globe, delete, newline])
+        let delete = key("delete.left", #selector(deleteBackward))
+        delete.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(delete)
+        let keys = UIStackView(arrangedSubviews: [globe, key("return", #selector(insertReturn))])
         keys.spacing = 8
         keys.alignment = .center
         keys.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(keys)
-        let height = view.heightAnchor.constraint(equalToConstant: 36)
+        let height = view.heightAnchor.constraint(equalToConstant: 44)
         height.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
             height,
@@ -62,13 +70,20 @@ final class KeyboardViewController: UIInputViewController {
             hold.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             hold.topAnchor.constraint(equalTo: view.topAnchor),
             hold.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            delete.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            delete.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             keys.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             keys.topAnchor.constraint(equalTo: view.topAnchor),
             keys.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            inside.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            inside.trailingAnchor.constraint(lessThanOrEqualTo: keys.leadingAnchor, constant: -8),
-            inside.topAnchor.constraint(equalTo: view.topAnchor),
-            inside.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            // The visible button spans everything between the keys; the whole strip still listens.
+            pill.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8),
+            pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8),
+            pill.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            pill.heightAnchor.constraint(equalToConstant: 36),
+            inside.centerXAnchor.constraint(equalTo: pill.centerXAnchor),
+            inside.centerYAnchor.constraint(equalTo: pill.centerYAnchor),
+            inside.leadingAnchor.constraint(greaterThanOrEqualTo: pill.leadingAnchor, constant: 12),
+            inside.trailingAnchor.constraint(lessThanOrEqualTo: pill.trailingAnchor, constant: -12),
         ])
     }
 
@@ -145,6 +160,7 @@ final class KeyboardViewController: UIInputViewController {
             return
         }
         pressedAt = .now
+        pressed(true)
         buzz { press.impactOccurred() }
         send(record: true)
     }
@@ -152,6 +168,7 @@ final class KeyboardViewController: UIInputViewController {
     @objc private func pressUp() {
         guard let pressedAt else { return }
         self.pressedAt = nil
+        pressed(false)
         buzz { letGo.impactOccurred() }
         send(record: false)
         if Date.now.timeIntervalSince(pressedAt) < 0.25 { status.text = "Hold to talk" }
@@ -166,6 +183,13 @@ final class KeyboardViewController: UIInputViewController {
         log.notice("record \(record, privacy: .public) from \(self.phase?.rawValue ?? "nil", privacy: .public), command written \(after != nil && after != before, privacy: .public)")
         pending = (record, .now + 3)
         draw(record ? .recording : .processing)
+    }
+
+    private func pressed(_ down: Bool) {
+        UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0) {
+            self.pill.transform = down ? CGAffineTransform(scaleX: 0.97, y: 0.94) : .identity
+            self.pill.backgroundColor = .systemBlue.withAlphaComponent(down ? 0.25 : 0.12)
+        }
     }
 
     /// Haptics need Full Access in a keyboard.
