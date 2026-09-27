@@ -81,7 +81,7 @@ final class DictationController {
         micSince = .now
         lastCommand = KeyboardHandoff.command()?.id // ignore taps from while the mic was off
         set(.ready)
-        poll = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+        poll = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
             Task { @MainActor in DictationController.shared.tick() }
         }
         log.notice("mic on")
@@ -109,7 +109,8 @@ final class DictationController {
     /// Heartbeat for the keyboard, and handles its start/stop taps one at a time.
     private func tick() {
         ticks += 1
-        if ticks % 10 == 0 { KeyboardHandoff.setStatus(phase) }
+        if ticks % 20 == 0 { KeyboardHandoff.setStatus(phase) }
+        if phase == .recording { KeyboardHandoff.setLevel(mic.level) }
         guard !busy, let command = KeyboardHandoff.command(), command.id != lastCommand else { return }
         lastCommand = command.id
         busy = true

@@ -63,6 +63,20 @@ enum KeyboardHandoff {
         return status.phase
     }
 
+    private struct Level: Codable {
+        var level: Float
+        var date: Date
+    }
+
+    /// Mic loudness while recording (0…1), written ~20×/s by the app so the keyboard's orb can react to the voice.
+    static func setLevel(_ level: Float) { write(Level(level: level, date: .now), to: "level") }
+
+    /// 0 when the app hasn't written a level in the last 0.3 s (not recording).
+    static func level() -> Float {
+        guard let level = read(Level.self, from: "level"), Date.now.timeIntervalSince(level.date) < 0.3 else { return 0 }
+        return level.level
+    }
+
     /// Where the keyboard's button sits on iPad, where the keyboard is too wide for a full-width button.
     enum ButtonPosition: String, Codable, CaseIterable {
         case left, center, right

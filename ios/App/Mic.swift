@@ -9,6 +9,7 @@ final class Mic: @unchecked Sendable {
 
     private struct State {
         var sink: Sink?
+        var level: Float = 0
         var recent: [(date: Date, buffer: AVAudioPCMBuffer)] = []
     }
 
@@ -18,11 +19,16 @@ final class Mic: @unchecked Sendable {
 
     var format: AVAudioFormat { engine.inputNode.outputFormat(forBus: 0) }
 
+    /// Smoothed loudness of the latest audio, 0…1.
+    var level: Float { state.withLockUnchecked { $0.level } }
+
     func start() throws {
-        engine.inputNode.installTap(onBus: 0, bufferSize: 4096, format: format) { [state] buffer, _ in
+        engine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [state] buffer, _ in
             guard let copy = Self.copy(buffer) else { return }
             let now = Date.now
+            let level = Self.loudness(copy)
             state.withLockUnchecked { state in
+                state.level = max(level, state.level * 0.8) // fast attack, slow release
                 state.recent.removeAll { now.timeIntervalSince($0.date) > Self.preRoll }
                 state.recent.append((now, copy))
                 state.sink?(copy)
@@ -48,6 +54,15 @@ final class Mic: @unchecked Sendable {
     }
 
     func detach() { state.withLockUnchecked { $0.sink = nil } }
+
+    /// RMS mapped from -50…0 dB to 0…1.
+    private static func loudness(_ buffer: AVAudioPCMBuffer) -> Float {
+        guard let samples = buffer.floatChannelData?[0], buffer.frameLength > 0 else { return 0 }
+        var sum: Float = 0
+        for i in 0..<Int(buffer.frameLength) { sum += samples[i] * samples[i] }
+        let db = 10 * log10(max(sum / Float(buffer.frameLength), 1e-10))
+        return min(max((db + 50) / 50, 0), 1)
+    }
 
     /// The tap may reuse its buffer, and the pre-roll keeps buffers around.
     private static func copy(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
