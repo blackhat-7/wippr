@@ -9,10 +9,22 @@ enum KeyboardHandoff {
         case off, ready, recording, processing
     }
 
+    /// What a dictation is for; sent with the stop.
+    enum Mode: String, Codable {
+        /// Clean up the speech and type it.
+        case dictate
+        /// The speech is an instruction: rewrite `Command.text` (or, if empty, write what it asks for).
+        case edit
+        /// Discard the recording (the key was tapped to undo).
+        case cancel
+    }
+
     struct Text: Codable {
         var id: UUID
         var text: String
         var date: Date
+        /// True when `text` replaces the text sent for editing. Empty `text` with `edit` means the edit failed.
+        var edit: Bool?
     }
 
     private struct Status: Codable {
@@ -25,6 +37,9 @@ enum KeyboardHandoff {
         var record: Bool
         /// When the key went down; the app replays audio from here. Optional so older files still decode.
         var date: Date?
+        var mode: Mode?
+        /// The text to edit (the selection, or the text before the cursor).
+        var text: String?
     }
 
     /// The keyboard ignores text older than this.
@@ -32,7 +47,7 @@ enum KeyboardHandoff {
 
     // App → keyboard
 
-    static func send(_ text: String) { write(Text(id: UUID(), text: text, date: .now), to: "text") }
+    static func send(_ text: String, edit: Bool = false) { write(Text(id: UUID(), text: text, date: .now, edit: edit), to: "text") }
 
     static func latestText() -> Text? {
         guard let text = read(Text.self, from: "text"), Date.now.timeIntervalSince(text.date) < maxAge else { return nil }
@@ -50,7 +65,9 @@ enum KeyboardHandoff {
 
     // Keyboard → app
 
-    static func sendCommand(record: Bool) { write(Command(id: UUID(), record: record, date: .now), to: "command") }
+    static func sendCommand(record: Bool, mode: Mode = .dictate, text: String? = nil) {
+        write(Command(id: UUID(), record: record, date: .now, mode: mode, text: text), to: "command")
+    }
 
     static func command() -> Command? { read(Command.self, from: "command") }
 

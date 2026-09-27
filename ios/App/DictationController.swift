@@ -117,7 +117,7 @@ final class DictationController {
             if command.record, phase == .ready {
                 await startDictation(since: (command.date ?? .now).addingTimeInterval(-0.15))
             } else if !command.record, phase == .recording {
-                await finishDictation()
+                await finishDictation(command)
             }
             busy = false
         }
@@ -137,19 +137,27 @@ final class DictationController {
         }
     }
 
-    private func finishDictation() async {
+    private func finishDictation(_ command: KeyboardHandoff.Command) async {
         guard let transcriber else { return }
         mic.detach()
         self.transcriber = nil
         set(.processing)
         do {
             let raw = try await transcriber.stop()
-            let text = await (cleaner ?? Cleaner()).clean(raw)
-            if !text.isEmpty {
-                KeyboardHandoff.send(text)
-                copy(text)
+            switch command.mode ?? .dictate {
+            case .dictate:
+                let text = await (cleaner ?? Cleaner()).clean(raw)
+                if !text.isEmpty {
+                    KeyboardHandoff.send(text)
+                    copy(text)
+                }
+            case .edit:
+                // Empty text tells the keyboard the edit failed, so it leaves the field alone.
+                KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
+            case .cancel:
+                break
             }
-            log.notice("dictation: \(raw.count) chars")
+            log.notice("\((command.mode ?? .dictate).rawValue, privacy: .public): \(raw.count) chars")
         } catch {
             log.error("finish: \(error, privacy: .public)")
         }
