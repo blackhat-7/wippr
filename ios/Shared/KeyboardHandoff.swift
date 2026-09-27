@@ -77,6 +77,12 @@ enum KeyboardHandoff {
         return level.level
     }
 
+    /// The keyboard calls this whenever it appears. The write only succeeds with Full Access,
+    /// so the file existing tells the app the keyboard is added and has Full Access.
+    static func markKeyboardSeen() { write(Date.now, to: "keyboard-seen") }
+
+    static var keyboardHasFullAccess: Bool { read(Date.self, from: "keyboard-seen") != nil }
+
     /// Where the keyboard's button sits on iPad, where the keyboard is too wide for a full-width button.
     enum ButtonPosition: String, Codable, CaseIterable {
         case left, center, right

@@ -106,6 +106,46 @@ final class DictationController {
         do { try await startMic() } catch { log.error("restart mic: \(error, privacy: .public)") }
     }
 
+    // MARK: Setup status and in-app practice (onboarding)
+
+    enum InAppError: LocalizedError {
+        case micDenied
+        var errorDescription: String? { "Microphone access is off. Turn it on in Settings → noboard." }
+    }
+
+    /// Whether the noboard keyboard is added in Settings → General → Keyboard → Keyboards.
+    static var keyboardAdded: Bool {
+        (UserDefaults.standard.array(forKey: "AppleKeyboards") as? [String])?
+            .contains { $0.hasPrefix("com.satuke.noboard.keyboard") } ?? false
+    }
+
+    /// Starts a dictation from inside the app (onboarding's practice strip), turning the mic on for now if needed.
+    func startInApp() async throws {
+        guard await AVAudioApplication.requestRecordPermission() else { throw InAppError.micDenied }
+        if phase == .off { try await startMic() }
+        guard phase == .ready else { return }
+        await startDictation(since: .now.addingTimeInterval(-0.15))
+    }
+
+    /// Stops the in-app dictation and returns the cleaned text instead of typing it through the keyboard.
+    func finishInApp() async -> String? {
+        guard let transcriber, phase == .recording else { return nil }
+        mic.detach()
+        self.transcriber = nil
+        set(.processing)
+        defer {
+            cleaner = nil
+            set(.ready)
+        }
+        guard let raw = try? await transcriber.stop(), !raw.isEmpty else { return nil }
+        return await (cleaner ?? Cleaner()).clean(raw)
+    }
+
+    /// After practice, turns the mic back off unless the user chose to keep it on.
+    func endInApp() async {
+        if !Self.micEnabled, phase == .ready { await stopMic() }
+    }
+
     /// Heartbeat for the keyboard, and handles its start/stop taps one at a time.
     private func tick() {
         ticks += 1

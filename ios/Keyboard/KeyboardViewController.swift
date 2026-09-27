@@ -122,6 +122,7 @@ final class KeyboardViewController: UIInputViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         placeButton()
+        if hasFullAccess { KeyboardHandoff.markKeyboardSeen() }
         log.notice("appear: full access \(self.hasFullAccess), status \(KeyboardHandoff.status().rawValue, privacy: .public)")
         update()
         orb.resume()
