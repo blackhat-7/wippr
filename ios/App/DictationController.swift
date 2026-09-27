@@ -81,7 +81,7 @@ final class DictationController {
         micSince = .now
         lastCommand = KeyboardHandoff.command()?.id // ignore taps from while the mic was off
         set(.ready)
-        poll = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+        poll = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             Task { @MainActor in DictationController.shared.tick() }
         }
         log.notice("mic on")
@@ -90,7 +90,6 @@ final class DictationController {
     private func stopMic() async {
         poll?.invalidate()
         poll = nil
-        mic.sink = nil
         _ = try? await transcriber?.stop()
         transcriber = nil
         cleaner = nil
@@ -110,13 +109,13 @@ final class DictationController {
     /// Heartbeat for the keyboard, and handles its start/stop taps one at a time.
     private func tick() {
         ticks += 1
-        if ticks % 5 == 0 { KeyboardHandoff.setStatus(phase) }
+        if ticks % 10 == 0 { KeyboardHandoff.setStatus(phase) }
         guard !busy, let command = KeyboardHandoff.command(), command.id != lastCommand else { return }
         lastCommand = command.id
         busy = true
         Task {
             if command.record, phase == .ready {
-                await startDictation()
+                await startDictation(since: (command.date ?? .now).addingTimeInterval(-0.15))
             } else if !command.record, phase == .recording {
                 await finishDictation()
             }
@@ -124,11 +123,12 @@ final class DictationController {
         }
     }
 
-    private func startDictation() async {
+    /// `since`: when the key went down. The mic's pre-roll covers the time until the model is ready.
+    private func startDictation(since: Date) async {
         set(.recording)
         do {
             let transcriber = try await Transcriber()
-            mic.sink = try await transcriber.start(micFormat: mic.format)
+            mic.attach(try await transcriber.start(micFormat: mic.format), since: since)
             self.transcriber = transcriber
             cleaner = Cleaner() // prewarms the model while the user speaks
         } catch {
@@ -139,7 +139,7 @@ final class DictationController {
 
     private func finishDictation() async {
         guard let transcriber else { return }
-        mic.sink = nil
+        mic.detach()
         self.transcriber = nil
         set(.processing)
         do {
