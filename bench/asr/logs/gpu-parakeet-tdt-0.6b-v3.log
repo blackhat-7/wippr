@@ -1,0 +1,53 @@
+(null): No such file or directory
+OneLogger: Setting error_handling_strategy to DISABLE_QUIETLY_AND_REPORT_METRIC_ERROR for rank (rank=0) with OneLogger disabled. To override: explicitly set error_handling_strategy parameter.
+No exporters were provided. This means that no telemetry data will be collected.
+(null): No such file or directory
+[NeMo I 2026-09-27 19:21:31 mixins:194] Tokenizer SentencePieceTokenizer initialized with 8192 tokens
+[NeMo W 2026-09-27 19:21:32 modelPT:175] If you intend to do training or fine-tuning, please call the ModelPT.setup_training_data() method and provide a valid configuration file to setup the train data loader.
+    Train config : 
+    use_lhotse: true
+    skip_missing_manifest_entries: true
+    input_cfg: null
+    tarred_audio_filepaths: null
+    manifest_filepath: null
+    sample_rate: 16000
+    shuffle: true
+    num_workers: 2
+    pin_memory: true
+    max_duration: 10.0
+    min_duration: 1.0
+    text_field: answer
+    batch_duration: null
+    max_tps: null
+    use_bucketing: true
+    bucket_duration_bins: null
+    bucket_batch_size: null
+    num_buckets: 30
+    bucket_buffer_size: 20000
+    shuffle_buffer_size: 10000
+    
+[NeMo W 2026-09-27 19:21:32 modelPT:182] If you intend to do validation, please call the ModelPT.setup_validation_data() or ModelPT.setup_multiple_validation_data() method and provide a valid configuration file to setup the validation data loader(s). 
+    Validation config : 
+    use_lhotse: true
+    manifest_filepath: null
+    sample_rate: 16000
+    batch_size: 16
+    shuffle: false
+    max_duration: 40.0
+    min_duration: 0.1
+    num_workers: 2
+    pin_memory: true
+    text_field: answer
+    
+[NeMo I 2026-09-27 19:21:35 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {'fastemit_lambda': 0.0, 'clamp': -1.0, 'durations': [0, 1, 2, 3, 4], 'sigma': 0.02, 'omega': 0.1}
+[NeMo I 2026-09-27 19:21:35 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {'fastemit_lambda': 0.0, 'clamp': -1.0, 'durations': [0, 1, 2, 3, 4], 'sigma': 0.02, 'omega': 0.1}
+[NeMo I 2026-09-27 19:21:35 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {'fastemit_lambda': 0.0, 'clamp': -1.0, 'durations': [0, 1, 2, 3, 4], 'sigma': 0.02, 'omega': 0.1}
+[NeMo I 2026-09-27 19:21:36 save_restore_connector:287] Model EncDecRNNTBPEModel was successfully restored from /home/illusion/.cache/huggingface/hub/models--nvidia--parakeet-tdt-0.6b-v3/snapshots/541d1f99c6b0c3cd0b11a95167540bb8edefd82b/parakeet-tdt-0.6b-v3.nemo.
+parakeet-tdt-0.6b-v3 gpu ls-clean: WER 1.49%  RTF 0.0102
+parakeet-tdt-0.6b-v3 gpu ls-other: WER 3.72%  RTF 0.0107
+parakeet-tdt-0.6b-v3 gpu ami: WER 9.39%  RTF 0.0136
+parakeet-tdt-0.6b-v3 gpu earnings22: WER 11.18%  RTF 0.0106
+{"model": "parakeet-tdt-0.6b-v3", "device": "gpu", "backend": "nemo", "args": ["nvidia/parakeet-tdt-0.6b-v3"], "threads": null, "load_s": 15.5, "params_m": 627.0, "precision": "fp32", "peak_rss_mb": 4102, "gpu_peak_alloc_mb": 5026, "latency": {"clip5_s": 0.0464, "clip15_s": 0.1038}, "date": "2026-09-27 19:22"}

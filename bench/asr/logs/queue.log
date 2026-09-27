@@ -4,3 +4,5 @@ END whisper-small.en rc=0 18:08:14
 START moonshine-streaming-small 18:08:14
 END moonshine-streaming-small rc=0 18:23:17
 START moonshine-streaming-medium 18:23:17
+END moonshine-streaming-medium rc=0 18:48:40
+START parakeet-tdt_ctc-110m 18:48:40

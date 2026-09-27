@@ -1,0 +1,53 @@
+(null): No such file or directory
+OneLogger: Setting error_handling_strategy to DISABLE_QUIETLY_AND_REPORT_METRIC_ERROR for rank (rank=0) with OneLogger disabled. To override: explicitly set error_handling_strategy parameter.
+No exporters were provided. This means that no telemetry data will be collected.
+(null): No such file or directory
+[NeMo I 2026-09-27 19:22:35 mixins:194] Tokenizer SentencePieceTokenizer initialized with 1024 tokens
+[NeMo W 2026-09-27 19:22:35 modelPT:175] If you intend to do training or fine-tuning, please call the ModelPT.setup_training_data() method and provide a valid configuration file to setup the train data loader.
+    Train config : 
+    manifest_filepath: null
+    sample_rate: 16000
+    batch_size: null
+    shuffle: true
+    num_workers: 8
+    pin_memory: true
+    max_duration: 40
+    min_duration: 0.1
+    is_tarred: true
+    tarred_audio_filepaths: null
+    shuffle_n: 2048
+    bucketing_strategy: fully_randomized
+    bucketing_batch_size: null
+    shard_manifests: true
+    use_lhotse: true
+    use_bucketing: true
+    num_buckets: 30
+    bucket_duration_bins: null
+    batch_duration: 600
+    defer_setup: true
+    
+[NeMo W 2026-09-27 19:22:35 modelPT:182] If you intend to do validation, please call the ModelPT.setup_validation_data() or ModelPT.setup_multiple_validation_data() method and provide a valid configuration file to setup the validation data loader(s). 
+    Validation config : 
+    manifest_filepath: null
+    sample_rate: 16000
+    batch_size: 32
+    shuffle: false
+    use_start_end_token: false
+    num_workers: 8
+    pin_memory: true
+    
+[NeMo W 2026-09-27 19:22:35 nemo_logging:364] /home/illusion/Documents/projects/wippr/bench/asr/.venv/lib/python3.12/site-packages/torch/nn/modules/rnn.py:1011: UserWarning: dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers greater than 1, but got dropout=0.2 and num_layers=1
+      super().__init__("LSTM", *args, **kwargs)
+    
+[NeMo I 2026-09-27 19:22:35 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {'fastemit_lambda': 0.0, 'clamp': -1.0, 'durations': [0, 1, 2, 3, 4], 'sigma': 0.02, 'omega': 0.1}
+[NeMo I 2026-09-27 19:22:35 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {'fastemit_lambda': 0.0, 'clamp': -1.0, 'durations': [0, 1, 2, 3, 4], 'sigma': 0.02, 'omega': 0.1}
+[NeMo I 2026-09-27 19:22:35 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {'fastemit_lambda': 0.0, 'clamp': -1.0, 'durations': [0, 1, 2, 3, 4], 'sigma': 0.02, 'omega': 0.1}
+[NeMo I 2026-09-27 19:22:36 save_restore_connector:287] Model EncDecHybridRNNTCTCBPEModel was successfully restored from /home/illusion/.cache/huggingface/hub/models--nvidia--parakeet-tdt_ctc-110m/snapshots/431a349f3051ab85c22b9b7a2741b5fe77065665/parakeet-tdt_ctc-110m.nemo.
+parakeet-tdt_ctc-110m gpu ls-clean: WER 1.73%  RTF 0.0198
+parakeet-tdt_ctc-110m gpu ls-other: WER 5.44%  RTF 0.0152
+parakeet-tdt_ctc-110m gpu ami: WER 12.71%  RTF 0.0098
+parakeet-tdt_ctc-110m gpu earnings22: WER 11.06%  RTF 0.0095
+{"model": "parakeet-tdt_ctc-110m", "device": "gpu", "backend": "nemo", "args": ["nvidia/parakeet-tdt_ctc-110m"], "threads": null, "load_s": 5.6, "params_m": 114.6, "precision": "fp32", "peak_rss_mb": 2733, "gpu_peak_alloc_mb": 1035, "latency": {"clip5_s": 0.0268, "clip15_s": 0.0748}, "date": "2026-09-27 19:23"}

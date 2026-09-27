@@ -1,0 +1,5 @@
+whisper-large-v3-turbo gpu ls-clean: WER 1.42%  RTF 0.0179
+whisper-large-v3-turbo gpu ls-other: WER 3.72%  RTF 0.0191
+whisper-large-v3-turbo gpu ami: WER 12.63%  RTF 0.0290
+whisper-large-v3-turbo gpu earnings22: WER 11.31%  RTF 0.0197
+{"model": "whisper-large-v3-turbo", "device": "gpu", "backend": "whispercpp", "args": ["ggml-large-v3-turbo-q8_0.bin"], "threads": null, "load_s": 1.2, "precision": "q8_0 ggml", "disk_mb": 834, "peak_rss_mb": 693, "latency": {"clip5_s": 0.1172, "clip15_s": 0.186}, "date": "2026-09-27 19:00"}

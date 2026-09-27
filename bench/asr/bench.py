@@ -84,8 +84,16 @@ def gpu_sync():
 def load_nemo(device, name, att_context=None):
     import torch
     import nemo.collections.asr as nemo_asr
+    from omegaconf import OmegaConf, open_dict
 
-    model = nemo_asr.models.ASRModel.from_pretrained(name, map_location="cuda").eval()
+    # NeMo defaults TDT/RNNT greedy decoding to CUDA graphs, which need the NVIDIA driver; off on ROCm.
+    cfg = nemo_asr.models.ASRModel.from_pretrained(name, return_config=True)
+    with open_dict(cfg):
+        cfg.decoding.greedy.use_cuda_graph_decoder = False
+    override = CACHE / f"{name.replace('/', '__')}.yaml"
+    override.parent.mkdir(parents=True, exist_ok=True)
+    OmegaConf.save(cfg, override)
+    model = nemo_asr.models.ASRModel.from_pretrained(name, override_config_path=str(override), map_location="cuda").eval()
     if att_context:  # cache-aware streaming model: full-utterance pass with the streaming attention window
         model.encoder.set_default_att_context_size(att_context)
 

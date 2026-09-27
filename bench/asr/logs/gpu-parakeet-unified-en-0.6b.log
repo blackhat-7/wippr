@@ -1,0 +1,42 @@
+(null): No such file or directory
+OneLogger: Setting error_handling_strategy to DISABLE_QUIETLY_AND_REPORT_METRIC_ERROR for rank (rank=0) with OneLogger disabled. To override: explicitly set error_handling_strategy parameter.
+No exporters were provided. This means that no telemetry data will be collected.
+[NeMo I 2026-09-27 19:17:08 mixins:194] Tokenizer SentencePieceTokenizer initialized with 1024 tokens
+(null): No such file or directory
+[NeMo W 2026-09-27 19:17:08 modelPT:175] If you intend to do training or fine-tuning, please call the ModelPT.setup_training_data() method and provide a valid configuration file to setup the train data loader.
+    Train config : 
+    use_lhotse: true
+    skip_missing_manifest_entries: true
+    input_cfg: null
+    manifest_filepath: null
+    sample_rate: 16000
+    batch_size: 16
+    shuffle: true
+    num_workers: 8
+    pin_memory: true
+    max_duration: 40.0
+    min_duration: 0.1
+    text_field: answer
+    batch_duration: null
+    use_bucketing: true
+    max_tps: null
+    bucket_duration_bins: null
+    bucket_batch_size: null
+    num_buckets: null
+    bucket_buffer_size: null
+    shuffle_buffer_size: null
+    tarred_audio_filepaths: null
+    augmentor: null
+    
+[NeMo I 2026-09-27 19:17:10 rnnt_models:226] Using RNNT Loss : warprnnt_numba
+    Loss warprnnt_numba_kwargs: None
+[NeMo I 2026-09-27 19:17:10 rnnt_models:226] Using RNNT Loss : warprnnt_numba
+    Loss warprnnt_numba_kwargs: None
+[NeMo I 2026-09-27 19:17:10 rnnt_models:226] Using RNNT Loss : warprnnt_numba
+    Loss warprnnt_numba_kwargs: None
+[NeMo I 2026-09-27 19:17:10 save_restore_connector:287] Model EncDecRNNTBPEModel was successfully restored from /home/illusion/.cache/huggingface/hub/models--nvidia--parakeet-unified-en-0.6b/snapshots/fe53cd885760c96b6a5f51a0bfd362cb4584a98b/parakeet-unified-en-0.6b.nemo.
+parakeet-unified-en-0.6b gpu ls-clean: WER 1.15%  RTF 0.0286
+parakeet-unified-en-0.6b gpu ls-other: WER 3.13%  RTF 0.0224
+parakeet-unified-en-0.6b gpu ami: WER 7.37%  RTF 0.0168
+parakeet-unified-en-0.6b gpu earnings22: WER 10.24%  RTF 0.0152
+{"model": "parakeet-unified-en-0.6b", "device": "gpu", "backend": "nemo", "args": ["nvidia/parakeet-unified-en-0.6b"], "threads": null, "load_s": 89.5, "params_m": 618.3, "precision": "fp32", "peak_rss_mb": 4856, "gpu_peak_alloc_mb": 4960, "latency": {"clip5_s": 0.0591, "clip15_s": 0.1293}, "date": "2026-09-27 19:18"}

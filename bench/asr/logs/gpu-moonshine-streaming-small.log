@@ -1,0 +1,8 @@
+(null): No such file or directory
+Loading weights:   0%|          | 0/262 [00:00<?, ?it/s]Loading weights: 100%|██████████| 262/262 [00:00<00:00, 19527.46it/s]
+(null): No such file or directory
+moonshine-streaming-small gpu ls-clean: WER 1.52%  RTF 0.0647
+moonshine-streaming-small gpu ls-other: WER 6.88%  RTF 0.0605
+moonshine-streaming-small gpu ami: WER 10.52%  RTF 0.0407
+moonshine-streaming-small gpu earnings22: WER 13.05%  RTF 0.0450
+{"model": "moonshine-streaming-small", "device": "gpu", "backend": "hf_moonshine", "args": ["moonshine-ai/moonshine-streaming-small"], "threads": null, "load_s": 39.0, "params_m": 140.1, "precision": "fp32", "peak_rss_mb": 2357, "gpu_peak_alloc_mb": 623, "latency": {"clip5_s": 0.0994, "clip15_s": 0.3724}, "date": "2026-09-27 19:07"}

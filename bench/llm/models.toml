@@ -2,15 +2,12 @@
 # Thinking mode is not benchmarked: ~0.5k thinking tokens per case, ~1.9 s on GPU (see learnings/bench-cleanup-llm.md).
 # `system` + `user_prefix` replace the shared prompt (for task-specific fine-tunes with a fixed format).
 
-[judge]
-path = "~/Documents/projects/llamacpp-tuner/tmp/models/ukisai%2FSwift-Qwen3.8-27B-GGUF/Swift-Qwen3.8-27B-Q4_K_S.gguf"
-
 [[model]]
 name = "s1-mini"
 params_b = 0.6
 repo = "superwhisper/s1-mini-GGUF"
 files = { Q4_K_M = "s1-mini-q4_k_m.gguf", F16 = "s1-mini-f16.gguf" }
-quants = ["Q4_K_M"]
+quants = ["Q4_K_M", "F16"]  # no Q8_0 published
 system = "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text."
 user_prefix = "[Styling: semi-formal] [Structure: lists] [Context: general]\n"
 
@@ -54,7 +51,7 @@ name = "qwen3.5-4b"
 params_b = 4.0
 repo = "unsloth/Qwen3.5-4B-GGUF"
 files = { Q4_K_M = "Qwen3.5-4B-Q4_K_M.gguf", Q8_0 = "Qwen3.5-4B-Q8_0.gguf" }
-quants = ["Q4_K_M"]
+quants = ["Q4_K_M", "Q8_0"]
 
 [[model]]
 name = "lfm2.5-350m"

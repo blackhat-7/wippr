@@ -14,8 +14,9 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 
 ## Phase 2 — Benchmarks (on 7900 XTX)
 
-- [~] ASR candidates: accuracy (WER) + speed → `learnings/bench-asr.md` (CPU phone-proxy done for 5 models; verdict: keep SpeechTranscriber, Parakeet v2 is the bundle pick. GPU runs still to do: agent was blocked by a permission check — run `cd bench/asr && flock ../.gpu.lock uv run bench.py <model> gpu`)
-- [~] Cleanup LLM candidates: quality + speed → `learnings/bench-cleanup-llm.md` (partial; paused for another session's GPU bench — resume `cd bench/llm && uv run bench.py all`)
+- [x] ASR candidates: accuracy (WER) + speed → `learnings/bench-asr.md` (GPU all 9 models; CPU phone proxy for 5)
+- [x] Cleanup LLM candidates: quality + speed → `learnings/bench-cleanup-llm.md` (S1-mini Q4_K_M pick, Qwen3.5-4B runner-up)
+- [ ] Cleanup bench: CPU-4t (phone proxy) speed for the remaining runs was skipped — run `cd bench/llm && uv run bench.py speed-cpu` if on-phone estimates need firming up
 - [x] Pick the phone stack (ASR + LLM) and write the decision → `learnings/decision-stack.md` (from partial results; recheck when benches finish)
 
 ## Phase 3 — Build (iOS)
@@ -27,7 +28,9 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 - [x] On-device ASR (Apple SpeechTranscriber) → `ios/App/Transcriber.swift`
 - [x] On-device cleanup LLM (Apple Foundation Models) → `ios/App/Cleaner.swift`
 - [x] Update cleanup prompt from `bench-cleanup-llm.md` results (v2 tagged prompt ported to Cleaner.swift)
-- [ ] A/B Apple Foundation Models vs the bench winner on device with `bench/llm/cases.jsonl`
+- [ ] A/B Apple Foundation Models vs the bench winner on device with `bench/llm/cases.jsonl` (winner: S1-mini Q4_K_M, its own prompt + control line)
+- [ ] Fallback cleanup path: S1-mini Q4_K_M via llama.cpp CPU-only (Metal is blocked in background) if AFM loses the A/B
+- [ ] Deterministic pre-pass for spoken punctuation ("comma", "period", "new line", "new paragraph", "number one…") before the LLM — S1-mini and Qwen3.5-2B miss these
 - [x] Deliver text: clipboard + iOS 27 "Paste from wippr"; retry on app open if the background write is refused
 - [x] Wake word → not needed: Siri App Shortcut "Dictate with wippr" (see `ios-platform-constraints.md` §4)
 - [x] Verify every Apple API against docs (can't compile on Linux) → `learnings/ios-api-verification.md` (no fixes needed; all files pass `swiftc -parse`; unverified items listed there)

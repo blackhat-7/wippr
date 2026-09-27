@@ -1,0 +1,33 @@
+{
+ "file_gb": 2.019,
+ "bench": {
+  "pp": 7923.6,
+  "tg": 203.6
+ },
+ "60w_cold": {
+  "cache_n": 0,
+  "prompt_n": 554,
+  "prompt_ms": 158.82,
+  "prompt_per_token_ms": 0.28667870036101084,
+  "prompt_per_second": 3488.2256642740213,
+  "predicted_n": 62,
+  "predicted_ms": 341.461,
+  "predicted_per_token_ms": 5.59772131147541,
+  "predicted_per_second": 178.64412041199432,
+  "wall_ms": 508.8213590061059,
+  "finish": "stop"
+ },
+ "60w_warm": {
+  "cache_n": 480,
+  "prompt_n": 74,
+  "prompt_ms": 24.44,
+  "prompt_per_token_ms": 0.3302702702702703,
+  "prompt_per_second": 3027.8232405891977,
+  "predicted_n": 62,
+  "predicted_ms": 317.537,
+  "predicted_per_token_ms": 5.205524590163934,
+  "predicted_per_second": 192.10359737605384,
+  "wall_ms": 347.02952099905815,
+  "finish": "stop"
+ }
+}

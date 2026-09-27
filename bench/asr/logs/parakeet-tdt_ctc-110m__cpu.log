@@ -1,0 +1,4 @@
+(null): No such file or directory
+parakeet-tdt_ctc-110m cpu ls-clean: WER 2.41%  RTF 0.0124
+parakeet-tdt_ctc-110m cpu ls-other: WER 5.89%  RTF 0.0125
+parakeet-tdt_ctc-110m cpu ami: WER 14.31%  RTF 0.0133

@@ -1,0 +1,4057 @@
+{
+ "model": "parakeet-unified-en-0.6b",
+ "device": "gpu",
+ "backend": "nemo",
+ "args": [
+  "nvidia/parakeet-unified-en-0.6b"
+ ],
+ "threads": null,
+ "load_s": 89.5,
+ "params_m": 618.3,
+ "precision": "fp32",
+ "peak_rss_mb": 4856,
+ "gpu_peak_alloc_mb": 4960,
+ "latency": {
+  "clip5_s": 0.0591,
+  "clip15_s": 0.1293
+ },
+ "sets": {
+  "ls-clean": {
+   "wer": 1.15,
+   "rtf": 0.0286,
+   "proc_s": 39.77,
+   "audio_s": 1392.1,
+   "n": 200,
+   "hyps": [
+    {
+     "id": "1089-134686-0017",
+     "hyp": "Stephen, leaning back and drawing idly on his scribbler, listened to the talk about him which Heron checked from time to time by saying",
+     "s": 0.2648
+    },
+    {
+     "id": "1089-134686-0020",
+     "hyp": "If a man had stolen a pound in his youth and had used that pound to amass a huge fortune, how much was he obliged to give back the pound he had stolen only, or the pound together with the compound interest accruing upon it, or all his huge fortune?",
+     "s": 0.4625
+    },
+    {
+     "id": "1089-134686-0031",
+     "hyp": "Stephen's heart began slowly to fold and fade with fear like a withering flower.",
+     "s": 0.2311
+    },
+    {
+     "id": "1089-134686-0035",
+     "hyp": "He had the faith in him that moves mountains",
+     "s": 0.1936
+    },
+    {
+     "id": "1089-134691-0002",
+     "hyp": "He set off abruptly for the bull, walking rapidly lest his father's shrill whistle might call him back and in a few moments he had rounded the curve at the police barrack and was safe",
+     "s": 0.3273
+    },
+    {
+     "id": "1188-133604-0020",
+     "hyp": "But, observe, you can only do this on one condition that of striving also to create in reality the beauty which you seek in imagination.",
+     "s": 0.3037
+    },
+    {
+     "id": "121-121726-0002",
+     "hyp": "anger, pain, painful to hear",
+     "s": 0.1978
+    },
+    {
+     "id": "121-121726-0003",
+     "hyp": "HAY FEVER A heart trouble caused by falling in love with a grass widow.",
+     "s": 0.2351
+    },
+    {
+     "id": "121-121726-0011",
+     "hyp": "Husband The next thing to a wife",
+     "s": 0.1965
+    },
+    {
+     "id": "121-123852-0004",
+     "hyp": "My heart doth plead that thou in him dost lie A closet never pierc'd with crystal eyes But the defendant doth that plea deny, And says in him thy fair appearance lies",
+     "s": 0.3792
+    },
+    {
+     "id": "121-127105-0004",
+     "hyp": "The stories written",
+     "s": 0.305
+    },
+    {
+     "id": "121-127105-0013",
+     "hyp": "You'll easily judge why when you hear because the thing had been such a scare? he continued to fix me.",
+     "s": 0.2288
+    },
+    {
+     "id": "121-127105-0016",
+     "hyp": "Probably not till the second post.",
+     "s": 0.1749
+    },
+    {
+     "id": "121-127105-0017",
+     "hyp": "It was almost the tone of hope everybody will stay.",
+     "s": 0.1916
+    },
+    {
+     "id": "121-127105-0018",
+     "hyp": "cried the ladies, whose departure had been fixed,",
+     "s": 0.1953
+    },
+    {
+     "id": "121-127105-0032",
+     "hyp": "Yes, but that's just the beauty of her passion.",
+     "s": 0.1919
+    },
+    {
+     "id": "1221-135766-0006",
+     "hyp": "they were now illuminated by the morning radiance of a young child's disposition but, later in the day of earthly existence, might be prolific of the storm and whirlwind.",
+     "s": 0.322
+    },
+    {
+     "id": "1221-135767-0020",
+     "hyp": "In truth she seemed absolutely hidden behind it.",
+     "s": 0.197
+    },
+    {
+     "id": "1284-1180-0001",
+     "hyp": "His hat had a peaked crown at a flat brim, and around the brim was a row of tiny golden bells that tinkled when he moved",
+     "s": 0.2627
+    },
+    {
+     "id": "1284-1180-0002",
+     "hyp": "Instead of shoes the old man wore boots with turnover tops and his blue coat had wide cuffs of gold braid",
+     "s": 0.1795
+    },
+    {
+     "id": "1284-1180-0008",
+     "hyp": "All the morning they trudged up the mountain path and at noon Unk and Ojo sat on a fallen tree trunk and ate the last of the bread which the old Munchkin had placed in his pocket.",
+     "s": 0.3287
+    },
+    {
+     "id": "1284-1180-0014",
+     "hyp": "Ojo had never eaten such a fine meal in all his life,",
+     "s": 0.1941
+    },
+    {
+     "id": "1284-1180-0024",
+     "hyp": "That is one reason you are Ojo the unlucky, said the woman, in a sympathetic tone.",
+     "s": 0.2228
+    },
+    {
+     "id": "1284-1180-0030",
+     "hyp": "When I found it I said to myself that it would do nicely for my servant girl, for when she was brought to life she would not be proud nor haughty as the Glass Cat is for such a dreadful mixture of colours would discourage her from trying to be as dignified as the blue munchkins are.",
+     "s": 0.4033
+    },
+    {
+     "id": "1284-134647-0000",
+     "hyp": "The grateful applause of the clergy has consecrated the memory of a prince who indulged their passions and promoted their interest.",
+     "s": 0.2594
+    },
+    {
+     "id": "1320-122612-0001",
+     "hyp": "The dews were suffered to exhale, and the sun had dispersed the mists, and was shedding a strong and clear light in the forest when the travellers resumed their journey",
+     "s": 0.2823
+    },
+    {
+     "id": "1320-122612-0003",
+     "hyp": "He often stopped to examine the trees nor did he cross a rivulet without attentively considering the quantity, the velocity, and the colour of its waters",
+     "s": 0.2827
+    },
+    {
+     "id": "1320-122617-0014",
+     "hyp": "They drew back a little from the entrance, and motioned to the supposed conjurer to enter",
+     "s": 0.2144
+    },
+    {
+     "id": "1320-122617-0016",
+     "hyp": "The cunning man is afraid that his breath will blow upon his brothers, and take away their courage too, continued David, improving the hint he received they must stand further off",
+     "s": 0.2889
+    },
+    {
+     "id": "1320-122617-0022",
+     "hyp": "The Delawares are children of the tortoise and they outstrip the deer.",
+     "s": 0.2039
+    },
+    {
+     "id": "1580-141083-0004",
+     "hyp": "I had to read it over carefully, as the text must be absolutely correct.",
+     "s": 0.2102
+    },
+    {
+     "id": "1580-141083-0016",
+     "hyp": "I was in such a hurry to come to you You left your door open?",
+     "s": 0.2027
+    },
+    {
+     "id": "1580-141083-0019",
+     "hyp": "Above were three students, one on each story.",
+     "s": 0.0866
+    },
+    {
+     "id": "1580-141083-0031",
+     "hyp": "Holmes held out a small chip with the letters NN and a space of clear wood after them. You see",
+     "s": 0.2327
+    },
+    {
+     "id": "1580-141083-0052",
+     "hyp": "Oh I would not venture to say, sir,",
+     "s": 0.0648
+    },
+    {
+     "id": "1580-141084-0016",
+     "hyp": "My friend did not appear to be depressed by his failure, but shrugged his shoulders in half humorous resignation.",
+     "s": 0.2344
+    },
+    {
+     "id": "1580-141084-0031",
+     "hyp": "We want to know, mister Gilchrist, how you, an honourable man, ever came to commit such an action as that of yesterday",
+     "s": 0.2409
+    },
+    {
+     "id": "1580-141084-0035",
+     "hyp": "he could examine the papers in his own office",
+     "s": 0.188
+    },
+    {
+     "id": "1580-141084-0044",
+     "hyp": "Gloves said the young man.",
+     "s": 0.1847
+    },
+    {
+     "id": "1995-1826-0010",
+     "hyp": "At any rate I say go",
+     "s": 0.1779
+    },
+    {
+     "id": "1995-1826-0012",
+     "hyp": "She wanted a glance of the new books and periodicals, and talk of great philanthropies and reforms,",
+     "s": 0.2313
+    },
+    {
+     "id": "1995-1826-0024",
+     "hyp": "the Golden Fleece It's the Silver Fleece He hearkened,",
+     "s": 0.2098
+    },
+    {
+     "id": "1995-1836-0003",
+     "hyp": "She was not herself a notably intelligent woman she greatly admired intelligence or whatever looked to her like intelligence in others",
+     "s": 0.2526
+    },
+    {
+     "id": "1995-1837-0002",
+     "hyp": "Ah, the swamp the cruel swamp",
+     "s": 0.0798
+    },
+    {
+     "id": "1995-1837-0014",
+     "hyp": "He stood a moment bewildered, then turned and rushed upon the island. A great sheet of dazzling sunlight swept the place, and beneath lay a mighty mass of olive green, thick, tall, wet, and willowy.",
+     "s": 0.3481
+    },
+    {
+     "id": "1995-1837-0025",
+     "hyp": "She rose with a fleeting glance, gathered the shawl around her, then gliding forward, wavering, tremulous, slipped across the road and into the swamp.",
+     "s": 0.2765
+    },
+    {
+     "id": "2094-142345-0018",
+     "hyp": "Who taught you to scrub a floor, I should like to know?",
+     "s": 0.1221
+    },
+    {
+     "id": "2094-142345-0057",
+     "hyp": "I know his farm is in better order than any other within ten miles of us and as for the kitchen, he added, smiling, I don't believe there's one in the kingdom to beat it",
+     "s": 0.0953
+    },
+    {
+     "id": "2300-131720-0006",
+     "hyp": "There seems no good reason for believing that it will change.",
+     "s": 0.2019
+    },
+    {
+     "id": "2300-131720-0014",
+     "hyp": "mister Edison was a leader far ahead of the time",
+     "s": 0.1975
+    },
+    {
+     "id": "237-126133-0004",
+     "hyp": "if she could only see Phronsie for just one moment.",
+     "s": 0.1226
+    },
+    {
+     "id": "237-126133-0008",
+     "hyp": "asked Phronsie, with her little face close to Polly's own.",
+     "s": 0.0897
+    },
+    {
+     "id": "237-134500-0038",
+     "hyp": "and anyhow there's nothing to understand.",
+     "s": 0.1155
+    },
+    {
+     "id": "237-134500-0040",
+     "hyp": "I pray for you but that's not the same as if you prayed yourself.",
+     "s": 0.0559
+    },
+    {
+     "id": "260-123288-0017",
+     "hyp": "Is the atmospheric condition, having once reached its density, to become final?",
+     "s": 0.1476
+    },
+    {
+     "id": "260-123440-0002",
+     "hyp": "It was the white rabbit returning, splendidly dressed with a pair of white kid gloves in one hand and a large fan in the other. He came trotting along in a great hurry, muttering to himself as he came Oh, the Duchess",
+     "s": 0.3669
+    },
+    {
+     "id": "2830-3979-0003",
+     "hyp": "The undertaking, which seemed so attractive when viewed as a literary task, proved a most difficult one, and at times became oppressive",
+     "s": 0.2611
+    },
+    {
+     "id": "2830-3979-0007",
+     "hyp": "Much later, when a friend of his was preparing an edition of all his Latin works, he remarked to his home circle If I had my way about it, they would republish only those of my books which have doctrine my Galatians, for instance",
+     "s": 0.2608
+    },
+    {
+     "id": "2830-3980-0005",
+     "hyp": "Do you suppose that God, for the sake of a few Lutheran heretics, would disown his entire church?",
+     "s": 0.1185
+    },
+    {
+     "id": "2830-3980-0014",
+     "hyp": "The call is not to be taken lightly",
+     "s": 0.1814
+    },
+    {
+     "id": "2830-3980-0027",
+     "hyp": "and all the brethren which are with me",
+     "s": 0.1804
+    },
+    {
+     "id": "2830-3980-0035",
+     "hyp": "They remain divine regardless of men's opinion",
+     "s": 0.0851
+    },
+    {
+     "id": "2830-3980-0038",
+     "hyp": "Grace be to you and peace from God the Father and from our Lord Jesus Christ",
+     "s": 0.2189
+    },
+    {
+     "id": "2830-3980-0064",
+     "hyp": "How may we obtain remission of our sins",
+     "s": 0.0655
+    },
+    {
+     "id": "2830-3980-0066",
+     "hyp": "Since Christ was given for our sins it stands to reason that they cannot be put away by our own efforts",
+     "s": 0.2321
+    },
+    {
+     "id": "2830-3980-0074",
+     "hyp": "This attitude is universal and particularly developed in those who consider themselves better than others.",
+     "s": 0.2303
+    },
+    {
+     "id": "2961-960-0014",
+     "hyp": "The ideas also remain, but they have become types in nature forms of men, animals, birds, fishes,",
+     "s": 0.2638
+    },
+    {
+     "id": "2961-960-0021",
+     "hyp": "There is a want of flow, and often a defect of rhythm the meaning is sometimes obscure and there is a greater use of opposition and more of repetition than occurs in Plato's earlier writings.",
+     "s": 0.3806
+    },
+    {
+     "id": "2961-960-0022",
+     "hyp": "Plato had not the command of his materials which would have enabled him to produce a perfect work of art",
+     "s": 0.2503
+    },
+    {
+     "id": "2961-961-0006",
+     "hyp": "And what was the subject of the poem? said the person who made the remark.",
+     "s": 0.212
+    },
+    {
+     "id": "2961-961-0007",
+     "hyp": "The subject was a very noble one he described the most famous action in which the Athenian people were ever engaged",
+     "s": 0.179
+    },
+    {
+     "id": "2961-961-0009",
+     "hyp": "Tell us, said the other, the whole story, and where Solon heard this story.",
+     "s": 0.0638
+    },
+    {
+     "id": "3570-5694-0000",
+     "hyp": "But already at a point in economic evolution far antedating the emergence of the lady, specialized consumption of goods as an evidence of pecuniary strength had begun to work out in a more or less elaborate system",
+     "s": 0.3453
+    },
+    {
+     "id": "3570-5694-0001",
+     "hyp": "The utility of consumption as an evidence of wealth is to be classed as a derivative of growth",
+     "s": 0.2264
+    },
+    {
+     "id": "3570-5695-0015",
+     "hyp": "The result is a great mobility of the labour employed in printing, perhaps greater than in any other equally well defined and considerable body of workmen.",
+     "s": 0.1839
+    },
+    {
+     "id": "3575-170457-0049",
+     "hyp": "This decision was communicated to the girls",
+     "s": 0.065
+    },
+    {
+     "id": "3729-6852-0001",
+     "hyp": "Without saying it positively, she made me understand that being herself an illustrious member of the Republic of Letters she was well aware that she was speaking to an insect.",
+     "s": 0.3346
+    },
+    {
+     "id": "3729-6852-0020",
+     "hyp": "Then, turning towards me, he says that I look like a foreigner, and when I say that I am an Italian, he begins to speak to me of the court, the city, of the theatres, and at last he offers to accompany me everywhere.",
+     "s": 0.3565
+    },
+    {
+     "id": "3729-6852-0025",
+     "hyp": "Is there not a meridian everywhere?",
+     "s": 0.2038
+    },
+    {
+     "id": "3729-6852-0046",
+     "hyp": "His housekeeper had the management of everything she never allowed him to be in need of anything, and she gave no account of his money, which she kept altogether, because he never asked her to render any accounts.",
+     "s": 0.346
+    },
+    {
+     "id": "4077-13751-0015",
+     "hyp": "A small settlement had been founded by Mormon families on Shoal Creek, and here on the thirtieth of october, eighteen thirty eight, a company of two hundred and forty fell upon the hapless settlers and butchered a score.",
+     "s": 0.376
+    },
+    {
+     "id": "4077-13754-0006",
+     "hyp": "What the Latter day Saints call celestial marriage is characteristic of the Church, and is in very general practice but of celestial marriage plurality of wives was an incident, never an essential.",
+     "s": 0.3548
+    },
+    {
+     "id": "4077-13754-0008",
+     "hyp": "It has been my privilege to tread the soil of many lands, to observe the customs and study the habits of more nations than one and I have yet to find the place and meet the people where and with whom the purity of man and woman is held more precious than among the maligned Mormons in the mountain valleys of the West",
+     "s": 0.4459
+    },
+    {
+     "id": "4446-2271-0002",
+     "hyp": "It's tremendously well put on, too.",
+     "s": 0.1866
+    },
+    {
+     "id": "4446-2271-0004",
+     "hyp": "Do you know, Alexander Mainhall looked with perplexity up into the top of the hansom and rubbed his pink cheek with his gloved finger do you know I sometimes think of taking to criticism seriously myself",
+     "s": 0.3432
+    },
+    {
+     "id": "4446-2273-0003",
+     "hyp": "When Bartley arrived at Bedford Square on Sunday evening, Marie, the pretty little French girl, met him at the door and conducted him upstairs",
+     "s": 0.2656
+    },
+    {
+     "id": "4446-2273-0011",
+     "hyp": "There's nothing else that looks so jolly",
+     "s": 0.0479
+    },
+    {
+     "id": "4446-2275-0002",
+     "hyp": "Alexander paced up and down the hallway, buttoning and unbuttoning his overcoat, until she returned and took him up to Hilda's living room",
+     "s": 0.2565
+    },
+    {
+     "id": "4446-2275-0004",
+     "hyp": "Alexander did not sit down,",
+     "s": 0.0429
+    },
+    {
+     "id": "4446-2275-0007",
+     "hyp": "She pushed him toward the big chair by the fire and sat down on a stool at the opposite side of the hearth, her knees drawn up to her chin, laughing like a happy little girl.",
+     "s": 0.2774
+    },
+    {
+     "id": "4446-2275-0016",
+     "hyp": "Hilda watched him from the corner, trembling and scarcely breathing, dark shadows growing about her eyes. It",
+     "s": 0.2455
+    },
+    {
+     "id": "4446-2275-0022",
+     "hyp": "But why didn't you tell me when you were here in the summer",
+     "s": 0.0718
+    },
+    {
+     "id": "4446-2275-0027",
+     "hyp": "He moved uneasily and his chair creaked.",
+     "s": 0.1203
+    },
+    {
+     "id": "4507-16021-0003",
+     "hyp": "She has a son, theft and a daughter, hunger",
+     "s": 0.0956
+    },
+    {
+     "id": "4507-16021-0012",
+     "hyp": "Why should one halt on the way",
+     "s": 0.1171
+    },
+    {
+     "id": "4507-16021-0013",
+     "hyp": "Nothing is more lugubrious than the contemplation thus in its nudity, in the broad light of thought, of the horrible swarming of slang",
+     "s": 0.3121
+    },
+    {
+     "id": "4507-16021-0016",
+     "hyp": "Can one imagine a naturalist refusing to study the viper, the bat, the scorpion, the centipede, the tarantula and one who would cast them back into their darkness, saying Oh, how ugly that is",
+     "s": 0.3965
+    },
+    {
+     "id": "4507-16021-0019",
+     "hyp": "It is the language of wretchedness",
+     "s": 0.1179
+    },
+    {
+     "id": "4507-16021-0023",
+     "hyp": "The sugar manufacturer who says loaf, clarified, lumps, bastard, common, burnt this honest manufacturer talks slang",
+     "s": 0.229
+    },
+    {
+     "id": "4507-16021-0025",
+     "hyp": "To meet the needs of this conflict wretchedness has invented the language of combat which is slang.",
+     "s": 0.2835
+    },
+    {
+     "id": "4507-16021-0042",
+     "hyp": "It is black in misfortune it is blacker still in crime these two blacknesses amalgamated compose slang",
+     "s": 0.3034
+    },
+    {
+     "id": "4507-16021-0058",
+     "hyp": "The flame is the enemy of the wing",
+     "s": 0.1901
+    },
+    {
+     "id": "4970-29093-0013",
+     "hyp": "And he went back to his books and to his waiting for an opening large enough for his dignified entrance into the literary world.",
+     "s": 0.2585
+    },
+    {
+     "id": "4970-29095-0017",
+     "hyp": "The sight seers returned in high spirits from the city.",
+     "s": 0.201
+    },
+    {
+     "id": "4992-23283-0002",
+     "hyp": "said misses Horton a few minutes after",
+     "s": 0.0831
+    },
+    {
+     "id": "4992-23283-0004",
+     "hyp": "And yet you must own her behaviour has warranted them has it not been in this particular incoherent and unaccountable",
+     "s": 0.178
+    },
+    {
+     "id": "4992-23283-0005",
+     "hyp": "Not that I know of not one more that I know of, he replied, with astonishment at what she had insinuated, and yet with a perfect assurance that she was in the wrong.",
+     "s": 0.3189
+    },
+    {
+     "id": "4992-23283-0008",
+     "hyp": "He seemed to wait for her reply, but as she made none he proceeded.",
+     "s": 0.0809
+    },
+    {
+     "id": "4992-23283-0017",
+     "hyp": "Miss Woodley was too little versed in the subject to know this would have been not to love at all at least not to the extent of breaking through engagements, and all the various obstacles that still mitigated against their union.",
+     "s": 0.3675
+    },
+    {
+     "id": "4992-41797-0006",
+     "hyp": "He keeps the Thou shalt not commandments first rate henlord does",
+     "s": 0.139
+    },
+    {
+     "id": "4992-41797-0022",
+     "hyp": "She's older than I am, but so tiny and sad and shy that she seems like a child.",
+     "s": 0.0677
+    },
+    {
+     "id": "4992-41806-0000",
+     "hyp": "Natty Harmon tried the kitchen pump secretly several times during the evening, for the water had to run uphill all the way from the well to the kitchen sink, and he believed this to be a continual miracle that might give out at any moment.",
+     "s": 0.3675
+    },
+    {
+     "id": "5105-28233-0005",
+     "hyp": "Sometimes he would wander on foot upon the sandy shore, and sometimes he would enjoy a ride along the summit of the cliff, altogether being in no hurry at all to bring his task to an end.",
+     "s": 0.2229
+    },
+    {
+     "id": "5142-33396-0011",
+     "hyp": "There she sat on the rollers as fair a ship as I ever saw",
+     "s": 0.2015
+    },
+    {
+     "id": "5142-33396-0013",
+     "hyp": "He is but a boy, the man said,",
+     "s": 0.0439
+    },
+    {
+     "id": "5142-33396-0017",
+     "hyp": "We ate at many men's tables uninvited",
+     "s": 0.0484
+    },
+    {
+     "id": "5142-33396-0021",
+     "hyp": "Up and down the water we went to get much wealth and much frolic,",
+     "s": 0.1302
+    },
+    {
+     "id": "5142-33396-0024",
+     "hyp": "I stood with my back to the wall, for I wanted no sword reaching out of the dark for me.",
+     "s": 0.2295
+    },
+    {
+     "id": "5142-33396-0034",
+     "hyp": "Then I drank half of the hornful and set the rest across the fire to the farmer. He took it and smiled, saying,",
+     "s": 0.0723
+    },
+    {
+     "id": "5142-33396-0049",
+     "hyp": "Here, friend, take it and he thrust it into the farmer's hand.",
+     "s": 0.0911
+    },
+    {
+     "id": "5142-33396-0063",
+     "hyp": "And would he not be a good gift for our baby?",
+     "s": 0.1187
+    },
+    {
+     "id": "5142-33396-0065",
+     "hyp": "Soft heart, he said gently to her then to Torkel Well, let him go, Torkel",
+     "s": 0.2259
+    },
+    {
+     "id": "5142-36377-0007",
+     "hyp": "A little cracked that, in the popular phrase, was my impression of the stranger who now made his appearance in the supper room.",
+     "s": 0.0758
+    },
+    {
+     "id": "5683-32865-0004",
+     "hyp": "Whatever Lord Chelford said, Miss Brandon received it very graciously, and even with a momentary smile",
+     "s": 0.1734
+    },
+    {
+     "id": "5683-32866-0011",
+     "hyp": "Their walk continued silent for the greater part neither was quite satisfied with the other but Rachel at last said",
+     "s": 0.0989
+    },
+    {
+     "id": "5683-32866-0027",
+     "hyp": "A cold bright moon was shining with clear, sharp lights and shadows.",
+     "s": 0.2158
+    },
+    {
+     "id": "5683-32879-0002",
+     "hyp": "So there came a step and a little rustling of feminine draperies the small door opened and Rachel entered, with her hand extended and a pale smile of welcome.",
+     "s": 0.3218
+    },
+    {
+     "id": "5683-32879-0003",
+     "hyp": "Women can hide their pain better than we men and bear it better too except when shame drops fire into the dreadful chalice.",
+     "s": 0.2733
+    },
+    {
+     "id": "5683-32879-0004",
+     "hyp": "But poor Rachel Lake had more than that stoical hypocrisy which enables the tortured spirits of her sex to lift a pale face through the flames and smile",
+     "s": 0.3242
+    },
+    {
+     "id": "5683-32879-0011",
+     "hyp": "She spoke with a sudden energy which partook of fear and passion, and flushed her thin cheek and made her languid eyes flash.",
+     "s": 0.0841
+    },
+    {
+     "id": "5683-32879-0013",
+     "hyp": "Chelford had a note from mister Wylder this morning another note his coming delayed and something of his having to see some person who was abroad, continued Dorcas, after a little pause.",
+     "s": 0.3329
+    },
+    {
+     "id": "5683-32879-0023",
+     "hyp": "You resemble me, Rachel you are fearless and inflexible and generous",
+     "s": 0.1446
+    },
+    {
+     "id": "61-70968-0003",
+     "hyp": "He was like unto my father in a way, and yet was not my father",
+     "s": 0.1367
+    },
+    {
+     "id": "61-70968-0027",
+     "hyp": "Robin and the little tumbler between them tried to force the squire to stand back, and very valiantly did these two comport themselves",
+     "s": 0.2516
+    },
+    {
+     "id": "61-70968-0028",
+     "hyp": "The head in chief of the riot, the Nottingham apprentice, with clenched fists threatened Montfichet",
+     "s": 0.0903
+    },
+    {
+     "id": "61-70968-0038",
+     "hyp": "Robin Fitzooth,",
+     "s": 0.1139
+    },
+    {
+     "id": "61-70968-0040",
+     "hyp": "Right willingly, for between us we have won the battle, answered Robin,",
+     "s": 0.1046
+    },
+    {
+     "id": "61-70968-0041",
+     "hyp": "I like you, Will you are the second Will that I have met and liked within two days is there a sign in that?",
+     "s": 0.1697
+    },
+    {
+     "id": "61-70968-0046",
+     "hyp": "Nottingham Castle was reached, and admittance was demanded.",
+     "s": 0.0889
+    },
+    {
+     "id": "61-70970-0003",
+     "hyp": "if, for a whim, you beggar yourself, I cannot stay you",
+     "s": 0.2037
+    },
+    {
+     "id": "61-70970-0017",
+     "hyp": "Rest and be still until I warn you",
+     "s": 0.0806
+    },
+    {
+     "id": "61-70970-0019",
+     "hyp": "At last all was quiet and black in the courtyard of Gamewell.",
+     "s": 0.1327
+    },
+    {
+     "id": "61-70970-0026",
+     "hyp": "Fitzooth's hand rested at last upon the top rung of a ladder, and slowly the truth came to him.",
+     "s": 0.2331
+    },
+    {
+     "id": "61-70970-0033",
+     "hyp": "Truly such a horse would be worth much in Nottingham Fair.",
+     "s": 0.2048
+    },
+    {
+     "id": "61-70970-0036",
+     "hyp": "Robin Fitzooth saw that his doubts of Warrenton had been unfair, and he became ashamed of himself for harbouring them.",
+     "s": 0.1734
+    },
+    {
+     "id": "672-122797-0001",
+     "hyp": "The place he had was a very good one the sun shone on him as to fresh air there was enough of that and round him grew many large sized comrades, pines as well as firs.",
+     "s": 0.3599
+    },
+    {
+     "id": "672-122797-0019",
+     "hyp": "rejoice in thy own fresh youth",
+     "s": 0.1291
+    },
+    {
+     "id": "672-122797-0069",
+     "hyp": "It was in a corner that he lay, among weeds and nettles,",
+     "s": 0.0795
+    },
+    {
+     "id": "6829-68769-0030",
+     "hyp": "I was bitkeeper, so it was easy to get a blank check and forge the signature.",
+     "s": 0.0606
+    },
+    {
+     "id": "6829-68769-0031",
+     "hyp": "As regards my robbing the company, I'll say that I saved him a heavy loss one day,",
+     "s": 0.0894
+    },
+    {
+     "id": "6829-68769-0052",
+     "hyp": "He might have had that forged check for the face of it if he'd been sharp,",
+     "s": 0.0606
+    },
+    {
+     "id": "6829-68771-0009",
+     "hyp": "Louise hoped for excellent results from this organization, and wished the entertainment to be so effective in winning their good will that they would work earnestly for the cause in which they were enlisted.",
+     "s": 0.3534
+    },
+    {
+     "id": "6829-68771-0012",
+     "hyp": "This was the first occasion within a generation when such an entertainment had been given at Elmhurst, and the only one within the memory of man where the neighbors and country people had been the invited guests",
+     "s": 0.1364
+    },
+    {
+     "id": "6829-68771-0014",
+     "hyp": "We ought to have more attendance, Beth, said Louise, approaching her cousin",
+     "s": 0.1446
+    },
+    {
+     "id": "6930-75918-0000",
+     "hyp": "Concord returned to its place amidst the tents,",
+     "s": 0.0504
+    },
+    {
+     "id": "6930-75918-0004",
+     "hyp": "She taught her daughter, then, by her own affection for it, that love for a country where they had both been hospitably received and where a brilliant future opened for them",
+     "s": 0.2216
+    },
+    {
+     "id": "6930-75918-0005",
+     "hyp": "The count had thrown himself back on his seat, leaning his shoulders against the partition of the tent, and remained thus, his face buried in his hands, with heaving chest and restless limbs.",
+     "s": 0.3471
+    },
+    {
+     "id": "6930-76324-0003",
+     "hyp": "Now what is the sense of it two innocent babies like that",
+     "s": 0.1262
+    },
+    {
+     "id": "6930-76324-0008",
+     "hyp": "I thought we were stumped again when I first saw that picture, but it's been of some use after all.",
+     "s": 0.0892
+    },
+    {
+     "id": "6930-76324-0026",
+     "hyp": "Isn't he the greatest for getting into odd corners?",
+     "s": 0.0893
+    },
+    {
+     "id": "6930-81414-0001",
+     "hyp": "I heard a noise behind I turned and saw Kaffir, his black eyes shining, while in his hand he held a gleaming knife he lifted it above his head as if to strike but I had the strength of ten men and I hurled him from me.",
+     "s": 0.3998
+    },
+    {
+     "id": "6930-81414-0006",
+     "hyp": "What, then, a human hand large and shapely, appeared distinctly on the surface of the pond",
+     "s": 0.1121
+    },
+    {
+     "id": "6930-81414-0013",
+     "hyp": "I had scarcely known what I had been saying or doing up to this time, but as he spoke I looked at my hand.",
+     "s": 0.1736
+    },
+    {
+     "id": "6930-81414-0016",
+     "hyp": "But that is Kaffir's knife",
+     "s": 0.1866
+    },
+    {
+     "id": "7021-79730-0001",
+     "hyp": "To suppose that the object of this work is to aid in effecting such a substitution as that is entirely to mistake its nature and design",
+     "s": 0.0868
+    },
+    {
+     "id": "7021-79740-0000",
+     "hyp": "To such persons these indirect modes of training children in habits of subordination to their will, or rather of yielding to their influence, are specially useful",
+     "s": 0.3237
+    },
+    {
+     "id": "7021-85628-0018",
+     "hyp": "and it is made of mother's best yarn and she knitted it herself and everybody wants to get it away from me.",
+     "s": 0.2599
+    },
+    {
+     "id": "7021-85628-0020",
+     "hyp": "he darted like an arrow through all the halls, down all the stairs, and across the yard.",
+     "s": 0.0673
+    },
+    {
+     "id": "7021-85628-0024",
+     "hyp": "Anders's face grew red",
+     "s": 0.0434
+    },
+    {
+     "id": "7127-75946-0018",
+     "hyp": "There was something in his carriage which resembled the buoyant movements of an immortal and he did not dance so much as seem to soar along,",
+     "s": 0.2794
+    },
+    {
+     "id": "7127-75946-0027",
+     "hyp": "Disdainful of a success of which Madame showed no acknowledgment, he thought of nothing but boldly regaining the marked preference of the princess.",
+     "s": 0.2896
+    },
+    {
+     "id": "7127-75947-0007",
+     "hyp": "She then rose, humming the air to which she was presently going to dance.",
+     "s": 0.0859
+    },
+    {
+     "id": "7127-75947-0034",
+     "hyp": "It seems the king will not consent to it",
+     "s": 0.0984
+    },
+    {
+     "id": "7176-88083-0002",
+     "hyp": "His feet were red his long, narrow beak, with its saw toothed edges and sharp hooked tip was bright red",
+     "s": 0.2592
+    },
+    {
+     "id": "7176-88083-0015",
+     "hyp": "Almost instantly he was forced to the top,",
+     "s": 0.1181
+    },
+    {
+     "id": "7176-92135-0004",
+     "hyp": "Frankly, I cannot always say",
+     "s": 0.0648
+    },
+    {
+     "id": "7176-92135-0010",
+     "hyp": "HAM To be or not to be",
+     "s": 0.0413
+    },
+    {
+     "id": "7176-92135-0033",
+     "hyp": "relapses into silence for the rest of the evening",
+     "s": 0.1162
+    },
+    {
+     "id": "7176-92135-0045",
+     "hyp": "Lord John, taking out gold cigarette case from his left hand upper waistcoat pocket,",
+     "s": 0.0905
+    },
+    {
+     "id": "7729-102255-0001",
+     "hyp": "This was at the March election, eighteen fifty five,",
+     "s": 0.0525
+    },
+    {
+     "id": "7729-102255-0007",
+     "hyp": "His reception speech at Westport, in which he maintained the legality of the legislature, and his determination to enforce their laws, delighted his pro slavery auditors.",
+     "s": 0.3359
+    },
+    {
+     "id": "8224-274381-0007",
+     "hyp": "By quick marches through these inaccessible mountains that general freed himself from the superior forces of the covenanters",
+     "s": 0.0827
+    },
+    {
+     "id": "8224-274384-0010",
+     "hyp": "Before the settlement of terms the administration must be possessed entirely by the parliaments of both kingdoms and how incompatible that scheme with the liberty of the king is easily imagined.",
+     "s": 0.3626
+    },
+    {
+     "id": "8230-279154-0001",
+     "hyp": "What is called perception differs from sensation by the fact that the sensational ingredients bring up habitual associates, images and expectations of their usual correlates, all of which are subjectively indistinguishable from the sensation.",
+     "s": 0.4063
+    },
+    {
+     "id": "8230-279154-0017",
+     "hyp": "There may be a specific feeling which could be called the feeling of pastness, especially where immediate memory is concerned.",
+     "s": 0.1263
+    },
+    {
+     "id": "8230-279154-0031",
+     "hyp": "They give laws according to which images of past occurrences come into our minds, but do not discuss our belief that these images refer to past occurrences, which is what constitutes knowledge memory.",
+     "s": 0.3476
+    },
+    {
+     "id": "8455-210777-0066",
+     "hyp": "They, of course, must all be altered,",
+     "s": 0.0695
+    },
+    {
+     "id": "8463-287645-0004",
+     "hyp": "John Wesley Combash, Jacob Taylor and Thomas Edward Skinner.",
+     "s": 0.1058
+    },
+    {
+     "id": "8463-287645-0012",
+     "hyp": "Substantially this was Jacob's unvarnished description of his master and mistress.",
+     "s": 0.2289
+    },
+    {
+     "id": "8463-294828-0006",
+     "hyp": "From rubbing shoulders with scientists in our little universe by the Botanical Gardens the boy had come to know a thing or two",
+     "s": 0.0781
+    },
+    {
+     "id": "8463-294828-0010",
+     "hyp": "Never did he object to buckling up his suit case for any country whatever China or the Congo, no matter how far off it was",
+     "s": 0.2624
+    },
+    {
+     "id": "8463-294828-0021",
+     "hyp": "A route slightly less direct, that's all.",
+     "s": 0.0497
+    },
+    {
+     "id": "8463-294828-0028",
+     "hyp": "I opened a line of credit sufficient to cover the Barbarossa and, Conseil at my heels, I jumped into a carriage",
+     "s": 0.2653
+    },
+    {
+     "id": "8463-294828-0035",
+     "hyp": "and so, if I had been delayed by a quarter of an hour, or even less, the frigate would have gone without me, and I would have missed out on this unearthly, extraordinary, and inconceivable expedition, whose true story might well meet with some scepticism.",
+     "s": 0.3846
+    },
+    {
+     "id": "8463-294828-0036",
+     "hyp": "The wharves of Brooklyn and every part of New York bordering the East River were crowded with curiosity seekers.",
+     "s": 0.2545
+    },
+    {
+     "id": "8463-294828-0038",
+     "hyp": "Thousands of handkerchiefs were waving above these tightly packed masses, hailing the Abraham Lincoln until it reached the waters of the Hudson River at the tip of the long peninsula that forms New York City.",
+     "s": 0.2558
+    },
+    {
+     "id": "8555-284447-0012",
+     "hyp": "The captain shook his head",
+     "s": 0.0414
+    },
+    {
+     "id": "908-157963-0011",
+     "hyp": "which thou dost scatter on every little blade of grass that springs, revives the milked cow, and tames the fire breathing steed",
+     "s": 0.1365
+    },
+    {
+     "id": "908-31957-0012",
+     "hyp": "If he to keep one oath must lose one joy By his life's star foretold",
+     "s": 0.169
+    },
+    {
+     "id": "908-31957-0020",
+     "hyp": "I thank all who have loved me in their hearts With thanks and love from mine",
+     "s": 0.0618
+    }
+   ]
+  },
+  "ls-other": {
+   "wer": 3.13,
+   "rtf": 0.0224,
+   "proc_s": 28.76,
+   "audio_s": 1285.85,
+   "n": 200,
+   "hyps": [
+    {
+     "id": "1688-142285-0017",
+     "hyp": "When he spoke of the mechanical powers he evidently looked upon them only as new ways of extending trade and making money",
+     "s": 0.1858
+    },
+    {
+     "id": "1688-142285-0049",
+     "hyp": "I had forgotten what I said for the time, continued Margaret quietly.",
+     "s": 0.0847
+    },
+    {
+     "id": "1688-142285-0051",
+     "hyp": "The sharpness in her eye turned to a wistful longing as she met Margaret's soft and friendly gaze.",
+     "s": 0.1172
+    },
+    {
+     "id": "1688-142285-0077",
+     "hyp": "She was late for tea at home.",
+     "s": 0.084
+    },
+    {
+     "id": "1998-15444-0001",
+     "hyp": "he should make inquiries as to symptoms and time at which food or medicine was last taken",
+     "s": 0.2358
+    },
+    {
+     "id": "1998-15444-0012",
+     "hyp": "The tube should be examined to see that it is not broken or cracked, as accidents have happened from neglecting this precaution.",
+     "s": 0.184
+    },
+    {
+     "id": "1998-15444-0013",
+     "hyp": "Antidotes are usually given hypodermically, or, if by mouth, in the form of tablets",
+     "s": 0.242
+    },
+    {
+     "id": "1998-29455-0003",
+     "hyp": "Swab me he said helplessly.",
+     "s": 0.0784
+    },
+    {
+     "id": "1998-29455-0019",
+     "hyp": "You stick to that, said Beard, radiant with delight you're a fair masterpiece, you are you earned it honest if ever I kid done.",
+     "s": 0.2683
+    },
+    {
+     "id": "1998-29455-0027",
+     "hyp": "The new game of begging and inventing stories, to interest the people from whom it was worth while to beg, went on gaily, day by day and week by week and Dicky, by constant practice, grew so clever at taking his part in the acting that mister Beer was quite dazed with admiration.",
+     "s": 0.4189
+    },
+    {
+     "id": "1998-29455-0029",
+     "hyp": "Clever as a train dog he is, and all out o' his own ed",
+     "s": 0.0537
+    },
+    {
+     "id": "2033-164914-0001",
+     "hyp": "But she said, Whomsoever thou seest awake he is the reciter",
+     "s": 0.0937
+    },
+    {
+     "id": "2033-164914-0010",
+     "hyp": "By Allah an thou fetch him not to me I will assuredly rouse the chamberlain on thee and he shall beat thee and cast thee out",
+     "s": 0.0873
+    },
+    {
+     "id": "2033-164915-0002",
+     "hyp": "When the eunuch saw this case he wondered at them and throwing over them somewhat to cover them, waited till they should recover.",
+     "s": 0.2101
+    },
+    {
+     "id": "2033-164916-0000",
+     "hyp": "So he turned to the Wazir Dan Dan and said to him, Verily your tale is a wonder of wonders",
+     "s": 0.0736
+    },
+    {
+     "id": "2414-128291-0005",
+     "hyp": "for I tell thee that I have already talked half a morning unto them and just now were they about to give me their answer",
+     "s": 0.318
+    },
+    {
+     "id": "2414-128292-0016",
+     "hyp": "The devil himself is perhaps kin",
+     "s": 0.0764
+    },
+    {
+     "id": "2414-159411-0008",
+     "hyp": "Is it just that he should do so or no?",
+     "s": 0.2064
+    },
+    {
+     "id": "2414-159411-0027",
+     "hyp": "Where was the tiger, then?",
+     "s": 0.0435
+    },
+    {
+     "id": "2414-159411-0029",
+     "hyp": "Very good, said the Jacko but I cannot judge without understanding the whole matter exactly",
+     "s": 0.117
+    },
+    {
+     "id": "2609-156975-0023",
+     "hyp": "Later he found his way to the court of one of the local kings in central Palestine, where he married and became, in time, a prosperous local prince.",
+     "s": 0.224
+    },
+    {
+     "id": "2609-156975-0029",
+     "hyp": "After the capture of Jericho certain of them went up with the southern tribes to conquer southern Palestine",
+     "s": 0.1236
+    },
+    {
+     "id": "2609-156975-0034",
+     "hyp": "The cruel fate of his people, and the painful experience in Egypt that had driven him into the wilderness, prepared his mind to receive this training",
+     "s": 0.2099
+    },
+    {
+     "id": "2609-169640-0003",
+     "hyp": "I never was in a better steering ship, post especially in moderate weather.",
+     "s": 0.1058
+    },
+    {
+     "id": "3005-163389-0003",
+     "hyp": "Sherburne run his eyes slow along the crowd, and wherever it struck the people tried a little to outgaze him, but they couldn't they dropped their eyes and looked sneaky.",
+     "s": 0.2274
+    },
+    {
+     "id": "3005-163389-0018",
+     "hyp": "Why, it was one of his own men",
+     "s": 0.1226
+    },
+    {
+     "id": "3005-163390-0000",
+     "hyp": "And but never mind the rest of his outfit it was jest wild, but it was awful funny",
+     "s": 0.1125
+    },
+    {
+     "id": "3005-163390-0002",
+     "hyp": "Twenty people sings out,",
+     "s": 0.0663
+    },
+    {
+     "id": "3005-163390-0004",
+     "hyp": "Everybody sings out Sold",
+     "s": 0.0665
+    },
+    {
+     "id": "3005-163390-0013",
+     "hyp": "Well, it don't, because it's in de breed I reckon they're all alike",
+     "s": 0.1034
+    },
+    {
+     "id": "3005-163390-0023",
+     "hyp": "Now, de Duke, he's a tolerable like the man in some ways.",
+     "s": 0.2181
+    },
+    {
+     "id": "3005-163391-0025",
+     "hyp": "They give a glance at one another, and nodded their heads as much as to say Would deh tell you",
+     "s": 0.0974
+    },
+    {
+     "id": "3005-163399-0020",
+     "hyp": "Has he come? No, says her husband.",
+     "s": 0.1336
+    },
+    {
+     "id": "3005-163399-0023",
+     "hyp": "He musta come, and you've missed him along the road",
+     "s": 0.0893
+    },
+    {
+     "id": "3005-163399-0024",
+     "hyp": "Oh, don't distress me any more'n I'm already distressed.",
+     "s": 0.0968
+    },
+    {
+     "id": "3005-163399-0028",
+     "hyp": "It's Tom Sawyer",
+     "s": 0.1201
+    },
+    {
+     "id": "3080-5032-0000",
+     "hyp": "But I am hugely pleased that you have seen my lady",
+     "s": 0.0546
+    },
+    {
+     "id": "3080-5040-0000",
+     "hyp": "Would it would leave me and then I could believe I shall not always have occasion for it.",
+     "s": 0.117
+    },
+    {
+     "id": "3080-5040-0003",
+     "hyp": "I wonder how she behaved herself when she was married",
+     "s": 0.0765
+    },
+    {
+     "id": "3080-5040-0023",
+     "hyp": "How welcome you will be But, alas",
+     "s": 0.0896
+    },
+    {
+     "id": "3331-159605-0001",
+     "hyp": "The more proposals the more credit",
+     "s": 0.0685
+    },
+    {
+     "id": "3331-159605-0013",
+     "hyp": "At first she tried to think she could but unfortunately hearts are so contrary that they won't be obedient to reason, will, or even gratitude.",
+     "s": 0.2139
+    },
+    {
+     "id": "3331-159605-0031",
+     "hyp": "He was gone before she could do anything but look up at him with a remorseful face, and she walked on, feeling that the first and perhaps the only lover she would ever have had his answer and accepted it in silence.",
+     "s": 0.1483
+    },
+    {
+     "id": "3331-159609-0002",
+     "hyp": "Pity that the end should come so soon But the hour did its work and went its way, leaving a clearer atmosphere behind, though the young folks did not see it then, for their eyes were dim because of the partings that must be.",
+     "s": 0.3711
+    },
+    {
+     "id": "3331-159609-0013",
+     "hyp": "It was so stupid of me not to guess before",
+     "s": 0.0471
+    },
+    {
+     "id": "3331-159609-0015",
+     "hyp": "I hope Maria Bailey is all he thinks her, she added softly, for I could not bear to have him disappointed again",
+     "s": 0.0765
+    },
+    {
+     "id": "3528-168656-0003",
+     "hyp": "And the schoolgirls would begin to laugh not in their sleeves, but under their veils charming little stifled laughs which made the vocal mothers frown",
+     "s": 0.2804
+    },
+    {
+     "id": "3528-168656-0005",
+     "hyp": "The ruler of Fontrevault did not forbid this",
+     "s": 0.0738
+    },
+    {
+     "id": "3528-168669-0004",
+     "hyp": "And you have been in the choir in pursuance of your duties? Two or three times.",
+     "s": 0.0649
+    },
+    {
+     "id": "3528-168669-0007",
+     "hyp": "The slab which closes the vault? Yes",
+     "s": 0.1302
+    },
+    {
+     "id": "3528-168669-0018",
+     "hyp": "Give me your orders, very reverend mother.",
+     "s": 0.0897
+    },
+    {
+     "id": "3528-168669-0032",
+     "hyp": "A fine sight it would be to see a man enter the bedroom More often",
+     "s": 0.0976
+    },
+    {
+     "id": "3528-168669-0040",
+     "hyp": "It cut more often short.",
+     "s": 0.0833
+    },
+    {
+     "id": "3528-168669-0044",
+     "hyp": "She retained her consciousness to the very last moment.",
+     "s": 0.0926
+    },
+    {
+     "id": "3528-168669-0050",
+     "hyp": "I have consulted upon this point many ecclesiastics labouring in our Lord, who occupy themselves in the exercises of the clerical life, and who bear wonderful fruit",
+     "s": 0.0943
+    },
+    {
+     "id": "3528-168669-0083",
+     "hyp": "On one side Saint Bernard on the other the agent of the sanitary department",
+     "s": 0.22
+    },
+    {
+     "id": "3528-168669-0085",
+     "hyp": "No one doubts the right of the monastery to sepulture",
+     "s": 0.0537
+    },
+    {
+     "id": "3528-168669-0096",
+     "hyp": "One no longer knows what is due to the living or to the dead a holy death is prohibited.",
+     "s": 0.2355
+    },
+    {
+     "id": "3528-168669-0101",
+     "hyp": "But she will hear she will not listen",
+     "s": 0.0856
+    },
+    {
+     "id": "3528-168669-0119",
+     "hyp": "Mother Ascension will be there two men would be better.",
+     "s": 0.0813
+    },
+    {
+     "id": "3538-163624-0009",
+     "hyp": "Then Sigurd went to his mother and asked for the broken pieces of his father's blade and gave them to Regan",
+     "s": 0.1684
+    },
+    {
+     "id": "367-130732-0002",
+     "hyp": "This question and answer might well go into the primary information for those who come to San Francisco from the East for what is called a lobster in San Francisco is not a lobster at all, but a crayfish",
+     "s": 0.3441
+    },
+    {
+     "id": "367-130732-0008",
+     "hyp": "Put this in a double boiler and let cook until thick, stirring constantly.",
+     "s": 0.1049
+    },
+    {
+     "id": "367-293981-0009",
+     "hyp": "The officers turned to him and said Well, how goes it, good man?",
+     "s": 0.0537
+    },
+    {
+     "id": "3764-168670-0015",
+     "hyp": "that the nun who had died that morning had requested to be buried in the coffin which had served her for a bed, and interred in the vault under the altar of the chapel",
+     "s": 0.2911
+    },
+    {
+     "id": "3764-168670-0037",
+     "hyp": "About three o'clock in the afternoon",
+     "s": 0.0473
+    },
+    {
+     "id": "3764-168670-0040",
+     "hyp": "Fauchelevent recoiled and cracked his finger joints but that is impossible",
+     "s": 0.1054
+    },
+    {
+     "id": "3764-168671-0000",
+     "hyp": "On the following day, as the sun was declining, the very rare passers by on the Boulevard du Maine pulled off their hats to an old fashioned hearse, ornamented with skulls, cross bones, and tears",
+     "s": 0.2656
+    },
+    {
+     "id": "3764-168671-0025",
+     "hyp": "Father Mestienne is the grave digger? He was",
+     "s": 0.0987
+    },
+    {
+     "id": "3997-180294-0014",
+     "hyp": "in order to disturb the laborers in the field, was one day devoured by a wolf because those whom he had so often deceived no longer believed in his cries for help",
+     "s": 0.3376
+    },
+    {
+     "id": "3997-180294-0017",
+     "hyp": "But to return to the first day of my liaison",
+     "s": 0.0504
+    },
+    {
+     "id": "3997-180294-0027",
+     "hyp": "Did she love me enough to believe that the more beautiful she looked the happier I should be",
+     "s": 0.0652
+    },
+    {
+     "id": "3997-180294-0028",
+     "hyp": "What is the matter with you to night? said Marguerite, rising and coming to the back of the box and kissing me on the forehead.",
+     "s": 0.128
+    },
+    {
+     "id": "3997-180297-0011",
+     "hyp": "Well, good heavens the means were easy enough to guess",
+     "s": 0.2209
+    },
+    {
+     "id": "3997-180297-0014",
+     "hyp": "Truly, she continued, we poor creatures of chance have fantastic desire and inconceivable loves",
+     "s": 0.0736
+    },
+    {
+     "id": "3997-180297-0018",
+     "hyp": "Never do they give you advice which is not lucrative",
+     "s": 0.1275
+    },
+    {
+     "id": "3997-182399-0006",
+     "hyp": "Way back in the days when Grandpapa Buzzard had his little falling out with Old King Eagle and done fly so high he scorched the feathers off his head, he had a cousin, did Granpapa Buzzard, and this cousin was just naturally lazy and no count.",
+     "s": 0.4408
+    },
+    {
+     "id": "3997-182399-0007",
+     "hyp": "Like most no count people, he used to make a regular nuisance of hisself, poking his nose into everybody's business and never tending to his own",
+     "s": 0.1446
+    },
+    {
+     "id": "3997-182399-0016",
+     "hyp": "Yes, sah, she surely was plumb scared",
+     "s": 0.0791
+    },
+    {
+     "id": "4198-12259-0020",
+     "hyp": "Give me a synonym for a gammon of bacon",
+     "s": 0.0768
+    },
+    {
+     "id": "4198-12281-0013",
+     "hyp": "Some died without speaking others spoke without dying some died in speaking others spoke in dying",
+     "s": 0.139
+    },
+    {
+     "id": "4198-61336-0009",
+     "hyp": "For three years he conducted vigorous campaigns in the Western land, where he met with vigorous resistance",
+     "s": 0.2563
+    },
+    {
+     "id": "4198-61336-0017",
+     "hyp": "Tiglath Pelizer next operated against the Median and other hill tribes in the northeast,",
+     "s": 0.0986
+    },
+    {
+     "id": "4198-61336-0018",
+     "hyp": "He overthrew buildings, destroyed orchards, and transported to Nineveh those of the inhabitants he had not put to the sword, with all the live stock he could lay hands on",
+     "s": 0.3454
+    },
+    {
+     "id": "4294-14317-0008",
+     "hyp": "I begged his most illustrious excellency to name a single person whom I had ever taken in.",
+     "s": 0.1689
+    },
+    {
+     "id": "4294-32859-0000",
+     "hyp": "Wilder was rather surly after the ladies had floated away from the scene, and he drank his liquor doggedly.",
+     "s": 0.1696
+    },
+    {
+     "id": "4294-35475-0009",
+     "hyp": "At this moment there was a distant rumbling as of thunder.'Tis the ogre cried the Fairy we must hasten.",
+     "s": 0.127
+    },
+    {
+     "id": "4294-35475-0016",
+     "hyp": "The prince spent all the following time until midnight trying to think of a suitable verse to say to the scissors",
+     "s": 0.0718
+    },
+    {
+     "id": "4294-35475-0024",
+     "hyp": "Among those who drew back were Ethelred's brothers, the three that were dark and the three that were fair",
+     "s": 0.1692
+    },
+    {
+     "id": "4294-9934-0013",
+     "hyp": "What are you going to do? I do not know.",
+     "s": 0.048
+    },
+    {
+     "id": "4294-9934-0019",
+     "hyp": "It is badly paid work, but one can live by it.",
+     "s": 0.0501
+    },
+    {
+     "id": "4294-9934-0024",
+     "hyp": "The landlord presented his bill, which had to be paid on the spot,",
+     "s": 0.1428
+    },
+    {
+     "id": "4350-10919-0020",
+     "hyp": "The celebrated doctor announced to the princess a feeling of what was due from him dictated his doing so that he ought to see the patient once more",
+     "s": 0.1314
+    },
+    {
+     "id": "4350-9170-0031",
+     "hyp": "Every increase in the army of one State, with the aim of self defence against its subjects, becomes a source of danger for neighboring States, and calls for a similar increase in their armies",
+     "s": 0.1021
+    },
+    {
+     "id": "4350-9170-0034",
+     "hyp": "and by this means all citizens are under arms to support the iniquities practised upon them all citizens have become their own oppressors.",
+     "s": 0.181
+    },
+    {
+     "id": "4350-9170-0055",
+     "hyp": "and if defence against barbarous nations is meant, one thousandth part of the troops now under arms would be amply sufficient for that purpose",
+     "s": 0.0837
+    },
+    {
+     "id": "4852-28311-0012",
+     "hyp": "Mike was standing on the corner",
+     "s": 0.1167
+    },
+    {
+     "id": "4852-28311-0017",
+     "hyp": "A livid yellow stained the horizon beyond the factories and grey clouds lowered and tumbled above.",
+     "s": 0.1686
+    },
+    {
+     "id": "4852-28311-0022",
+     "hyp": "on the left the coil of rope in the centre the model of a sailing ship in a grain glass bottle and on the right the wooden statue of a negro boy in baggy trousers, Turkish jacket, and white turban",
+     "s": 0.357
+    },
+    {
+     "id": "4852-28312-0008",
+     "hyp": "Chris swallowed, and his voice came back to him.",
+     "s": 0.0529
+    },
+    {
+     "id": "4852-28312-0029",
+     "hyp": "A coach with its stop piled high with luggage stamped to a halt beside the flagged courtyard",
+     "s": 0.1199
+    },
+    {
+     "id": "533-131556-0004",
+     "hyp": "I have done well to record them so minutely.",
+     "s": 0.2042
+    },
+    {
+     "id": "533-131556-0012",
+     "hyp": "I enjoy a moonlight ramble as well as you, I answered, steadily fixing my eyes upon her and Frabury happens to be one of my favorite resorts.",
+     "s": 0.3357
+    },
+    {
+     "id": "533-131564-0001",
+     "hyp": "mister and misses Hattersley have been staying at Trove a fortnight and as mister Hargrave is still absent, and the weather was remarkably fine, I never passed a day without seeing my two friends, Millicent and Esther, either there or here",
+     "s": 0.4139
+    },
+    {
+     "id": "533-131564-0012",
+     "hyp": "But hang it that's not my fault",
+     "s": 0.0465
+    },
+    {
+     "id": "533-131564-0015",
+     "hyp": "I know they are bless them",
+     "s": 0.0689
+    },
+    {
+     "id": "533-131564-0023",
+     "hyp": "Nay, not I, said he, turning round and pushing towards me",
+     "s": 0.1076
+    },
+    {
+     "id": "5442-32873-0005",
+     "hyp": "Stanley Stanley it would be mercy to kill me She broke her again.",
+     "s": 0.062
+    },
+    {
+     "id": "5442-41168-0003",
+     "hyp": "Shouts were raised, and for a moment all was confusion, so that the marshal of the province had to call for order a ballad",
+     "s": 0.284
+    },
+    {
+     "id": "5442-41168-0011",
+     "hyp": "To escape from this painful feeling he went away into the other room, where there was nobody except the waiters at the refreshment bar.",
+     "s": 0.1966
+    },
+    {
+     "id": "5442-41168-0013",
+     "hyp": "Levin advanced, but utterly forgetting what he was to do and much embarrassed, he turned to Sergey Ivanovitch with the question Where am I to put it",
+     "s": 0.1303
+    },
+    {
+     "id": "5484-24317-0000",
+     "hyp": "When he came from the bath Proclus visited him again,",
+     "s": 0.0785
+    },
+    {
+     "id": "5484-24317-0004",
+     "hyp": "The banquet was to begin in a few hours yet he could not let the day pass without seeing Daphne and telling her the words of the oracle.",
+     "s": 0.1918
+    },
+    {
+     "id": "5484-24317-0005",
+     "hyp": "He longed, with ardent yearning, for the sound of her voice, and still more to unburden his sorely troubled soul to her",
+     "s": 0.0809
+    },
+    {
+     "id": "5484-24317-0015",
+     "hyp": "His son had been the royal dame's first husband, and she had deserted him to marry Lysimachus, the aged king of Thrace",
+     "s": 0.1916
+    },
+    {
+     "id": "5484-24317-0031",
+     "hyp": "How indifferent you look But I tell you her deep blue eyes flashed as she spoke that so long as you were still a genuine creating artist the case was different",
+     "s": 0.0949
+    },
+    {
+     "id": "5484-24318-0001",
+     "hyp": "To offer resistance would have been madness, for even Hermann perceived, by the loud clanking of weapons around them, the greatly superior power of the enemy and they were acting by the orders of the king To the prison near the place of execution,",
+     "s": 0.3838
+    },
+    {
+     "id": "5484-24318-0004",
+     "hyp": "ought he not to greet his sudden end as a boon from the immortals?",
+     "s": 0.0852
+    },
+    {
+     "id": "5484-24318-0018",
+     "hyp": "In spite of his deep mental distress he could have shouted aloud in his delight and gratitude.",
+     "s": 0.095
+    },
+    {
+     "id": "5484-24318-0030",
+     "hyp": "Besides, he knew that the object of his love would not part from him without granting him one last word",
+     "s": 0.116
+    },
+    {
+     "id": "5484-24318-0037",
+     "hyp": "Honour to Myrtilus and his art but he trusted this noble feast ill assemblage would pardon the unintentional deception, and aid his prayer for recovery",
+     "s": 0.2171
+    },
+    {
+     "id": "5764-299665-0006",
+     "hyp": "Is he responsible for all the wars that have been waged, for all the innocent blood that has been shed?",
+     "s": 0.1604
+    },
+    {
+     "id": "5764-299665-0027",
+     "hyp": "a man, wishing to go to a certain place, come to where the road divides,",
+     "s": 0.1259
+    },
+    {
+     "id": "5764-299665-0028",
+     "hyp": "He has tried that road and knows that it is the wrong road",
+     "s": 0.1577
+    },
+    {
+     "id": "5764-299665-0071",
+     "hyp": "The first stone is that matter substance cannot be destroyed, cannot be annihilated",
+     "s": 0.2644
+    },
+    {
+     "id": "5764-299665-0085",
+     "hyp": "They depend on the lot on luck and charity",
+     "s": 0.144
+    },
+    {
+     "id": "6070-63485-0018",
+     "hyp": "The fiacas started",
+     "s": 0.1199
+    },
+    {
+     "id": "6070-86744-0012",
+     "hyp": "I fear I shall not have that honour.",
+     "s": 0.0468
+    },
+    {
+     "id": "6070-86744-0024",
+     "hyp": "My dear Franz, replied Albert, when, upon receipt of my letter, you found the necessity of asking the count's assistance, you promptly went to him, saying My friend Albert de Morcerf is in danger help me to deliver him",
+     "s": 0.4037
+    },
+    {
+     "id": "6070-86745-0003",
+     "hyp": "Wait then during the day tell Rosa that when I leave the opera I will sup with her as she wishes.",
+     "s": 0.1828
+    },
+    {
+     "id": "6070-86745-0009",
+     "hyp": "No, no, my dear fellow do not confound our plans",
+     "s": 0.1384
+    },
+    {
+     "id": "6128-63240-0005",
+     "hyp": "In spite of this decoration the young man looked poor as poor as a young man could look who had such a fine head and such magnificent eyes.",
+     "s": 0.1372
+    },
+    {
+     "id": "6128-63240-0012",
+     "hyp": "He looked at misses Looner with intelligent incredulity.",
+     "s": 0.054
+    },
+    {
+     "id": "6128-63240-0020",
+     "hyp": "One didn't even know what one had come back for",
+     "s": 0.0925
+    },
+    {
+     "id": "6128-63241-0000",
+     "hyp": "Poor Ransom announced this fact to himself as if he had made a great discovery but in reality he had never been so Boeotian as at that moment.",
+     "s": 0.327
+    },
+    {
+     "id": "6128-63241-0012",
+     "hyp": "He was too simple, too Mississippian for that she was almost disappointed.",
+     "s": 0.0647
+    },
+    {
+     "id": "6128-63244-0022",
+     "hyp": "It was not clear to this interesting girl in what manner such a sacrifice as this last would be required of her but she solved the matter through a kind of sunrise mist of emotion which made danger, as rosy a success.",
+     "s": 0.1793
+    },
+    {
+     "id": "6432-63722-0000",
+     "hyp": "But'scuse me, den you'll figure on doin' some detectin' and givin' up fishin",
+     "s": 0.064
+    },
+    {
+     "id": "6432-63722-0008",
+     "hyp": "But he hadn't any more to do with it, Colonel, than that cat.",
+     "s": 0.1008
+    },
+    {
+     "id": "6432-63722-0016",
+     "hyp": "the very pair I was going to buy",
+     "s": 0.1232
+    },
+    {
+     "id": "6432-63722-0018",
+     "hyp": "and the detective's professional instincts got the upper hand of his friendliness. Not the least in the world not as much as you do, was the cool answer",
+     "s": 0.2096
+    },
+    {
+     "id": "6432-63722-0034",
+     "hyp": "If you don't mind, I should like to examine this a bit.",
+     "s": 0.0531
+    },
+    {
+     "id": "6432-63723-0009",
+     "hyp": "The colonel did not disclose the fact that it was no news to him",
+     "s": 0.0967
+    },
+    {
+     "id": "6432-63723-0014",
+     "hyp": "Larch, by refusing to appear, practically admitted the charges against him and did not oppose the separation",
+     "s": 0.2585
+    },
+    {
+     "id": "6432-63723-0015",
+     "hyp": "So I had to let her have her way, and we did not ask the Court for money, though I had no such squeamish feelings when it came to my counsel",
+     "s": 0.1192
+    },
+    {
+     "id": "6432-63723-0022",
+     "hyp": "Larch himself was a peculiar character,",
+     "s": 0.0479
+    },
+    {
+     "id": "6432-63723-0033",
+     "hyp": "Don't worry it will come out all right.",
+     "s": 0.0468
+    },
+    {
+     "id": "6432-63723-0043",
+     "hyp": "I'm afraid my digestion isn't quite up to that, as I've had to cut out my fishing of late.",
+     "s": 0.0698
+    },
+    {
+     "id": "6432-63723-0053",
+     "hyp": "There was a rattle of coins on the mahogany bar as King sought to disentangle a single bill from the watted up currency in his pocket.",
+     "s": 0.1365
+    },
+    {
+     "id": "6938-70848-0000",
+     "hyp": "Even the sun came out pale and watery at noon,",
+     "s": 0.0504
+    },
+    {
+     "id": "6938-70848-0025",
+     "hyp": "he spoke to the Rum Convention",
+     "s": 0.0914
+    },
+    {
+     "id": "6938-70848-0029",
+     "hyp": "A new humanity will be born of this war",
+     "s": 0.0482
+    },
+    {
+     "id": "7018-75788-0000",
+     "hyp": "Then I took up a great stone from among the trees and coming up to him smote him therewith on the head with all my might and crushed in his skull as he lay dead drunk.",
+     "s": 0.095
+    },
+    {
+     "id": "7018-75788-0011",
+     "hyp": "There I abode a little and then went on to Bagdad, where I entered my quarter and found my house and forgathered with my family and saluted my friends who gave me joy of my safe return and I laid up all my goods and valuables in my storehouses.",
+     "s": 0.4195
+    },
+    {
+     "id": "7018-75789-0003",
+     "hyp": "I rowed my conveyance into the place, which was intensely dark, and the current carried the raft with it down the underground channel.",
+     "s": 0.0821
+    },
+    {
+     "id": "7018-75789-0012",
+     "hyp": "So I consorted with the chief of the islanders and they paid me the utmost respect",
+     "s": 0.157
+    },
+    {
+     "id": "7018-75789-0014",
+     "hyp": "Quoth he, Thou art thine own master yet if it be thy will to abide with us, on our head and eyes be it for thou gladdenest us with thy company",
+     "s": 0.348
+    },
+    {
+     "id": "7018-75789-0022",
+     "hyp": "I will tell you the story of my seventh and last voyage, which is still more wondrous and marvellous than that of the first six",
+     "s": 0.08
+    },
+    {
+     "id": "7105-2330-0005",
+     "hyp": "hence the anxiety in the crowded court, and in the little groups gathered round the tape machines in Whitehall and Doning Street and other affected centres.",
+     "s": 0.1591
+    },
+    {
+     "id": "7105-2330-0025",
+     "hyp": "This is not a moment for standing on dignity, he observed bluntly musicians must be supplied at once.",
+     "s": 0.1221
+    },
+    {
+     "id": "7105-2330-0034",
+     "hyp": "demanded the chief organizer of the prison governor. Drums, cymbals, those sort of things",
+     "s": 0.0733
+    },
+    {
+     "id": "7105-2340-0004",
+     "hyp": "Wilfrid Pigeoncote had suddenly become heir to his uncle, Sir Wilfrid Pigeoncote, on the death of his cousin, Major Wilfrid Pigeoncote, who had succumbed to the after effects of a polo accident",
+     "s": 0.3839
+    },
+    {
+     "id": "7105-2340-0012",
+     "hyp": "In the drawing room after dinner their nervousness and awkwardness increased.",
+     "s": 0.1101
+    },
+    {
+     "id": "7902-96591-0014",
+     "hyp": "The kick he had received was a foretaste of what he might expect, and after a little consideration he came to the conclusion that his duty was to escape and get back to the cutter as quickly as he could.",
+     "s": 0.2215
+    },
+    {
+     "id": "7902-96592-0019",
+     "hyp": "It was you father kicked for shirking, and my well I hardly knowed you",
+     "s": 0.0585
+    },
+    {
+     "id": "7902-96592-0022",
+     "hyp": "Think I don't know you, mister Orfiser?",
+     "s": 0.0479
+    },
+    {
+     "id": "7902-96592-0027",
+     "hyp": "Nothing but the chimney presented itself",
+     "s": 0.0753
+    },
+    {
+     "id": "7902-96592-0032",
+     "hyp": "No, I can't part with that. Ha ha laughed the boy jeeringly",
+     "s": 0.2247
+    },
+    {
+     "id": "7902-96592-0037",
+     "hyp": "Why, your clothes don't fit you, and your cap's put on all skuroo",
+     "s": 0.0901
+    },
+    {
+     "id": "7902-96594-0009",
+     "hyp": "Certainly, sir smugglers are smugglers indeed",
+     "s": 0.0527
+    },
+    {
+     "id": "7902-96594-0031",
+     "hyp": "Beg pardon, sir, said the master deprecatingly.",
+     "s": 0.0529
+    },
+    {
+     "id": "7902-96595-0025",
+     "hyp": "You do not know? No",
+     "s": 0.0746
+    },
+    {
+     "id": "7975-280076-0000",
+     "hyp": "Although every book purporting to narrate the lives of the younger brothers has told of the Liberty robbery and implied that we had a part in it, the youngers were not suspected at that time, nor for a long time afterward",
+     "s": 0.3618
+    },
+    {
+     "id": "7975-280076-0024",
+     "hyp": "Helvin Fickle and wife of Greenton Valley were attending the springs at that time and either of them will testify to the above for John and I sat in front of mister Smith while he was preaching, and was in his company for a few moments together with his wife and mister and Miss Fickle after the service,",
+     "s": 0.4222
+    },
+    {
+     "id": "7975-280076-0025",
+     "hyp": "About the last of December, eighteen seventy three, I arrived in Carroll Parish, Louisiana,",
+     "s": 0.172
+    },
+    {
+     "id": "7975-280084-0013",
+     "hyp": "What kept you so long? I asked Pitts.",
+     "s": 0.0469
+    },
+    {
+     "id": "7975-280084-0015",
+     "hyp": "Where's the money outside the safe? Bob asked.",
+     "s": 0.0507
+    },
+    {
+     "id": "8131-117016-0030",
+     "hyp": "We're not using wagons, Murdoch told him. Line them up",
+     "s": 0.1494
+    },
+    {
+     "id": "8131-117016-0044",
+     "hyp": "But the Stonewall gang is backing Wayne.",
+     "s": 0.1307
+    },
+    {
+     "id": "8131-117016-0048",
+     "hyp": "What makes you think Wayne will be re elected?",
+     "s": 0.0805
+    },
+    {
+     "id": "8131-117016-0054",
+     "hyp": "He was getting even fatter now that he was eating better food from the fair restaurant around the corner.",
+     "s": 0.2585
+    },
+    {
+     "id": "8131-117017-0000",
+     "hyp": "It was night outside, and the phosphor bulbs at the corners glowed dimly, giving him barely enough light by which to locate the way to the extemporized precinct house.",
+     "s": 0.1007
+    },
+    {
+     "id": "8131-117017-0021",
+     "hyp": "A thousand interest at ten per cent a week, standard right",
+     "s": 0.1051
+    },
+    {
+     "id": "8131-117017-0025",
+     "hyp": "For a second Izzy's face went blank then he chuckled",
+     "s": 0.056
+    },
+    {
+     "id": "8131-117029-0007",
+     "hyp": "Fat's place was still open, though the crooked tables had been removed. Gordon dropped to a stool, slipping off his helmet.",
+     "s": 0.1174
+    },
+    {
+     "id": "8131-117029-0008",
+     "hyp": "He reached automatically for the glass of ether needled beer.",
+     "s": 0.0838
+    },
+    {
+     "id": "8188-269288-0026",
+     "hyp": "I shall go I know a way",
+     "s": 0.0432
+    },
+    {
+     "id": "8188-269288-0032",
+     "hyp": "What can she be doing out by herself?",
+     "s": 0.0452
+    },
+    {
+     "id": "8188-269288-0043",
+     "hyp": "Now, drink this at once, she said in a voice of authority, if you really wish to sleep.",
+     "s": 0.0979
+    },
+    {
+     "id": "8188-269288-0046",
+     "hyp": "Do you want to kill me? Don't talk any more.",
+     "s": 0.0953
+    },
+    {
+     "id": "8188-269290-0039",
+     "hyp": "Margery and Eileen were close to her",
+     "s": 0.0451
+    },
+    {
+     "id": "8188-274364-0009",
+     "hyp": "Young Vane, falling upon this paper of notes, deemed the matter of the utmost importance, and immediately communicated it to Pym, who now produced the paper before the House of Commons.",
+     "s": 0.2375
+    },
+    {
+     "id": "8188-274364-0011",
+     "hyp": "Your majesty having tried the affections of your people, you are absolved and loose from all rules of government, and may do what power will admit",
+     "s": 0.2843
+    },
+    {
+     "id": "8280-266249-0012",
+     "hyp": "Doubtless that is the case, remarked mister Dinsmore",
+     "s": 0.0829
+    },
+    {
+     "id": "8280-266249-0033",
+     "hyp": "And the door was slammed violently to",
+     "s": 0.0942
+    },
+    {
+     "id": "8280-266249-0036",
+     "hyp": "What does it mean? cried one.",
+     "s": 0.0445
+    },
+    {
+     "id": "8461-258277-0010",
+     "hyp": "So he told him what had befallen him and added, If I know whither the rascal is gone and where to find the knave I would pay him out.",
+     "s": 0.2012
+    },
+    {
+     "id": "8461-258277-0016",
+     "hyp": "He replied, I have forty lads, but they are in Cairo.",
+     "s": 0.1025
+    },
+    {
+     "id": "8461-281231-0002",
+     "hyp": "As he lay upon his bed, racked with pain and mental agony, and filled with the fear of rapidly approaching death, he heard a voice address him",
+     "s": 0.211
+    },
+    {
+     "id": "8461-281231-0013",
+     "hyp": "At length De Bracey fell",
+     "s": 0.0451
+    }
+   ]
+  },
+  "ami": {
+   "wer": 7.37,
+   "rtf": 0.0168,
+   "proc_s": 12.54,
+   "audio_s": 747.88,
+   "n": 200,
+   "hyps": [
+    {
+     "id": "AMI_EN2002a_H00_MEE073_0147120_0147459",
+     "hyp": "Yeah, seriously.",
+     "s": 0.0433
+    },
+    {
+     "id": "AMI_EN2002a_H00_MEE073_0164731_0165115",
+     "hyp": "yeah it'll get behind schedule, you know, pretty quick",
+     "s": 0.0883
+    },
+    {
+     "id": "AMI_EN2002a_H01_FEO070_0052255_0052654",
+     "hyp": " Yeah, that's a good start",
+     "s": 0.1389
+    },
+    {
+     "id": "AMI_EN2002a_H01_FEO070_0086073_0086473",
+     "hyp": "Just so see the integration works sort of between the different com",
+     "s": 0.1038
+    },
+    {
+     "id": "AMI_EN2002a_H02_FEO072_0010620_0010958",
+     "hyp": "  Um, either we could do that, you know, when does a pop-up come?",
+     "s": 0.058
+    },
+    {
+     "id": "AMI_EN2002a_H02_FEO072_0038786_0039120",
+     "hyp": "    Yeah, there's a second thing about the topics, the topic window.",
+     "s": 0.0568
+    },
+    {
+     "id": "AMI_EN2002a_H02_FEO072_0081658_0082025",
+     "hyp": "And finally the prototype he spoke about",
+     "s": 0.048
+    },
+    {
+     "id": "AMI_EN2002a_H02_FEO072_0133778_0134161",
+     "hyp": "words or text or something in it, so it just searches for those files",
+     "s": 0.0552
+    },
+    {
+     "id": "AMI_EN2002a_H02_FEO072_0137932_0138302",
+     "hyp": "Yeah, just search for a specific string.",
+     "s": 0.0484
+    },
+    {
+     "id": "AMI_EN2002a_H02_FEO072_0145448_0145854",
+     "hyp": "Oh you can.",
+     "s": 0.0907
+    },
+    {
+     "id": "AMI_EN2002a_H03_MEE071_0018302_0018699",
+     "hyp": " So otherwise we just have a right-click or do",
+     "s": 0.1029
+    },
+    {
+     "id": "AMI_EN2002a_H03_MEE071_0118027_0118367",
+     "hyp": "The the the week as as is rather than the proper week, do you know what I mean?",
+     "s": 0.1018
+    },
+    {
+     "id": "AMI_EN2002b_H00_FEO070_0067581_0067962",
+     "hyp": "Well, I still like struggling with Java stuff.",
+     "s": 0.0531
+    },
+    {
+     "id": "AMI_EN2002b_H00_FEO070_0089209_0089625",
+     "hyp": " Pop-offs",
+     "s": 0.0979
+    },
+    {
+     "id": "AMI_EN2002b_H00_FEO070_0175983_0176353",
+     "hyp": "Um yeah, um twelve thirty tomorrow with",
+     "s": 0.0511
+    },
+    {
+     "id": "AMI_EN2002b_H01_MEE071_0162852_0163194",
+     "hyp": "I see sometimes it's easier to have the top i in its own intersections if you see what I mean.",
+     "s": 0.0599
+    },
+    {
+     "id": "AMI_EN2002b_H02_FEO072_0014437_0014850",
+     "hyp": "Um I'm not sure if we need the outline of the prototype.",
+     "s": 0.0562
+    },
+    {
+     "id": "AMI_EN2002b_H02_FEO072_0034547_0034909",
+     "hyp": "That's what I thought as well, I mean do we are we are we actually gonna attempt that?",
+     "s": 0.1494
+    },
+    {
+     "id": "AMI_EN2002b_H02_FEO072_0175109_0175452",
+     "hyp": "I haven't used my pen",
+     "s": 0.0449
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0012730_0013102",
+     "hyp": "  So it's all whatever inaccurate and",
+     "s": 0.0828
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0065557_0065912",
+     "hyp": " I mean with the intention that this is done.",
+     "s": 0.0502
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0081248_0081582",
+     "hyp": "Actually just to clarify, last week when we were talking about our search results.",
+     "s": 0.0596
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0082114_0082502",
+     "hyp": " Um do we want separate result panes uh for each of those?",
+     "s": 0.0548
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0083092_0083471",
+     "hyp": "  So that when they you know click on that it's gonna go to the relevant thing.",
+     "s": 0.0595
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0147168_0147522",
+     "hyp": "Actually, I was thinking I might try and talk to who is it, Jonathan and Jean?",
+     "s": 0.0584
+    },
+    {
+     "id": "AMI_EN2002b_H03_MEE073_0172114_0172473",
+     "hyp": "Yeah, okay, actually, no, no, actually that's a good idea, I'll take one quick look over",
+     "s": 0.1006
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0042347_0042747",
+     "hyp": "Although we could do mm we could do the one highlighted I suppose",
+     "s": 0.0603
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0055476_0055829",
+     "hyp": "Then I could use that for the for the topic pop-up window.",
+     "s": 0.0785
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0105814_0106146",
+     "hyp": "And through that once you've got the results, you click on something and that loads up the first.",
+     "s": 0.0951
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0160737_0161085",
+     "hyp": "No, but the general inverted file.",
+     "s": 0.0949
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0161826_0162209",
+     "hyp": "Yeah, I I wasn't sure if it was or not",
+     "s": 0.0498
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0163798_0164155",
+     "hyp": "'Cause I mean then then it would give you like if you search for word.",
+     "s": 0.0879
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0204433_0204785",
+     "hyp": "No, that's um",
+     "s": 0.043
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0254517_0254873",
+     "hyp": "I'll write um I'll write this meeting up and I'll send it to Penila as well.",
+     "s": 0.0595
+    },
+    {
+     "id": "AMI_EN2002c_H01_FEO072_0272402_0272761",
+     "hyp": "Yeah, I mean you'd you just do it really simply, you know",
+     "s": 0.0533
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0035962_0036317",
+     "hyp": "See that's the kit how did we do you now have a look at that again?",
+     "s": 0.055
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0056071_0056435",
+     "hyp": " But that would be that would cause a problem with anything that wasn't annotated for topics.",
+     "s": 0.1084
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0102381_0102717",
+     "hyp": "Load me a meeting, load me a search, load me something else",
+     "s": 0.0537
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0153109_0153454",
+     "hyp": "  But you could do keyword search could be topic search, couldn't they it could be the same thing",
+     "s": 0.0621
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0162977_0163392",
+     "hyp": "  But yeah, I guess i if you don't if if that's not part of it, don't worry about it, it doesn't",
+     "s": 0.1153
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0215164_0215514",
+     "hyp": " And then from there it takes you to wherever else you wanna go",
+     "s": 0.0577
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0268426_0268832",
+     "hyp": " Yeah that would help a lot for that s for single terms it would be very useful.",
+     "s": 0.0642
+    },
+    {
+     "id": "AMI_EN2002c_H02_MEE071_0281996_0282399",
+     "hyp": "So if it so yeah, if you return seventy five, why where do you stop?",
+     "s": 0.0606
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0011623_0012020",
+     "hyp": "  Like if you're in the topic and it goes and highlights the topic in the text, or whatever.",
+     "s": 0.0672
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0015854_0016228",
+     "hyp": " You haven't had to build any new windows to do that sort of thing?",
+     "s": 0.0903
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0026979_0027329",
+     "hyp": " Like when he was talking about like have an architecture that things are gonna plug into.",
+     "s": 0.0656
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0027954_0028342",
+     "hyp": "Um actually even the searches or whatever you know just any sort of thing.",
+     "s": 0.0617
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0053116_0053476",
+     "hyp": " Or is it just like individual ones, like one f one object for Okay",
+     "s": 0.1019
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0078233_0078625",
+     "hyp": "But have to get better results, like better presented",
+     "s": 0.0835
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0117456_0117835",
+     "hyp": "  I mean before you do a search at all on this.",
+     "s": 0.0517
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0119318_0119664",
+     "hyp": "  So it's gonna be loading up each of those one at a time to get the data that we wanna",
+     "s": 0.1151
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0140755_0141096",
+     "hyp": "There's a clash he was trying to get uh to work on Friday.",
+     "s": 0.0841
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0147825_0148187",
+     "hyp": " Yeah, so the general one is pro yeah, yeah.",
+     "s": 0.0496
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0192679_0193086",
+     "hyp": "  Like if they're looking for a particular person, particular working group, particular whatever",
+     "s": 0.0981
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0201541_0201912",
+     "hyp": " Like there's just a range of things we could do, we could have like search options, browse options.",
+     "s": 0.0951
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0244241_0244628",
+     "hyp": "  So do we wanna arrange this, get this one earlier maybe?",
+     "s": 0.0863
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0264561_0264931",
+     "hyp": "You know, Sunny shows up in this document, Day shows up, but they're not together.",
+     "s": 0.0613
+    },
+    {
+     "id": "AMI_EN2002c_H03_MEE073_0272813_0273225",
+     "hyp": " We'll have we'll have to talk to Prunel about this then just'cause um see how she's uh doing this.",
+     "s": 0.0673
+    },
+    {
+     "id": "AMI_EN2002d_H00_FEO070_0068919_0069261",
+     "hyp": "It's like I'm all the interested in this guy'cause he seems to be funny.",
+     "s": 0.0588
+    },
+    {
+     "id": "AMI_EN2002d_H01_FEO072_0020309_0020675",
+     "hyp": "There is a file in the directory called disfile.",
+     "s": 0.0506
+    },
+    {
+     "id": "AMI_EN2002d_H01_FEO072_0025312_0025661",
+     "hyp": " And",
+     "s": 0.0734
+    },
+    {
+     "id": "AMI_EN2002d_H01_FEO072_0037073_0037439",
+     "hyp": "At the moment as well the whole windows that pop up are not pretty at all.",
+     "s": 0.0558
+    },
+    {
+     "id": "AMI_EN2002d_H01_FEO072_0097278_0097652",
+     "hyp": " No.",
+     "s": 0.0401
+    },
+    {
+     "id": "AMI_EN2002d_H01_FEO072_0125814_0126195",
+     "hyp": "At the end we'll say, yeah, but you never gave us any test subjects.",
+     "s": 0.0557
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0025310_0025643",
+     "hyp": "Oh no they live there but there's I had even more stuff there yesterday.",
+     "s": 0.0557
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0029599_0030007",
+     "hyp": "It uh generated a lot of exceptions in the background",
+     "s": 0.081
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0042029_0042437",
+     "hyp": "I haven't done it I haven't updated all those object files yet though'cause it takes ages on these computers",
+     "s": 0.0668
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0044535_0044929",
+     "hyp": "Really speed it up yeah",
+     "s": 0.0773
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0050314_0050682",
+     "hyp": "  And then everybody, the next one, seems to mostly be back-",
+     "s": 0.0547
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0057616_0057967",
+     "hyp": " That's what I w that's what I'm asking you really",
+     "s": 0.0833
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0063991_0064404",
+     "hyp": "So you've got the global one there and then here you can just have the top five in this meeting",
+     "s": 0.0686
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0074781_0075165",
+     "hyp": " So they put they put the the dialogue acts and then they put a double a colon and then they put that",
+     "s": 0.0643
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0145149_0145491",
+     "hyp": "No we should have it we should try and have edit done by then anyway I think.",
+     "s": 0.0576
+    },
+    {
+     "id": "AMI_EN2002d_H02_MEE071_0209934_0210340",
+     "hyp": "Well yeah, even if even if I happen to manage to make it do some keywords.",
+     "s": 0.0594
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0018272_0018612",
+     "hyp": "  Then you t spend the time to invest and learn all about them, but it's like okay, wow.",
+     "s": 0.0608
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0043909_0044253",
+     "hyp": "",
+     "s": 0.0378
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0044253_0044625",
+     "hyp": "I've done stuff like that before, it's insane, it's insane.",
+     "s": 0.0549
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0079699_0080103",
+     "hyp": "I actually do we have like naming convention for s our source files?",
+     "s": 0.0888
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0112218_0112577",
+     "hyp": " Well it's still, I guess, research platform",
+     "s": 0.0511
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0134790_0135144",
+     "hyp": "Then you can do a massive amount of analysis on three people.",
+     "s": 0.0529
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0178779_0179183",
+     "hyp": "in like the other windows, like the various like um if we're in the topic",
+     "s": 0.0586
+    },
+    {
+     "id": "AMI_EN2002d_H03_MEE073_0206901_0207310",
+     "hyp": "See are we bothering with our topic stuff still",
+     "s": 0.0521
+    },
+    {
+     "id": "AMI_ES2004a_H00_MEO015_0032413_0032773",
+     "hyp": "It's your best friend in your you can talk to a dog, it can be your best",
+     "s": 0.0571
+    },
+    {
+     "id": "AMI_ES2004a_H01_FEE013_0001099_0001453",
+     "hyp": "  Are we we're not allowed to dim lights, so people can see that a bit better.",
+     "s": 0.0586
+    },
+    {
+     "id": "AMI_ES2004a_H01_FEE013_0050119_0050466",
+     "hyp": "A seagull right, not a seagull.",
+     "s": 0.0791
+    },
+    {
+     "id": "AMI_ES2004a_H03_FEE016_0004975_0005318",
+     "hyp": "Gee, this is gonna fall off it doesn't",
+     "s": 0.0487
+    },
+    {
+     "id": "AMI_ES2004a_H03_FEE016_0077978_0078326",
+     "hyp": "Actually that just raises a point, I wonder what our design people think.",
+     "s": 0.057
+    },
+    {
+     "id": "AMI_ES2004a_H03_FEE016_0078326_0078704",
+     "hyp": " But you know on a mobile phone you can press a key and it gives you a menu.",
+     "s": 0.0575
+    },
+    {
+     "id": "AMI_ES2004b_H00_MEO015_0143060_0143427",
+     "hyp": "the injuries, maybe a touch screen could be a better option for that",
+     "s": 0.0551
+    },
+    {
+     "id": "AMI_ES2004b_H01_FEE013_0016324_0016680",
+     "hyp": "Um three presentations I've got written here, so",
+     "s": 0.0512
+    },
+    {
+     "id": "AMI_ES2004b_H01_FEE013_0181972_0182307",
+     "hyp": " But I mean there there's customer service",
+     "s": 0.0774
+    },
+    {
+     "id": "AMI_ES2004b_H01_FEE013_0185430_0185816",
+     "hyp": " It does, you just put it in the drawer until something goes wrong and then you try and search through it.",
+     "s": 0.0634
+    },
+    {
+     "id": "AMI_ES2004b_H02_MEE014_0060745_0061098",
+     "hyp": "No no yeah it's just",
+     "s": 0.0444
+    },
+    {
+     "id": "AMI_ES2004b_H02_MEE014_0135290_0135625",
+     "hyp": "No well no'cause you wouldn't have to you don't actually have to press them you just",
+     "s": 0.0595
+    },
+    {
+     "id": "AMI_ES2004b_H02_MEE014_0165894_0166237",
+     "hyp": "And you wouldn't you wouldn't need a a whole host of extra buttons for",
+     "s": 0.0563
+    },
+    {
+     "id": "AMI_ES2004b_H02_MEE014_0171863_0172203",
+     "hyp": "But just have that function would be would be really good.",
+     "s": 0.0514
+    },
+    {
+     "id": "AMI_ES2004b_H03_FEE016_0032302_0032675",
+     "hyp": "You saying the triple A batteries are small or d or the cara carriage surrounding it.",
+     "s": 0.0577
+    },
+    {
+     "id": "AMI_ES2004b_H03_FEE016_0087219_0087626",
+     "hyp": "Just their general use of the remote control, you can see we had a hundred subjects there",
+     "s": 0.059
+    },
+    {
+     "id": "AMI_ES2004b_H03_FEE016_0184190_0184550",
+     "hyp": "Not for such simple functions because we're focusing on that, yes, o",
+     "s": 0.0543
+    },
+    {
+     "id": "AMI_ES2004b_H03_FEE016_0196662_0197058",
+     "hyp": "brown things with the same coloured buttons all crammed in on th surface.",
+     "s": 0.0867
+    },
+    {
+     "id": "AMI_ES2004b_H03_FEE016_0215162_0215553",
+     "hyp": " It's easiest to put nice to handle",
+     "s": 0.085
+    },
+    {
+     "id": "AMI_ES2004c_H00_MEO015_0134989_0135328",
+     "hyp": "Absolutely f for somebody who surfs very often.",
+     "s": 0.0507
+    },
+    {
+     "id": "AMI_ES2004c_H00_MEO015_0170898_0171243",
+     "hyp": "So we we can check into the financial feasibility of incorporating this.",
+     "s": 0.0554
+    },
+    {
+     "id": "AMI_ES2004c_H01_FEE013_0118872_0119263",
+     "hyp": " Well that's been really popular with mobile phones, so I don't see why not",
+     "s": 0.0589
+    },
+    {
+     "id": "AMI_ES2004c_H01_FEE013_0144155_0144495",
+     "hyp": "We're marketing to guys as much as we are to women.",
+     "s": 0.0509
+    },
+    {
+     "id": "AMI_ES2004c_H02_MEE014_0058725_0059062",
+     "hyp": " But I I think I think the the next one's the best anyway.",
+     "s": 0.0523
+    },
+    {
+     "id": "AMI_ES2004c_H02_MEE014_0078600_0078967",
+     "hyp": "Batteries and the solar charging um",
+     "s": 0.0464
+    },
+    {
+     "id": "AMI_ES2004c_H02_MEE014_0109417_0109818",
+     "hyp": "  If you go for titanium they can only do a standard box shape.",
+     "s": 0.0924
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0057116_0057532",
+     "hyp": "I know, in different parts of the world too, if we're if we're marketing internationally",
+     "s": 0.0632
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0128514_0128876",
+     "hyp": "I j sorry to interrupt, I don't see why the curved thing is a problem.",
+     "s": 0.056
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0136802_0137175",
+     "hyp": "Yeah, just a thought they wouldn't actually need one and they could use anything they've got, could they?",
+     "s": 0.0658
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0146202_0146611",
+     "hyp": "trying to think of other features we can build in that wouldn't cost too much, but when maybe leave that one on the side.",
+     "s": 0.0699
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0148117_0148530",
+     "hyp": "Oh, I think we'll be forget about the mirror, that was just a very quick passing thought, yeah.",
+     "s": 0.07
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0208684_0209080",
+     "hyp": "  We looked at those remotes, I mean they are kind of anonymous, very similar looking things.",
+     "s": 0.0643
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0222656_0223061",
+     "hyp": "'Cause I took it from the feedback you gave in the last meeting from y from you your report.",
+     "s": 0.0641
+    },
+    {
+     "id": "AMI_ES2004c_H03_FEE016_0226432_0226842",
+     "hyp": " I think that was what you talked about, a beeper for location, and we just rejected that in favour of voice recognition then.",
+     "s": 0.109
+    },
+    {
+     "id": "AMI_ES2004d_H00_MEO015_0172218_0172557",
+     "hyp": " We came to a very pretty creative design, yeah?",
+     "s": 0.0508
+    },
+    {
+     "id": "AMI_ES2004d_H01_FEE013_0088855_0089231",
+     "hyp": "  So maybe because there's more space, it's not kind of moving around",
+     "s": 0.104
+    },
+    {
+     "id": "AMI_ES2004d_H01_FEE013_0121644_0122034",
+     "hyp": "  Um we've got plastic and rubber, haven't we?",
+     "s": 0.0543
+    },
+    {
+     "id": "AMI_ES2004d_H01_FEE013_0138315_0138673",
+     "hyp": " Oh no, it was seven five, it's changed not a lot.",
+     "s": 0.052
+    },
+    {
+     "id": "AMI_ES2004d_H02_MEE014_0034391_0034801",
+     "hyp": "  And then finally um on to the interface.",
+     "s": 0.0503
+    },
+    {
+     "id": "AMI_ES2004d_H02_MEE014_0114834_0115187",
+     "hyp": "It was regular chip on print and",
+     "s": 0.0446
+    },
+    {
+     "id": "AMI_ES2004d_H02_MEE014_0130421_0130825",
+     "hyp": "Yeah, the push-buttons one and LC display one.",
+     "s": 0.0526
+    },
+    {
+     "id": "AMI_ES2004d_H02_MEE014_0146869_0147206",
+     "hyp": " If you took away that, that'll make it twelve point three five.",
+     "s": 0.0556
+    },
+    {
+     "id": "AMI_ES2004d_H02_MEE014_0216025_0216367",
+     "hyp": " In your yeah.",
+     "s": 0.0424
+    },
+    {
+     "id": "AMI_ES2004d_H03_FEE016_0058075_0058416",
+     "hyp": " This is where I realise how tiny I actually am.",
+     "s": 0.0509
+    },
+    {
+     "id": "AMI_ES2004d_H03_FEE016_0061753_0062147",
+     "hyp": "Criteria A the fancy look and feel.",
+     "s": 0.0499
+    },
+    {
+     "id": "AMI_ES2004d_H03_FEE016_0068895_0069292",
+     "hyp": " Not that you're biased, the designer.",
+     "s": 0.0498
+    },
+    {
+     "id": "AMI_ES2004d_H03_FEE016_0121063_0121404",
+     "hyp": "The other curve's at the sides, but it's slightly flattened at the bottom, so it doesn't roll over.",
+     "s": 0.064
+    },
+    {
+     "id": "AMI_ES2004d_H03_FEE016_0220084_0220492",
+     "hyp": " Well, I didn't have to rate you on how much you influenced the meeting this time",
+     "s": 0.0616
+    },
+    {
+     "id": "AMI_IS1009a_H00_FIE088_0035592_0035998",
+     "hyp": "",
+     "s": 0.0397
+    },
+    {
+     "id": "AMI_IS1009a_H00_FIE088_0066770_0067159",
+     "hyp": "Oh yeah well but then those people we can't help everybody",
+     "s": 0.0894
+    },
+    {
+     "id": "AMI_IS1009a_H00_FIE088_0070746_0071113",
+     "hyp": "So we looking for a working design when we come back",
+     "s": 0.0502
+    },
+    {
+     "id": "AMI_IS1009b_H00_FIE088_0039112_0039508",
+     "hyp": "And that the corporate colour and design are being used on the product.",
+     "s": 0.0548
+    },
+    {
+     "id": "AMI_IS1009b_H00_FIE088_0102808_0103154",
+     "hyp": " Yeah, you're sitting there already, maybe you have no other uh",
+     "s": 0.0544
+    },
+    {
+     "id": "AMI_IS1009b_H01_FIO087_0137124_0137523",
+     "hyp": "   And I don't think it will cost much to set an alarm clock inside a remote",
+     "s": 0.0597
+    },
+    {
+     "id": "AMI_IS1009b_H02_FIO084_0066643_0067027",
+     "hyp": "A remote controller is specifically designed to a single device",
+     "s": 0.0539
+    },
+    {
+     "id": "AMI_IS1009b_H02_FIO084_0102753_0103119",
+     "hyp": "Yeah, and then you can just see your remote controller yeah yeah yeah so",
+     "s": 0.0555
+    },
+    {
+     "id": "AMI_IS1009b_H02_FIO084_0105851_0106265",
+     "hyp": "then uh the remote controller should automatically have a s light",
+     "s": 0.0888
+    },
+    {
+     "id": "AMI_IS1009b_H03_FIO089_0085300_0085700",
+     "hyp": "Now that's good from a marketing point of view, the fun the fun shape",
+     "s": 0.058
+    },
+    {
+     "id": "AMI_IS1009c_H01_FIO087_0054117_0054527",
+     "hyp": "So this is one one of the interface which can be created.",
+     "s": 0.058
+    },
+    {
+     "id": "AMI_IS1009c_H02_FIO084_0088348_0088688",
+     "hyp": "Suppose if it is thirty eight degrees outside, forty degrees outside.",
+     "s": 0.0574
+    },
+    {
+     "id": "AMI_IS1009c_H02_FIO084_0101828_0102181",
+     "hyp": "Every button, every individual button, has its own Morse code.",
+     "s": 0.0533
+    },
+    {
+     "id": "AMI_IS1009c_H02_FIO084_0104247_0104633",
+     "hyp": "that uh Morse code has been generated by the integrated circuit.",
+     "s": 0.0564
+    },
+    {
+     "id": "AMI_IS1009c_H02_FIO084_0105088_0105449",
+     "hyp": "That is the use of transistor transistor we which we use in the remote controller.",
+     "s": 0.087
+    },
+    {
+     "id": "AMI_IS1009c_H02_FIO084_0135967_0136326",
+     "hyp": " Uh which which we used to do before ten ten years before I think",
+     "s": 0.0553
+    },
+    {
+     "id": "AMI_IS1009c_H02_FIO084_0157856_0158196",
+     "hyp": "Yeah, it's not distance problem, it it's recognising a person's voice.",
+     "s": 0.0586
+    },
+    {
+     "id": "AMI_IS1009d_H00_FIE088_0009020_0009435",
+     "hyp": "   Should have a memory switch, a mute button in case the telephone rings or something",
+     "s": 0.0607
+    },
+    {
+     "id": "AMI_IS1009d_H00_FIE088_0131419_0131783",
+     "hyp": "Um I just realise one thing.",
+     "s": 0.0461
+    },
+    {
+     "id": "AMI_IS1009d_H03_FIO089_0177170_0177576",
+     "hyp": " I'm pretty happy with the two, yeah it's something I think I can market.",
+     "s": 0.0601
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0009014_0009424",
+     "hyp": "So this is our project documents folder.",
+     "s": 0.0504
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0017917_0018314",
+     "hyp": "  Um have you all seen the corporate website already?",
+     "s": 0.054
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0022735_0023113",
+     "hyp": "  It has to be original, trendy and user-friendly.",
+     "s": 0.0547
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0032473_0032816",
+     "hyp": " But that will be all worked out in uh other meetings.",
+     "s": 0.0519
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0049213_0049607",
+     "hyp": "  Uh this I can start from now.",
+     "s": 0.0491
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0053502_0053863",
+     "hyp": "Now you will see my drawing capabilities.",
+     "s": 0.0472
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0111125_0111506",
+     "hyp": "  Move along to the project finance.",
+     "s": 0.0475
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0119783_0120140",
+     "hyp": "  So I'm gonna sit down and think.",
+     "s": 0.0479
+    },
+    {
+     "id": "AMI_TS3003a_H00_MTD009PM_0143328_0143680",
+     "hyp": "Any questions about this uh presentation",
+     "s": 0.048
+    },
+    {
+     "id": "AMI_TS3003a_H03_MTD012ME_0073228_0073584",
+     "hyp": "'Kay, I'm not much of an artist, but here we go.",
+     "s": 0.0522
+    },
+    {
+     "id": "AMI_TS3003a_H03_MTD012ME_0121006_0121414",
+     "hyp": "So just on a side note, why is it my laptop is only giving me a black screen",
+     "s": 0.0585
+    },
+    {
+     "id": "AMI_TS3003b_H00_MTD009PM_0006370_0006777",
+     "hyp": "Okay, so this is our second meeting",
+     "s": 0.0482
+    },
+    {
+     "id": "AMI_TS3003b_H00_MTD009PM_0015365_0015769",
+     "hyp": "  So I suggest we take about seven minutes per presentation.",
+     "s": 0.0553
+    },
+    {
+     "id": "AMI_TS3003b_H00_MTD009PM_0054103_0054516",
+     "hyp": "So anybody have uh any questions until now?",
+     "s": 0.0494
+    },
+    {
+     "id": "AMI_TS3003b_H00_MTD009PM_0092001_0092351",
+     "hyp": "I think it's going to uh it's not too much okay.",
+     "s": 0.0511
+    },
+    {
+     "id": "AMI_TS3003b_H00_MTD009PM_0114304_0114648",
+     "hyp": "  Uh remote control and the other way around",
+     "s": 0.0484
+    },
+    {
+     "id": "AMI_TS3003b_H00_MTD009PM_0142419_0142809",
+     "hyp": "Volume selection, power and teletext.",
+     "s": 0.0511
+    },
+    {
+     "id": "AMI_TS3003b_H01_MTD011UID_0065128_0065479",
+     "hyp": " Um yeah",
+     "s": 0.0424
+    },
+    {
+     "id": "AMI_TS3003b_H02_MTD0010ID_0094422_0094811",
+     "hyp": "  So, we've got um the the plate.",
+     "s": 0.0489
+    },
+    {
+     "id": "AMI_TS3003b_H02_MTD0010ID_0099441_0099841",
+     "hyp": "   Um I think we should focus on aesthetics, the design and the user interface",
+     "s": 0.06
+    },
+    {
+     "id": "AMI_TS3003b_H03_MTD012ME_0030335_0030700",
+     "hyp": "most um important functions of a remote control.",
+     "s": 0.0822
+    },
+    {
+     "id": "AMI_TS3003b_H03_MTD012ME_0046162_0046539",
+     "hyp": "'Cause they're used most and so they should be robust",
+     "s": 0.0867
+    },
+    {
+     "id": "AMI_TS3003b_H03_MTD012ME_0123533_0123878",
+     "hyp": "Besides that, I think the market for forty plus is like",
+     "s": 0.0527
+    },
+    {
+     "id": "AMI_TS3003b_H03_MTD012ME_0160699_0161089",
+     "hyp": "I don't think there are many TV s that can switch channels that fast",
+     "s": 0.0571
+    },
+    {
+     "id": "AMI_TS3003b_H03_MTD012ME_0187315_0187701",
+     "hyp": "I think since a lot of people indicated that a new remote control is hard to learn.",
+     "s": 0.0596
+    },
+    {
+     "id": "AMI_TS3003c_H00_MTD009PM_0108773_0109157",
+     "hyp": "  So maybe a docking station will help them give the remote a place",
+     "s": 0.0568
+    },
+    {
+     "id": "AMI_TS3003c_H00_MTD009PM_0151424_0151767",
+     "hyp": "So everybody's okay with uh changing covers?",
+     "s": 0.049
+    },
+    {
+     "id": "AMI_TS3003c_H00_MTD009PM_0223007_0223394",
+     "hyp": "Me sure uh let's see.",
+     "s": 0.0532
+    },
+    {
+     "id": "AMI_TS3003c_H01_MTD011UID_0056340_0056736",
+     "hyp": " Um and yeah overall um user-friendly.",
+     "s": 0.0513
+    },
+    {
+     "id": "AMI_TS3003c_H01_MTD011UID_0061248_0061666",
+     "hyp": "television uh put a sound of uh put a sound off, uh",
+     "s": 0.0868
+    },
+    {
+     "id": "AMI_TS3003c_H01_MTD011UID_0074788_0075199",
+     "hyp": "Yeah, the place where people uh most often looks at uh.",
+     "s": 0.0538
+    },
+    {
+     "id": "AMI_TS3003c_H01_MTD011UID_0077038_0077404",
+     "hyp": " Um it's uh quite uh",
+     "s": 0.0449
+    },
+    {
+     "id": "AMI_TS3003c_H01_MTD011UID_0201075_0201425",
+     "hyp": "Uh to make this side um like mm.",
+     "s": 0.0479
+    },
+    {
+     "id": "AMI_TS3003c_H02_MTD0010ID_0086341_0086677",
+     "hyp": "Uh for the b buttons we can use plastic or rubber",
+     "s": 0.0497
+    },
+    {
+     "id": "AMI_TS3003c_H02_MTD0010ID_0098719_0099113",
+     "hyp": "  You don't wanna swing before you can watch television.",
+     "s": 0.0546
+    },
+    {
+     "id": "AMI_TS3003c_H02_MTD0010ID_0100360_0100754",
+     "hyp": "Well you b you basically shake your remote and then it powers up.",
+     "s": 0.0561
+    },
+    {
+     "id": "AMI_TS3003c_H03_MTD012ME_0021224_0021610",
+     "hyp": "We distributed some more on-cat questionnaires.",
+     "s": 0.0537
+    },
+    {
+     "id": "AMI_TS3003c_H03_MTD012ME_0033107_0033520",
+     "hyp": "Um this leads us to some personal preferences",
+     "s": 0.0534
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0007073_0007473",
+     "hyp": "  And then we're going to close the project today as well",
+     "s": 0.0536
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0051551_0051892",
+     "hyp": "So that's uh not much to say either",
+     "s": 0.0473
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0056577_0056973",
+     "hyp": "I think we can uh discard the help and the mute button.",
+     "s": 0.0525
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0104376_0104780",
+     "hyp": " Can we use can't we integrate the teletext and the subtitles in one button?",
+     "s": 0.0584
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0144030_0144412",
+     "hyp": " Before we went on to the to the whole design.",
+     "s": 0.0495
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0185246_0185657",
+     "hyp": "And they wanna put fashion in their products",
+     "s": 0.0506
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0206916_0207281",
+     "hyp": " Also you two of you with the last phase.",
+     "s": 0.0478
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0212384_0212719",
+     "hyp": "SMARTboard was irritating",
+     "s": 0.0474
+    },
+    {
+     "id": "AMI_TS3003d_H00_MTD009PM_0245777_0246188",
+     "hyp": "   We can put these in the project folder as well.",
+     "s": 0.0523
+    },
+    {
+     "id": "AMI_TS3003d_H02_MTD0010ID_0030312_0030651",
+     "hyp": "   And well the on-off button it's it's a necessity.",
+     "s": 0.0544
+    },
+    {
+     "id": "AMI_TS3003d_H02_MTD0010ID_0122725_0123125",
+     "hyp": "We could make two buttons out of that",
+     "s": 0.0485
+    },
+    {
+     "id": "AMI_TS3003d_H03_MTD012ME_0162952_0163317",
+     "hyp": " Are there not too many functions uh amount of functions",
+     "s": 0.0508
+    }
+   ]
+  },
+  "earnings22": {
+   "wer": 10.24,
+   "rtf": 0.0152,
+   "proc_s": 18.26,
+   "audio_s": 1204.87,
+   "n": 200,
+   "hyps": [
+    {
+     "id": "4432298/126.wav",
+     "hyp": "Our cooperation with distributors and the retail stores which keep selling it again.",
+     "s": 0.0638
+    },
+    {
+     "id": "4432298/133.wav",
+     "hyp": "But there is a process, we're in the middle of that process and this conversation is happening.",
+     "s": 0.0657
+    },
+    {
+     "id": "4432298/143.wav",
+     "hyp": "I assume you mean that digital percent of cyberpunk sales.",
+     "s": 0.0586
+    },
+    {
+     "id": "4432298/145.wav",
+     "hyp": "Sales overall. Yeah, overall.",
+     "s": 0.0878
+    },
+    {
+     "id": "4432298/153.wav",
+     "hyp": "One is what we call permanent markdown, which is like a permanent slash of price, and the other one is promotional.",
+     "s": 0.0742
+    },
+    {
+     "id": "4432298/165.wav",
+     "hyp": "Cyberpunk, of course, a big part of the team still working on cyberpunk.",
+     "s": 0.164
+    },
+    {
+     "id": "4432298/166.wav",
+     "hyp": "But definitely there are teams preparing future unannounced projects.",
+     "s": 0.2527
+    },
+    {
+     "id": "4432298/169.wav",
+     "hyp": "development. It's rather preparation for future works, not development",
+     "s": 0.1159
+    },
+    {
+     "id": "4432298/181.wav",
+     "hyp": "Thank you",
+     "s": 0.0493
+    },
+    {
+     "id": "4432298/191.wav",
+     "hyp": "",
+     "s": 0.0411
+    },
+    {
+     "id": "4432298/205.wav",
+     "hyp": "Thank you.",
+     "s": 0.1593
+    },
+    {
+     "id": "4432298/216.wav",
+     "hyp": "And that's something we will gladly discuss on our H1 results.",
+     "s": 0.1719
+    },
+    {
+     "id": "4432298/220.wav",
+     "hyp": "of the MNA transactions.",
+     "s": 0.0518
+    },
+    {
+     "id": "4432298/245.wav",
+     "hyp": "Thank you, very helpful.",
+     "s": 0.0793
+    },
+    {
+     "id": "4432298/250.wav",
+     "hyp": "Firstly, on the R and D that's being expensed on early stage work, is that a new thing",
+     "s": 0.1214
+    },
+    {
+     "id": "4432298/257.wav",
+     "hyp": "Or does it somehow involve kind of also satisfying them about next gen",
+     "s": 0.0602
+    },
+    {
+     "id": "4432298/299.wav",
+     "hyp": "So honestly speaking, I mean, it would be unheard of to go back to the level of sales from the month of the launch.",
+     "s": 0.1757
+    },
+    {
+     "id": "4432298/302.wav",
+     "hyp": "Really, when it comes to marketing support of coming back to the PlayStation, I would not really expect",
+     "s": 0.1188
+    },
+    {
+     "id": "4432298/305.wav",
+     "hyp": "Nothing nothing bombastic, so to say.",
+     "s": 0.0568
+    },
+    {
+     "id": "4432298/314.wav",
+     "hyp": "Thank you. So now we have a section to answer the questions asked on",
+     "s": 0.0974
+    },
+    {
+     "id": "4432298/325.wav",
+     "hyp": "Uh that's tricky because actually our patches some of are larger, some are smaller.",
+     "s": 0.0994
+    },
+    {
+     "id": "4432298/350.wav",
+     "hyp": "well and that was all on our chart",
+     "s": 0.0544
+    },
+    {
+     "id": "4432298/39.wav",
+     "hyp": "Second, during first quarter we run research and prototyping works for our subsequent projects.",
+     "s": 0.0669
+    },
+    {
+     "id": "4432298/64.wav",
+     "hyp": "Each time I comment on the results, I typically present a chart with our expenditures and development projects.",
+     "s": 0.1298
+    },
+    {
+     "id": "4432298/71.wav",
+     "hyp": "This year, the capitalized amount was smaller as many of the developers were moved to other tasks.",
+     "s": 0.1807
+    },
+    {
+     "id": "4450488/10.wav",
+     "hyp": "Ladies and gentlemen, I would like to welcome you on this still summertime afternoon.",
+     "s": 0.1028
+    },
+    {
+     "id": "4450488/110.wav",
+     "hyp": "The revenue of the capital group were up 32% on a year-to-year basis.",
+     "s": 0.0974
+    },
+    {
+     "id": "4450488/117.wav",
+     "hyp": "So first we have to accumulate goods before we sell the front batches.",
+     "s": 0.0643
+    },
+    {
+     "id": "4450488/130.wav",
+     "hyp": "In Sierra Gorda, the main driving force was the increase in the production volume.",
+     "s": 0.064
+    },
+    {
+     "id": "4450488/14.wav",
+     "hyp": "I think that the figures of today's meeting are 132 and 433",
+     "s": 0.1845
+    },
+    {
+     "id": "4450488/153.wav",
+     "hyp": "They were not included in Sierra Gorda in the consolidated statements.",
+     "s": 0.0616
+    },
+    {
+     "id": "4450488/162.wav",
+     "hyp": "energy. There are no negative deviations. We do have savings and we provided for savings in our budget.",
+     "s": 0.1287
+    },
+    {
+     "id": "4450488/166.wav",
+     "hyp": "And I've already explained that we had increased inventory, which was a temporary thing.",
+     "s": 0.1634
+    },
+    {
+     "id": "4450488/17.wav",
+     "hyp": "And the recurring comment is that copper prices were favourable to us.",
+     "s": 0.0585
+    },
+    {
+     "id": "4450488/170.wav",
+     "hyp": "And as a result, we had more ships coming to the port at the same time, all in June.",
+     "s": 0.0676
+    },
+    {
+     "id": "4450488/193.wav",
+     "hyp": "So let me turn the floor to Mr. Bugaichuk.",
+     "s": 0.0573
+    },
+    {
+     "id": "4450488/195.wav",
+     "hyp": "Everyone. Let me walk you through our investment projects and development projects.",
+     "s": 0.061
+    },
+    {
+     "id": "4450488/197.wav",
+     "hyp": "Perhaps the number is not very impressive, but let me say that our projects are very complex.",
+     "s": 0.0678
+    },
+    {
+     "id": "4450488/208.wav",
+     "hyp": "We have also completed our central air cooling system.",
+     "s": 0.0592
+    },
+    {
+     "id": "4450488/211.wav",
+     "hyp": "We are working on the Globofuan",
+     "s": 0.0499
+    },
+    {
+     "id": "4450488/213.wav",
+     "hyp": "Now our energy development program, we move twofold.",
+     "s": 0.1081
+    },
+    {
+     "id": "4450488/217.wav",
+     "hyp": "As of today, the plan is such that we will switch to this 50-50 system",
+     "s": 0.0635
+    },
+    {
+     "id": "4450488/225.wav",
+     "hyp": "So all these projects have been delivered as scheduled.",
+     "s": 0.1149
+    },
+    {
+     "id": "4450488/228.wav",
+     "hyp": "But obviously we will not rest on our laurels having communicated this good news to you.",
+     "s": 0.1102
+    },
+    {
+     "id": "4450488/24.wav",
+     "hyp": "In the context of Sierra Gorda comes another good number.",
+     "s": 0.1156
+    },
+    {
+     "id": "4450488/268.wav",
+     "hyp": "was very little has changed with regard to renewable energy sources.",
+     "s": 0.1595
+    },
+    {
+     "id": "4450488/3.wav",
+     "hyp": "We'll start traditionally with management board's comments on the results for the first half of the year",
+     "s": 0.127
+    },
+    {
+     "id": "4450488/315.wav",
+     "hyp": "In terms of inventory, as I explained, the inventory was up for technical reasons.",
+     "s": 0.1232
+    },
+    {
+     "id": "4450488/319.wav",
+     "hyp": "So this is all technical and therefore it doesn't affect our performance because this is a repeated cycle.",
+     "s": 0.0727
+    },
+    {
+     "id": "4450488/342.wav",
+     "hyp": "And I also wanted to ask you about the impact of electricity prices on your financial performance.",
+     "s": 0.1672
+    },
+    {
+     "id": "4450488/351.wav",
+     "hyp": "We want to come up with the technologies that will allow us to reduce energy consumption.",
+     "s": 0.0662
+    },
+    {
+     "id": "4450488/371.wav",
+     "hyp": "Is CAPEX going to be shouldered by Sierra Gorda or by external partners",
+     "s": 0.0967
+    },
+    {
+     "id": "4450488/386.wav",
+     "hyp": "suppliers of this equipment are actually talking about it everywhere",
+     "s": 0.1084
+    },
+    {
+     "id": "4450488/391.wav",
+     "hyp": "place I believe that we need time for technology to develop.",
+     "s": 0.0594
+    },
+    {
+     "id": "4450488/398.wav",
+     "hyp": "If the batteries develop substantially even it could be feasible.",
+     "s": 0.0588
+    },
+    {
+     "id": "4450488/405.wav",
+     "hyp": "And mine, such as ours, takes just a tiny fraction of this desert.",
+     "s": 0.0659
+    },
+    {
+     "id": "4450488/411.wav",
+     "hyp": "Obviously first they have to concentrate better into ammonia",
+     "s": 0.1126
+    },
+    {
+     "id": "4450488/415.wav",
+     "hyp": "We are in talks with all major manufacturers worldwide, so that's the situation right now.",
+     "s": 0.0725
+    },
+    {
+     "id": "4450488/433.wav",
+     "hyp": "But there was a question addressed to Martin Kluzinski from Jakub Kaimovich.",
+     "s": 0.1209
+    },
+    {
+     "id": "4450488/443.wav",
+     "hyp": "and if we have better transportation to the mill.",
+     "s": 0.1503
+    },
+    {
+     "id": "4450488/444.wav",
+     "hyp": "else and then we have better coordination with maintenance we act proactively",
+     "s": 0.0644
+    },
+    {
+     "id": "4450488/449.wav",
+     "hyp": "And also on the cost level we undertook a number of initiatives",
+     "s": 0.0582
+    },
+    {
+     "id": "4450488/45.wav",
+     "hyp": "And Sierra operates in cycles. Occasionally we encounter greater contents.",
+     "s": 0.0675
+    },
+    {
+     "id": "4450488/485.wav",
+     "hyp": "The CEO answered that you expected, among other things, reduction. I think it was a reduction.",
+     "s": 0.2592
+    },
+    {
+     "id": "4450488/495.wav",
+     "hyp": "And this fee will continue till the end of 2021.",
+     "s": 0.116
+    },
+    {
+     "id": "4450488/496.wav",
+     "hyp": "That depends on when the resolution that the CEO has just mentioned will come into force",
+     "s": 0.182
+    },
+    {
+     "id": "4450488/505.wav",
+     "hyp": "And let's hope we will meet again next quarter, hopefully with a bigger number of participants.",
+     "s": 0.0659
+    },
+    {
+     "id": "4450488/57.wav",
+     "hyp": "As regards specific financials, these will be presented by individual members of the management board.",
+     "s": 0.0698
+    },
+    {
+     "id": "4450488/58.wav",
+     "hyp": "Now I would like to give the floor to Andre Kensbach who will tell us about production figures but also financial.",
+     "s": 0.1864
+    },
+    {
+     "id": "4450488/66.wav",
+     "hyp": "therefore with a higher content of copper, but not necessarily with a higher content of silver",
+     "s": 0.0684
+    },
+    {
+     "id": "4450488/90.wav",
+     "hyp": "Ladies and gentlemen, the results on our foreign assets in particular Sierra Gorda and Robinson are very good",
+     "s": 0.133
+    },
+    {
+     "id": "4470290/127.wav",
+     "hyp": "And second, kind of as expected, you're going to draw down on the cash a bit, I guess, as people redeem vouchers.",
+     "s": 0.0773
+    },
+    {
+     "id": "4470290/13.wav",
+     "hyp": "For a description of this link, please refer to our filings with the Securities and Exchange Commission and our press release.",
+     "s": 0.1154
+    },
+    {
+     "id": "4470290/157.wav",
+     "hyp": "So we are confident that the pace of the recovery will be sustained over the next few months.",
+     "s": 0.0673
+    },
+    {
+     "id": "4470290/167.wav",
+     "hyp": "We do not expect that this will represent or be reflected in any lower take rates.",
+     "s": 0.0624
+    },
+    {
+     "id": "4470290/26.wav",
+     "hyp": "Second, another strong quarter in Colombia, where we observed significant pent up demand.",
+     "s": 0.1242
+    },
+    {
+     "id": "4470290/5.wav",
+     "hyp": "Now I would like to turn the call over to Ms. Natalia Nirenberg, Investor Relations.",
+     "s": 0.1016
+    },
+    {
+     "id": "4470290/56.wav",
+     "hyp": "To date, Pasaporte de Spira is available in Brazil, Argentina and Mexico",
+     "s": 0.1026
+    },
+    {
+     "id": "4470290/70.wav",
+     "hyp": "I will now turn the call over to Alberto to discuss this quarter's financial results.",
+     "s": 0.0652
+    },
+    {
+     "id": "4470290/75.wav",
+     "hyp": "The ratio of cancellations to gross bookings decreased thirty-three basis points quarter on quarter.",
+     "s": 0.0685
+    },
+    {
+     "id": "4470290/78.wav",
+     "hyp": "Algorithms. Now, please turn to slide seven.",
+     "s": 0.1057
+    },
+    {
+     "id": "4470290/93.wav",
+     "hyp": "Now please turn to slide nine for the key takeaways of the quarter.",
+     "s": 0.1108
+    },
+    {
+     "id": "4479741/121.wav",
+     "hyp": "for your attention and with this I would like to hand over to the Q??",
+     "s": 0.1146
+    },
+    {
+     "id": "4479741/134.wav",
+     "hyp": "If you could say what is the negative impact of input cost in Q one versus last year.",
+     "s": 0.0647
+    },
+    {
+     "id": "4479741/141.wav",
+     "hyp": "Just recapping your question is about the input cost, our process for price increases.",
+     "s": 0.0645
+    },
+    {
+     "id": "4479741/146.wav",
+     "hyp": "We have seen higher cost and it's also impacted our results for QON",
+     "s": 0.0987
+    },
+    {
+     "id": "4479741/166.wav",
+     "hyp": "And then I wonder what this implies for the HMO revenue in the quarter.",
+     "s": 0.0663
+    },
+    {
+     "id": "4479741/176.wav",
+     "hyp": "So for sure, a encouraging start of the year with good momentum across our two business areas",
+     "s": 0.069
+    },
+    {
+     "id": "4479741/177.wav",
+     "hyp": "And as I stated in the call, we also see good momentum going into Q two",
+     "s": 0.1157
+    },
+    {
+     "id": "4479741/192.wav",
+     "hyp": "So a couple of comments. I think your calculation of HMO is not one hundred percent correct.",
+     "s": 0.1236
+    },
+    {
+     "id": "4479741/194.wav",
+     "hyp": "is it was launched online and it was, let's say, what would be called a pre-launch.",
+     "s": 0.0672
+    },
+    {
+     "id": "4479741/196.wav",
+     "hyp": "most of those orders being secured by our long-term contracts",
+     "s": 0.0586
+    },
+    {
+     "id": "4479741/207.wav",
+     "hyp": "where I understand that you say that the growth will now be more front end loaded for the full year.",
+     "s": 0.105
+    },
+    {
+     "id": "4479741/226.wav",
+     "hyp": "clear we would like to avoid to give you absolute numbers on the revenue from from HMO",
+     "s": 0.0682
+    },
+    {
+     "id": "4479741/252.wav",
+     "hyp": "low. This is a business and a market that's only growing and emerging now as we speak.",
+     "s": 0.1242
+    },
+    {
+     "id": "4479741/259.wav",
+     "hyp": "And that is consistent, Georgina, with what we have said both for HMO and probiotics",
+     "s": 0.0656
+    },
+    {
+     "id": "4479741/263.wav",
+     "hyp": "Our next question comes from the line of Heidi Sternen of Exxon BMP Paraba.",
+     "s": 0.066
+    },
+    {
+     "id": "4479741/279.wav",
+     "hyp": "particularly in our probiotics solutions.",
+     "s": 0.0547
+    },
+    {
+     "id": "4479741/291.wav",
+     "hyp": "Could that have an impact in FCNE or is that not a concern for the",
+     "s": 0.0603
+    },
+    {
+     "id": "4479741/299.wav",
+     "hyp": "The first one just on pricing to offset input cost inflation.",
+     "s": 0.0571
+    },
+    {
+     "id": "4479741/331.wav",
+     "hyp": "So what visibility do you have and maybe help me frame what volatility here means",
+     "s": 0.1005
+    },
+    {
+     "id": "4479741/334.wav",
+     "hyp": "And then secondly, if you can shed some light of historical growth rate for the lighthouses, you have to put the thirty five percent growth rate into context.",
+     "s": 0.0865
+    },
+    {
+     "id": "4479741/335.wav",
+     "hyp": "talked about that not being representative for the full year but if I recall we've seen a specific number for this.",
+     "s": 0.0744
+    },
+    {
+     "id": "4479741/341.wav",
+     "hyp": "I would not mention specifically could you see a negative quarter.",
+     "s": 0.0602
+    },
+    {
+     "id": "4479741/353.wav",
+     "hyp": "Just remind me, Matthias, was there a second part to your question that we haven't",
+     "s": 0.0633
+    },
+    {
+     "id": "4479741/364.wav",
+     "hyp": "So percentage on a quarterly basis can be misleading.",
+     "s": 0.0573
+    },
+    {
+     "id": "4479741/374.wav",
+     "hyp": "No, you've mentioned benefits from timing of orders in plant health and product launches in HMOs.",
+     "s": 0.0685
+    },
+    {
+     "id": "4479741/376.wav",
+     "hyp": "Plant health and HMOs, as I understand human health, is just a one time benefit",
+     "s": 0.0681
+    },
+    {
+     "id": "4479741/377.wav",
+     "hyp": "And Lucy, if you can give us an indication on the performance of bioprotection in the quarter, it would be great",
+     "s": 0.0728
+    },
+    {
+     "id": "4479741/4.wav",
+     "hyp": "This will take approximately twenty minutes and then we will move on to Q?? A.",
+     "s": 0.0668
+    },
+    {
+     "id": "4479741/40.wav",
+     "hyp": "Health and Nutrition recovered after a very soft quarter, reaching thirteen percent organic growth in Q1",
+     "s": 0.1344
+    },
+    {
+     "id": "4479741/415.wav",
+     "hyp": "We base this on that this is what we have usually done and we are in very good collaboration with the customers on that.",
+     "s": 0.111
+    },
+    {
+     "id": "4479741/436.wav",
+     "hyp": "Yes, so let me start with human health.",
+     "s": 0.1044
+    },
+    {
+     "id": "4479741/446.wav",
+     "hyp": "it was mainly volume driven and mainly volume driven and mainly in developed markets.",
+     "s": 0.1756
+    },
+    {
+     "id": "4479741/51.wav",
+     "hyp": "Growth in health and nutrition was positively impacted by order timing as Q4 was very",
+     "s": 0.0658
+    },
+    {
+     "id": "4479741/61.wav",
+     "hyp": "review thank you Mauricio and welcome also",
+     "s": 0.1123
+    },
+    {
+     "id": "4479741/72.wav",
+     "hyp": "Excluding HMO, our health and nutrition EBIT margin would have been above last year.",
+     "s": 0.065
+    },
+    {
+     "id": "4479741/98.wav",
+     "hyp": "And with this, I would like to hand back over to Mauricio to present our new climate.",
+     "s": 0.0963
+    },
+    {
+     "id": "4483338/11.wav",
+     "hyp": "we seem to have a little bit of technical issues with the operator system. But here we are",
+     "s": 0.2536
+    },
+    {
+     "id": "4483338/143.wav",
+     "hyp": "we have already started migrating our first customers with successful results.",
+     "s": 0.098
+    },
+    {
+     "id": "4483338/151.wav",
+     "hyp": "I'm happy to announce that we can now guide for the full year in accordance with our midterm guidance.",
+     "s": 0.0691
+    },
+    {
+     "id": "4483338/175.wav",
+     "hyp": "With the five G auctions now concluded in Latvia, we will start to ramp up the five G rollout while preparing for the auctions in Lithuania and Estonia.",
+     "s": 0.086
+    },
+    {
+     "id": "4483338/214.wav",
+     "hyp": "And we'll be back at what the consensus was. But this is how we are.",
+     "s": 0.0597
+    },
+    {
+     "id": "4483338/221.wav",
+     "hyp": "And then within that, the fourth quarter is typically a very high trading season.",
+     "s": 0.0621
+    },
+    {
+     "id": "4483338/232.wav",
+     "hyp": "Or do we then rely on operational gearing to drive the growth forward?",
+     "s": 0.0617
+    },
+    {
+     "id": "4483338/240.wav",
+     "hyp": "Excuse me, Andrew, have you finished with your questions",
+     "s": 0.0596
+    },
+    {
+     "id": "4483338/260.wav",
+     "hyp": "That's right, I mean, that's generally you would hope not to see higher chair when contracts expire",
+     "s": 0.0702
+    },
+    {
+     "id": "4483338/270.wav",
+     "hyp": "So it's a decision that we have made internally based on how we think we can get the most value out of the approach.",
+     "s": 0.1903
+    },
+    {
+     "id": "4483338/278.wav",
+     "hyp": "First of all, from a commercial point of view, in the consumer market, we are really executing on a value strategy, right?",
+     "s": 0.1353
+    },
+    {
+     "id": "4483338/31.wav",
+     "hyp": "and we were able to achieve a very good valuation for the company.",
+     "s": 0.0581
+    },
+    {
+     "id": "4483338/327.wav",
+     "hyp": "So you see a very high cash flow generation in the business.",
+     "s": 0.1122
+    },
+    {
+     "id": "4483338/331.wav",
+     "hyp": "course, I cannot say anything about what we're going to do this year, but the board is very committed to our policy",
+     "s": 0.0738
+    },
+    {
+     "id": "4483338/392.wav",
+     "hyp": "if you compare to the Q three and Q four ASPO, it's a flat development.",
+     "s": 0.12
+    },
+    {
+     "id": "4483338/395.wav",
+     "hyp": "it works in the right direction for us in B2B.",
+     "s": 0.1032
+    },
+    {
+     "id": "4483338/41.wav",
+     "hyp": "In Q four, we decided to take our foot off the gas a bit in terms of commercial spending",
+     "s": 0.0636
+    },
+    {
+     "id": "4483338/428.wav",
+     "hyp": "And you see the what BT is doing in the UK as maybe one way of doing it",
+     "s": 0.0631
+    },
+    {
+     "id": "4483338/434.wav",
+     "hyp": "Do you think that in Sweden it will be similar, the increase this year to last",
+     "s": 0.1115
+    },
+    {
+     "id": "4483338/460.wav",
+     "hyp": "So there is a clip out there that describes how that journey goes.",
+     "s": 0.063
+    },
+    {
+     "id": "4483338/473.wav",
+     "hyp": "you can turn it on when you choose that allows you to dip in and out of the market to optimize your return on spend.",
+     "s": 0.0734
+    },
+    {
+     "id": "4483338/483.wav",
+     "hyp": "One of the reasons why Stefan is successful in B2B is that they do much better analysis now.",
+     "s": 0.0676
+    },
+    {
+     "id": "4483338/505.wav",
+     "hyp": "And the guidance for our CapEx, you have it, will be at the upper end, clearly.",
+     "s": 0.0632
+    },
+    {
+     "id": "4483338/522.wav",
+     "hyp": "We will continue to do that also this year.",
+     "s": 0.0552
+    },
+    {
+     "id": "4483338/528.wav",
+     "hyp": "that's where we still have a lot of opportunity and mileage to go.",
+     "s": 0.0968
+    },
+    {
+     "id": "4483338/534.wav",
+     "hyp": "And the last question comes online of Abhilash Mohapatra from Berenberg Bank.",
+     "s": 0.0638
+    },
+    {
+     "id": "4483338/541.wav",
+     "hyp": "Looks like consensus has around 1% growth for Sweden in both consumer and business",
+     "s": 0.0698
+    },
+    {
+     "id": "4483338/566.wav",
+     "hyp": "We are and the last question comes from Lan of Nick Lyle from So",
+     "s": 0.0631
+    },
+    {
+     "id": "4483338/574.wav",
+     "hyp": "Well, could you just explain why that's why that is or is not a true reflection of the sort of network quality? And",
+     "s": 0.1253
+    },
+    {
+     "id": "4483338/580.wav",
+     "hyp": "Could you just explain the sort of background to the market on the fixed side and the broadband side?",
+     "s": 0.067
+    },
+    {
+     "id": "4483338/59.wav",
+     "hyp": "country. So let's move over to Sweden Consumer on Slide five.",
+     "s": 0.061
+    },
+    {
+     "id": "4483338/611.wav",
+     "hyp": "And thank you very much everyone for joining us this morning to go through the full year of twenty one and our outlook for twenty two.",
+     "s": 0.0773
+    },
+    {
+     "id": "4483338/74.wav",
+     "hyp": "The mobile last two declined in the quarter by four percent, but we clearly see improvements from the levels witnessed at the end of last year.",
+     "s": 0.1891
+    },
+    {
+     "id": "4485244/123.wav",
+     "hyp": "Historically, private wealth has contributed about 10 to 20 percent of the money that we raise annually.",
+     "s": 0.0755
+    },
+    {
+     "id": "4485244/13.wav",
+     "hyp": "And as a reminder, we report our segment numbers on an adjusted share basis.",
+     "s": 0.1169
+    },
+    {
+     "id": "4485244/134.wav",
+     "hyp": "A year ago, we were at $17 billion of AUM across core, and today that figure is north of forty billion.",
+     "s": 0.0776
+    },
+    {
+     "id": "4485244/14.wav",
+     "hyp": "Our call will contain forward looking statements, which do not guarantee future events or performance.",
+     "s": 0.0696
+    },
+    {
+     "id": "4485244/171.wav",
+     "hyp": "And then secondly, Rob, you mentioned a number of fundraising initiatives for twenty twenty two.",
+     "s": 0.0692
+    },
+    {
+     "id": "4485244/186.wav",
+     "hyp": "So again, really it's I think the overall takeaway, lots of activity and it just continues to feel like we have a lot of momentum.",
+     "s": 0.0787
+    },
+    {
+     "id": "4485244/19.wav",
+     "hyp": "Organically, over the last twelve months, AUM at KKR increased forty eight percent.",
+     "s": 0.0669
+    },
+    {
+     "id": "4485244/196.wav",
+     "hyp": "So I think the expectation should certainly be continued management fee growth from us and being able to do so in a sustainable basis over time",
+     "s": 0.0798
+    },
+    {
+     "id": "4485244/20.wav",
+     "hyp": "For an asset management business of our size, that alone is a pretty remarkable statistic.",
+     "s": 0.0648
+    },
+    {
+     "id": "4485244/21.wav",
+     "hyp": "and including the Global Atlantic acquisition, AUM increased eighty seven percent year over year.",
+     "s": 0.0708
+    },
+    {
+     "id": "4485244/234.wav",
+     "hyp": "And so individual investors are less than 5%. And by our research, we actually think that number is in around 2% to 3%.",
+     "s": 0.0744
+    },
+    {
+     "id": "4485244/235.wav",
+     "hyp": "We have this enormous end market. It's underpenetrated with allocations that are increasing.",
+     "s": 0.0704
+    },
+    {
+     "id": "4485244/238.wav",
+     "hyp": "So one, we're focused on our partnerships with private wealth platforms.",
+     "s": 0.0601
+    },
+    {
+     "id": "4485244/240.wav",
+     "hyp": "And outside the US, it's the global private banks and the regional private banks",
+     "s": 0.0608
+    },
+    {
+     "id": "4485244/241.wav",
+     "hyp": "And so the business is organized by geography here, and you're correct, you've seen some hiring related to that.",
+     "s": 0.0731
+    },
+    {
+     "id": "4485244/256.wav",
+     "hyp": "As it relates to Q1, we already have a good amount of visibility into some pretty meaningful revenue from monetization activity.",
+     "s": 0.1877
+    },
+    {
+     "id": "4485244/275.wav",
+     "hyp": "And then if rates were to go up, can you walk us through what the net impact would be between maybe a higher ROE there versus any impact on management fees?",
+     "s": 0.083
+    },
+    {
+     "id": "4485244/280.wav",
+     "hyp": "And so we do see rates certainly increasing like the rest of the market.",
+     "s": 0.06
+    },
+    {
+     "id": "4485244/284.wav",
+     "hyp": "Now of course, there are uncertainties around weights are going, but I think there's a number of areas where we're, I think, pretty well competitively positioned",
+     "s": 0.0874
+    },
+    {
+     "id": "4485244/308.wav",
+     "hyp": "So no updated guidance for twenty two, but suffice it to say, we well exceeded what we told you a year ago.",
+     "s": 0.0734
+    },
+    {
+     "id": "4485244/343.wav",
+     "hyp": "So we invested ten billion dollars in twenty twenty, we invested ten point two in twenty twenty one.",
+     "s": 0.067
+    },
+    {
+     "id": "4485244/365.wav",
+     "hyp": "Hoping we could get an update just on the strategic investments within your kind of perpetual capital sleeves.",
+     "s": 0.0747
+    },
+    {
+     "id": "4485244/374.wav",
+     "hyp": "It's again capital where you can have recycling, which can be very valuable from an economic standpoint.",
+     "s": 0.1285
+    },
+    {
+     "id": "4485244/382.wav",
+     "hyp": "And then just as a follow up, appreciate the thoughts around the private wealth channel. But",
+     "s": 0.069
+    },
+    {
+     "id": "4485244/411.wav",
+     "hyp": "The only thing I'd add, Greg, is that it's going to be a constantly evolving answer to your question.",
+     "s": 0.0709
+    },
+    {
+     "id": "4485244/432.wav",
+     "hyp": "And we've talked about in the past that we think we could take our Asia business and make it one day as big as our North America business.",
+     "s": 0.112
+    },
+    {
+     "id": "4485244/435.wav",
+     "hyp": "Two, we have a huge head start and competitive advantage versus our competitors.",
+     "s": 0.067
+    },
+    {
+     "id": "4485244/437.wav",
+     "hyp": "We've got five products, X private equity, that will be fundraising for capital in Asia in 2022.",
+     "s": 0.0717
+    },
+    {
+     "id": "4485244/439.wav",
+     "hyp": "what we're doing across real assets and real estate and infrastructure, we think is really exciting.",
+     "s": 0.0674
+    },
+    {
+     "id": "4485244/455.wav",
+     "hyp": "So we've got lots of opportunities to scale, and we haven't even hit all of them today.",
+     "s": 0.0665
+    },
+    {
+     "id": "4485244/463.wav",
+     "hyp": "How should we think about margin expansion in 2022 relative to 2021?",
+     "s": 0.0606
+    },
+    {
+     "id": "4485244/485.wav",
+     "hyp": "Scott, you mentioned obviously some products on the yield side gaining attention.",
+     "s": 0.0642
+    },
+    {
+     "id": "4485244/496.wav",
+     "hyp": "it's off to a great start at the real estate business",
+     "s": 0.0941
+    },
+    {
+     "id": "4485244/497.wav",
+     "hyp": "So it just feels like we have a lot of momentum, which is really exciting for us.",
+     "s": 0.0638
+    },
+    {
+     "id": "4485244/511.wav",
+     "hyp": "That. And then, as it relates to the dry powder, it's a tough question to answer.",
+     "s": 0.0668
+    },
+    {
+     "id": "4485244/512.wav",
+     "hyp": "It is really a function of how active the investment environment is coupled with our fundraising activity.",
+     "s": 0.0702
+    },
+    {
+     "id": "4485244/53.wav",
+     "hyp": "Capital invested in both traditional private equity and core private equity was strong.",
+     "s": 0.064
+    },
+    {
+     "id": "4485244/535.wav",
+     "hyp": "And so that's kind of part one to the answer your question as to why the quantum is greater than we'd anticipated.",
+     "s": 0.0704
+    },
+    {
+     "id": "4485244/562.wav",
+     "hyp": "So if you included Global Atlantic in that number, we'd be a little bit below $7 billion of deployment for the year.",
+     "s": 0.1173
+    },
+    {
+     "id": "4485244/573.wav",
+     "hyp": "It's a topical one and we're spending a lot of time internally focused on it",
+     "s": 0.1002
+    },
+    {
+     "id": "4485244/575.wav",
+     "hyp": "In general, the industry is getting more sophisticated and we think that is ultimately a good thing for policyholders",
+     "s": 0.108
+    },
+    {
+     "id": "4485244/578.wav",
+     "hyp": "We know they are working to gather information and industry feedback and beyond that there's really not a lot that we can comment on",
+     "s": 0.0777
+    },
+    {
+     "id": "4485244/592.wav",
+     "hyp": "I would say the space around block transactions, I'm sure as you noted, has become a little bit more competitive.",
+     "s": 0.0748
+    },
+    {
+     "id": "4485244/597.wav",
+     "hyp": "Thank you.",
+     "s": 0.0493
+    },
+    {
+     "id": "4485244/60.wav",
+     "hyp": "And finally, I want to touch on capital return before Rob walks through our earnings profile",
+     "s": 0.1196
+    },
+    {
+     "id": "4485244/68.wav",
+     "hyp": "Management fee growth was driven by closes across a number of active funds in the quarter.",
+     "s": 0.0658
+    },
+    {
+     "id": "4485244/78.wav",
+     "hyp": "Fee related compensation came in right at that twenty two point five percent mark, the midpoint of the range we've discussed previously",
+     "s": 0.0811
+    },
+    {
+     "id": "4485244/80.wav",
+     "hyp": "The increase here was driven by higher placement fees as well as professional fees given high activity levels across the firm",
+     "s": 0.1897
+    },
+    {
+     "id": "4485244/90.wav",
+     "hyp": "Our insurance segment also experienced an incredibly strong quarter with three hundred forty seven million of operating earnings.",
+     "s": 0.0786
+    }
+   ]
+  }
+ },
+ "date": "2026-09-27 19:18"
+}

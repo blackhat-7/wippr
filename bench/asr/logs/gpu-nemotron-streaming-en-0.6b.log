@@ -1,0 +1,55 @@
+(null): No such file or directory
+OneLogger: Setting error_handling_strategy to DISABLE_QUIETLY_AND_REPORT_METRIC_ERROR for rank (rank=0) with OneLogger disabled. To override: explicitly set error_handling_strategy parameter.
+No exporters were provided. This means that no telemetry data will be collected.
+(null): No such file or directory
+[NeMo I 2026-09-27 19:23:50 mixins:194] Tokenizer SentencePieceTokenizer initialized with 1024 tokens
+[NeMo W 2026-09-27 19:23:50 modelPT:175] If you intend to do training or fine-tuning, please call the ModelPT.setup_training_data() method and provide a valid configuration file to setup the train data loader.
+    Train config : 
+    use_lhotse: true
+    skip_missing_manifest_entries: true
+    input_cfg: null
+    tarred_audio_filepaths: null
+    manifest_filepath: null
+    sample_rate: 16000
+    shuffle: true
+    num_workers: 2
+    pin_memory: true
+    max_duration: 40.0
+    min_duration: 0.1
+    text_field: answer
+    batch_duration: null
+    use_bucketing: true
+    max_tps: null
+    bucket_duration_bins: null
+    bucket_batch_size: null
+    num_buckets: null
+    bucket_buffer_size: null
+    shuffle_buffer_size: null
+    augmentor: null
+    
+[NeMo W 2026-09-27 19:23:50 modelPT:182] If you intend to do validation, please call the ModelPT.setup_validation_data() or ModelPT.setup_multiple_validation_data() method and provide a valid configuration file to setup the validation data loader(s). 
+    Validation config : 
+    use_lhotse: true
+    manifest_filepath: /data/ASR/en/librispeech/test-other.json
+    sample_rate: 16000
+    batch_size: 32
+    shuffle: false
+    max_duration: 40.0
+    min_duration: 0.1
+    num_workers: 2
+    pin_memory: true
+    text_field: answer
+    tarred_audio_filepaths: null
+    
+[NeMo I 2026-09-27 19:23:52 rnnt_models:226] Using RNNT Loss : warprnnt_numba
+    Loss warprnnt_numba_kwargs: {'fastemit_lambda': 0.005, 'clamp': -1.0}
+[NeMo I 2026-09-27 19:23:52 rnnt_models:226] Using RNNT Loss : warprnnt_numba
+    Loss warprnnt_numba_kwargs: {'fastemit_lambda': 0.005, 'clamp': -1.0}
+[NeMo I 2026-09-27 19:23:52 rnnt_models:226] Using RNNT Loss : warprnnt_numba
+    Loss warprnnt_numba_kwargs: {'fastemit_lambda': 0.005, 'clamp': -1.0}
+[NeMo I 2026-09-27 19:23:53 save_restore_connector:287] Model EncDecRNNTBPEModel was successfully restored from /home/illusion/.cache/huggingface/hub/models--nvidia--nemotron-speech-streaming-en-0.6b/snapshots/ebe59e5a817142986528bbbee5dba8db7b38ed50/nemotron-speech-streaming-en-0.6b.nemo.
+nemotron-streaming-en-0.6b gpu ls-clean: WER 1.57%  RTF 0.0243
+nemotron-streaming-en-0.6b gpu ls-other: WER 5.33%  RTF 0.0208
+nemotron-streaming-en-0.6b gpu ami: WER 8.80%  RTF 0.0160
+nemotron-streaming-en-0.6b gpu earnings22: WER 12.89%  RTF 0.0146
+{"model": "nemotron-streaming-en-0.6b", "device": "gpu", "backend": "nemo", "args": ["nvidia/nemotron-speech-streaming-en-0.6b", [70, 6]], "threads": null, "load_s": 7.7, "params_m": 618.1, "precision": "fp32", "peak_rss_mb": 3992, "gpu_peak_alloc_mb": 5015, "latency": {"clip5_s": 0.0537, "clip15_s": 0.1259}, "date": "2026-09-27 19:25"}

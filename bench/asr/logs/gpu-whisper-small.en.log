@@ -1,0 +1,5 @@
+whisper-small.en gpu ls-clean: WER 2.26%  RTF 0.0158
+whisper-small.en gpu ls-other: WER 6.40%  RTF 0.0161
+whisper-small.en gpu ami: WER 15.91%  RTF 0.0190
+whisper-small.en gpu earnings22: WER 12.23%  RTF 0.0149
+{"model": "whisper-small.en", "device": "gpu", "backend": "whispercpp", "args": ["ggml-small.en-q8_0.bin"], "threads": null, "load_s": 0.6, "precision": "q8_0 ggml", "disk_mb": 252, "peak_rss_mb": 688, "latency": {"clip5_s": 0.0972, "clip15_s": 0.2343}, "date": "2026-09-27 19:01"}
