@@ -1,9 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <title>noboard</title>
   <rect width="1024" height="1024" fill="#000"/>
-  <g fill="none" stroke="#fff" stroke-width="56" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M317 344 Q382 434 447 344 T577 344 T707 344"/>
-    <path d="M187 512 Q252 388 317 512 T447 512 T577 512 T707 512 T837 512"/>
-    <path d="M317 680 Q382 770 447 680 T577 680 T707 680"/>
+  <g fill="none" stroke="#fff" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
+    <!-- the back of the wave rising to the crest, the lip throwing forward and curling into the barrel -->
+    <path d="M905 775 C845 600 795 360 625 250 C485 160 292 210 252 362 C230 452 302 506 364 475 C414 449 406 385 362 385"/>
+    <!-- flat water turning up into the steep, hollow face under the lip -->
+    <path d="M115 775 L300 775 C470 775 565 625 565 432"/>
   </g>
 </svg>
