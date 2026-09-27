@@ -19,9 +19,14 @@ final class Cleaner {
     func clean(_ raw: String) async -> String {
         guard let session, !raw.isEmpty else { return raw }
         do {
+            #if compiler(>=6.4) // Xcode 27 SDK renamed it; back-deployed to iOS 26
+            let options = GenerationOptions(samplingMode: .greedy)
+            #else
+            let options = GenerationOptions(sampling: .greedy)
+            #endif
             let response = try await session.respond(
                 to: "<transcript>\n\(raw)\n</transcript>",
-                options: GenerationOptions(sampling: .greedy)
+                options: options
             )
             let text = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
             return text.isEmpty ? raw : text

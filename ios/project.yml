@@ -10,7 +10,7 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
     CODE_SIGN_STYLE: Automatic
-    DEVELOPMENT_TEAM: "" # set your team ID, or pick it in Xcode
+    DEVELOPMENT_TEAM: CRH6P5D9K2
     MARKETING_VERSION: "0.1"
     CURRENT_PROJECT_VERSION: "1"
 

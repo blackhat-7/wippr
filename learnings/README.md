@@ -30,3 +30,4 @@ Shared memory for every agent and session working on wippr. Read this folder bef
 - [rocm-setup.md](rocm-setup.md) — llama.cpp HIP build, sherpa-onnx/whisper-normalizer deps, GPU sharing with other projects
 - [bench-asr.md](bench-asr.md) — PARTIAL (CPU only): bundled ASR (Parakeet v2/v3/110m, Whisper small.en, Moonshine) vs Apple SpeechTranscriber: WER on LibriSpeech/AMI/earnings22, 4-thread RTF/latency, published SpeechTranscriber numbers, verdict (keep SpeechTranscriber; Parakeet v2 is the bundle pick if ever needed)
 - [decision-stack.md](decision-stack.md) — phone stack: Apple SpeechTranscriber + Foundation Models ship; Parakeet TDT 0.6B v2 and S1-mini are the bundled fallbacks; when to switch; what's ruled out
+- [device-testing.md](device-testing.md) — Phase 4 on-device results (iPhone 18 Pro Max, iOS 27.0): build/signing notes, per-trigger results, latency
