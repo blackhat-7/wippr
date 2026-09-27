@@ -1,0 +1,21 @@
+name: iOS build
+
+on:
+  push:
+    paths: ["ios/**", ".github/workflows/ios-build.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcodebuild -version
+      - name: Generate project
+        run: brew install xcodegen && cd ios && xcodegen
+      - name: Build app + widget extension (simulator, unsigned)
+        run: |
+          cd ios
+          xcodebuild build -project Wippr.xcodeproj -target Wippr -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO > build.log 2>&1 || { grep -E 'error:' build.log; tail -40 build.log; exit 1; }
+          grep -E 'warning:' build.log | sort -u || true

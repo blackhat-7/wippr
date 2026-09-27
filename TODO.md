@@ -14,9 +14,9 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 
 ## Phase 2 — Benchmarks (on 7900 XTX)
 
-- [~] ASR candidates: accuracy (WER) + speed → `learnings/bench-asr.md` (asr-bench agent: CPU runs in progress, GPU blocked by another project holding VRAM)
+- [~] ASR candidates: accuracy (WER) + speed → `learnings/bench-asr.md` (CPU phone-proxy done for 5 models; verdict: keep SpeechTranscriber, Parakeet v2 is the bundle pick. GPU runs still to do: agent was blocked by a permission check — run `cd bench/asr && flock ../.gpu.lock uv run bench.py <model> gpu`)
 - [~] Cleanup LLM candidates: quality + speed → `learnings/bench-cleanup-llm.md` (partial; paused for another session's GPU bench — resume `cd bench/llm && uv run bench.py all`)
-- [ ] Pick the phone stack (ASR + LLM) and write the decision → `learnings/decision-stack.md`
+- [x] Pick the phone stack (ASR + LLM) and write the decision → `learnings/decision-stack.md` (from partial results; recheck when benches finish)
 
 ## Phase 3 — Build (iOS)
 
@@ -34,7 +34,8 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 
 ## Phase 4 — Verify
 
-- [ ] Build on a Mac with Xcode (`cd ios && xcodegen`), fix compile errors
+- [~] Compile check in CI (GitHub Actions macOS runner, `.github/workflows/ios-build.yml`) — simulator build, unsigned
+- [ ] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device
 - [ ] Island button starts the mic with the app suspended / killed / phone locked (iOS 26 and 27)
 - [ ] No "Target is not foreground" when the island was dismissed and the Control/Siri path must start a new Live Activity
 - [ ] Clipboard write from the background succeeds; "Paste from wippr" chip appears; no paste prompt
