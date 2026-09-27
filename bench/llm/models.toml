@@ -1,0 +1,155 @@
+# Candidates. `files` maps quant -> filename in `repo`; `quants` = runs to benchmark.
+# Thinking mode is not benchmarked: ~0.5k thinking tokens per case, ~1.9 s on GPU (see learnings/bench-cleanup-llm.md).
+# `system` + `user_prefix` replace the shared prompt (for task-specific fine-tunes with a fixed format).
+
+[judge]
+path = "~/Documents/projects/llamacpp-tuner/tmp/models/ukisai%2FSwift-Qwen3.8-27B-GGUF/Swift-Qwen3.8-27B-Q4_K_S.gguf"
+
+[[model]]
+name = "s1-mini"
+params_b = 0.6
+repo = "superwhisper/s1-mini-GGUF"
+files = { Q4_K_M = "s1-mini-q4_k_m.gguf", F16 = "s1-mini-f16.gguf" }
+quants = ["Q4_K_M"]
+system = "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text."
+user_prefix = "[Styling: semi-formal] [Structure: lists] [Context: general]\n"
+
+[[model]]
+name = "qwen3-0.6b"
+params_b = 0.6
+repo = "unsloth/Qwen3-0.6B-GGUF"
+files = { Q4_K_M = "Qwen3-0.6B-Q4_K_M.gguf", Q8_0 = "Qwen3-0.6B-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "qwen3-1.7b"
+params_b = 1.7
+repo = "unsloth/Qwen3-1.7B-GGUF"
+files = { Q4_K_M = "Qwen3-1.7B-Q4_K_M.gguf", Q8_0 = "Qwen3-1.7B-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "qwen3-4b-2507"
+params_b = 4.0
+repo = "unsloth/Qwen3-4B-Instruct-2507-GGUF"
+files = { Q4_K_M = "Qwen3-4B-Instruct-2507-Q4_K_M.gguf", Q8_0 = "Qwen3-4B-Instruct-2507-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "qwen3.5-0.8b"
+params_b = 0.8
+repo = "unsloth/Qwen3.5-0.8B-GGUF"
+files = { Q4_K_M = "Qwen3.5-0.8B-Q4_K_M.gguf", Q8_0 = "Qwen3.5-0.8B-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "qwen3.5-2b"
+params_b = 2.0
+repo = "unsloth/Qwen3.5-2B-GGUF"
+files = { Q4_K_M = "Qwen3.5-2B-Q4_K_M.gguf", Q8_0 = "Qwen3.5-2B-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "qwen3.5-4b"
+params_b = 4.0
+repo = "unsloth/Qwen3.5-4B-GGUF"
+files = { Q4_K_M = "Qwen3.5-4B-Q4_K_M.gguf", Q8_0 = "Qwen3.5-4B-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "lfm2.5-350m"
+params_b = 0.35
+repo = "LiquidAI/LFM2.5-350M-GGUF"
+files = { Q4_K_M = "LFM2.5-350M-Q4_K_M.gguf", Q8_0 = "LFM2.5-350M-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "lfm2-700m"
+params_b = 0.7
+repo = "LiquidAI/LFM2-700M-GGUF"
+files = { Q4_K_M = "LFM2-700M-Q4_K_M.gguf", Q8_0 = "LFM2-700M-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "lfm2.5-1.2b"
+params_b = 1.2
+repo = "LiquidAI/LFM2.5-1.2B-Instruct-GGUF"
+files = { Q4_K_M = "LFM2.5-1.2B-Instruct-Q4_K_M.gguf", Q8_0 = "LFM2.5-1.2B-Instruct-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "gemma3-270m"
+params_b = 0.27
+repo = "unsloth/gemma-3-270m-it-GGUF"
+files = { Q4_K_M = "gemma-3-270m-it-Q4_K_M.gguf", Q8_0 = "gemma-3-270m-it-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "gemma3-1b"
+params_b = 1.0
+repo = "ggml-org/gemma-3-1b-it-GGUF"
+files = { Q4_K_M = "gemma-3-1b-it-Q4_K_M.gguf", Q8_0 = "gemma-3-1b-it-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "gemma3n-e2b"
+params_b = 2.0  # effective; 5B stored incl. per-layer embeddings
+repo = "unsloth/gemma-3n-E2B-it-GGUF"
+files = { Q4_K_M = "gemma-3n-E2B-it-Q4_K_M.gguf", Q8_0 = "gemma-3n-E2B-it-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "gemma4-e2b"
+params_b = 2.3  # effective; 5.1B stored incl. per-layer embeddings
+repo = "unsloth/gemma-4-E2B-it-GGUF"
+files = { Q4_K_M = "gemma-4-E2B-it-Q4_K_M.gguf", Q8_0 = "gemma-4-E2B-it-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "llama3.2-1b"
+params_b = 1.2
+repo = "bartowski/Llama-3.2-1B-Instruct-GGUF"
+files = { Q4_K_M = "Llama-3.2-1B-Instruct-Q4_K_M.gguf", Q8_0 = "Llama-3.2-1B-Instruct-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "llama3.2-3b"
+params_b = 3.2
+repo = "bartowski/Llama-3.2-3B-Instruct-GGUF"
+files = { Q4_K_M = "Llama-3.2-3B-Instruct-Q4_K_M.gguf", Q8_0 = "Llama-3.2-3B-Instruct-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "smollm3-3b"
+params_b = 3.1
+repo = "unsloth/SmolLM3-3B-GGUF"
+files = { Q4_K_M = "SmolLM3-3B-Q4_K_M.gguf", Q8_0 = "SmolLM3-3B-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "phi4-mini"
+params_b = 3.8
+repo = "bartowski/microsoft_Phi-4-mini-instruct-GGUF"
+files = { Q4_K_M = "microsoft_Phi-4-mini-instruct-Q4_K_M.gguf", Q8_0 = "microsoft_Phi-4-mini-instruct-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "granite4.1-3b"
+params_b = 3.0
+repo = "ibm-granite/granite-4.1-3b-GGUF"
+files = { Q4_K_M = "granite-4.1-3b-Q4_K_M.gguf", Q8_0 = "granite-4.1-3b-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "ministral3-3b"
+params_b = 3.4
+repo = "mistralai/Ministral-3-3B-Instruct-2512-GGUF"
+files = { Q4_K_M = "Ministral-3-3B-Instruct-2512-Q4_K_M.gguf", Q8_0 = "Ministral-3-3B-Instruct-2512-Q8_0.gguf" }
+quants = ["Q4_K_M"]
+
+[[model]]
+name = "qwen2.5-0.5b"
+params_b = 0.5
+repo = "Qwen/Qwen2.5-0.5B-Instruct-GGUF"
+files = { Q4_K_M = "qwen2.5-0.5b-instruct-q4_k_m.gguf" }
+quants = ["Q4_K_M"]

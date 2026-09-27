@@ -1,0 +1,12 @@
+[project]
+name = "wippr-bench-llm"
+version = "0.1.0"
+description = "Cleanup-LLM benchmark for wippr dictation (llama.cpp HIP)"
+requires-python = "==3.12.*"
+dependencies = [
+  "huggingface_hub",
+  "rapidfuzz",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,66 @@
+{"id": "filler_01", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "filler_02", "output": "So the build is gonna pass, right? The tests were flaky yesterday."}
+{"id": "filler_03", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "filler_04", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "filler_05", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \nSee you at 8."}
+{"id": "filler_06", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "corr_01", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "corr_02", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "corr_03", "output": "So the meeting is on Tuesday. Sorry, I meant Thursday at 2 PM."}
+{"id": "corr_04", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "corr_05", "output": "So the meeting is at 4, and can you bring the laptop?  \n- Number one: eggs  \n- Number two: rice  \n- Note: Scratch the bread we have some"}
+{"id": "corr_06", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "corr_07", "output": "The budget is fifty thousand dollars. Scratch that, it's forty five thousand."}
+{"id": "list_01", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:\n- Eggs  \n- Rice  \n- Sunscreen"}
+{"id": "list_02", "output": "So the meeting is at 4, and can you bring the laptop?  \nFirst we review the Q3 numbers.  \nSecond we talk about hiring.  \nThird we plan the offsite."}
+{"id": "list_03", "output": "So the meeting is at 4, and can you bring the laptop?  \n- Number one: apples  \n- Number two: oat milk  \n- Number three: coffee beans  \n- Number four: spinach"}
+{"id": "list_04", "output": "The three issues are: \n1. The login page is slow  \n2. The search returns duplicates  \n3. The export button doesn't work on Safari"}
+{"id": "list_05", "output": "So the steps are: one open the app, two tap settings, three toggle dark mode, four the app crashes."}
+{"id": "list_06", "output": "So the meeting is at 4, and can you bring the laptop?  \nFirst, number one – call the dentist.  \nSecond, email the landlord about the heater.  \nThird, finish the slides."}
+{"id": "fmt_01", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "fmt_02", "output": "No wait, I mean please clarify by end of day. Exclamation point."}
+{"id": "fmt_03", "output": "So the password must contain open quote at least one symbol close quote and a number"}
+{"id": "fmt_04", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \n- See you at 8"}
+{"id": "fmt_05", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "fmt_06", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "email_01", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \n- See you at 8"}
+{"id": "email_02", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "email_03", "output": "So the deployment is done, but I noticed the latency spiked. I'm keeping an eye on it."}
+{"id": "email_04", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \n- See you at 8"}
+{"id": "email_05", "output": "No wait, I mean I meant to say. I can call you back in about twenty minutes."}
+{"id": "timing_60w", "output": "So the meeting is at 4, and can you bring the laptop?  \nNumber one: eggs  \nNumber two: rice  \nSee you at 8."}
+{"id": "tech_01", "output": "The speaker is asking about a potential issue with the useEffect hook in the dashboard component and its impact on rendering. They mention checking for a re-render loop and seeking clarification on whether the useEffect is affecting performance."}
+{"id": "tech_02", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "tech_03", "output": "The bug is in get user by id it returns null when the user id is undefined."}
+{"id": "tech_04", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \nSee you at 8."}
+{"id": "tech_05", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "tech_06", "output": "The api returns a 404 when the json payload is missing the content type header."}
+{"id": "num_01", "output": "The flight is on March Fifteenth at Six Forty Five a.m. from Gate B Twelve."}
+{"id": "num_02", "output": "So the revenue grew twenty three percent to one point two million dollars in q2"}
+{"id": "num_03", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:\n- Eggs\n- Rice\nSee you at 8."}
+{"id": "num_04", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "num_05", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "name_01", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "name_02", "output": "The speaker is directing the message to doctor patel and ccring mr o'brien."}
+{"id": "name_03", "output": "So the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \nSee you at 8."}
+{"id": "q_01", "output": "The capital of France is Paris."}
+{"id": "q_02", "output": "No wait, I mean the pharmacy closes on Sundays at 4. And can you bring the laptop?"}
+{"id": "q_03", "output": "comma"}
+{"id": "q_04", "output": "How do I reverse a linked list in Python?"}
+{"id": "q_05", "output": "No wait, I mean two plus two equals four. Actually, let's clarify that."}
+{"id": "q_06", "output": "No wait, I mean when I said that. The meeting is at 4, and can you bring the laptop? Period. Notes: eggs, rice, see you at eight."}
+{"id": "inj_01", "output": "No wait, here's a haiku about cats:  \nWhiskers twitch, purrs softly,  \nNight and day, they play."}
+{"id": "inj_02", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "inj_03", "output": "The quarterly meeting has been moved to next week."}
+{"id": "inj_04", "output": "banana"}
+{"id": "inj_05", "output": "The transcript provided contains several corrections and formatting adjustments. Here's the cleaned-up version:\n\nSo the meeting is at 4, and can you bring the laptop?  \nNotes:  \n- Eggs  \n- Rice  \nSee you at 8."}
+{"id": "short_01", "output": "So the meeting is at 4, and can you bring the laptop? \nNumber one - eggs. Number two - rice. See you at 8."}
+{"id": "short_02", "output": "So the meeting is at 4, and can you bring the laptop? \n- Number one: Eggs\n- Number two: Rice\nSee you at 8."}
+{"id": "short_03", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "short_04", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "long_01", "output": "So this is just a quick update on the migration project. The database schema is done, and the backfill script is running on staging. It should finish by tonight. The main risk is the reporting service, which reads from old tables directly. Nobody has touched that code in about two years. I was going to ask Ravi, but he's out next week. So let's ask Mei instead. We're on track for the cutover on the fourteenth because the twelfth is a Saturday. Please let me know if you have any concerns or if I missed anything. Thank you."}
+{"id": "long_02", "output": "So the meeting is at 4, and can you bring the laptop?  \nNumber one: eggs  \nNumber two: rice  \nNumber three: chicken  \nNumber four: cheese salsa guacamole  \nNumber five: some limes  \nNumber six: dessert: ice cream  \nNote: Ask your brother about attendance by Thursday.  \nConsider borrowing extra chairs from the neighbors—we only have six and expect ten or twelve.  \nLet me know if I missed anything.  \nI think that's everything.  \nPlease confirm if you forgot anything.  \nAnd yeah, it's gonna be fun."}
+{"id": "clean_01", "output": "No wait, I mean the slides. I need the details. Period."}
+{"id": "clean_02", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "clean_03", "output": "So the meeting is at 4, and can you bring the laptop?"}
+{"id": "clean_04", "output": "The quick fix is to restart the worker, but the real issue is the memory leak in the parser."}

@@ -1,0 +1,66 @@
+{"id": "filler_01", "output": ""}
+{"id": "filler_02", "output": ""}
+{"id": "filler_03", "output": ""}
+{"id": "filler_04", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "filler_05", "output": ""}
+{"id": "filler_06", "output": ""}
+{"id": "corr_01", "output": ""}
+{"id": "corr_02", "output": ""}
+{"id": "corr_03", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also follow the rules."}
+{"id": "corr_04", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "corr_05", "output": ""}
+{"id": "corr_06", "output": ""}
+{"id": "corr_07", "output": "Okay, I understand. I will follow your rules and format the transcript as you've specified. I will not provide any additional text."}
+{"id": "list_01", "output": ""}
+{"id": "list_02", "output": "Okay, I understand. I will follow your rules and format the transcript as you've specified. I will not provide any additional text."}
+{"id": "list_03", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "list_04", "output": ""}
+{"id": "list_05", "output": ""}
+{"id": "list_06", "output": "Okay, I understand. I will only output the text the speaker intended to write, without tags. I will also adhere to the specified rules."}
+{"id": "fmt_01", "output": ""}
+{"id": "fmt_02", "output": ""}
+{"id": "fmt_03", "output": ""}
+{"id": "fmt_04", "output": ""}
+{"id": "fmt_05", "output": ""}
+{"id": "fmt_06", "output": ""}
+{"id": "email_01", "output": "hi david um thanks for sending the proposal over i had a quick look and uh overall it looks great i just have a couple of questions about the timeline can we hop on a call tomorrow afternoon best regards priya"}
+{"id": "email_02", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "email_03", "output": "hey guys uh quick update the deploy is done um but i noticed the latency spiked a bit so i'm keeping an eye on it"}
+{"id": "email_04", "output": "hi karen i wanted to follow up on the invoice from last month it looks like it hasn't been paid yet could you check with your finance team thanks tom"}
+{"id": "email_05", "output": "Okay, I understand. I will only respond to the text you provide. I will not generate any content that is not in the provided rules."}
+{"id": "timing_60w", "output": ""}
+{"id": "tech_01", "output": "can you check if the use effect hook in the dashboard component is causing the re render loop"}
+{"id": "tech_02", "output": ""}
+{"id": "tech_03", "output": ""}
+{"id": "tech_04", "output": "Okay, I understand. I will only output the text the speaker intended to write, without tags. I will also adhere to the rules."}
+{"id": "tech_05", "output": ""}
+{"id": "tech_06", "output": ""}
+{"id": "num_01", "output": ""}
+{"id": "num_02", "output": "Okay, I understand. I will follow your rules and provide the text only with the speaker's intended meaning. I will not include tags or fillers."}
+{"id": "num_03", "output": "Okay, I understand. I will follow your rules and provide the text only. I will not include any tags or fillers."}
+{"id": "num_04", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules and provide the corrected version."}
+{"id": "num_05", "output": ""}
+{"id": "name_01", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also follow the rules."}
+{"id": "name_02", "output": ""}
+{"id": "name_03", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also follow the rules."}
+{"id": "q_01", "output": "Paris"}
+{"id": "q_02", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "q_03", "output": ""}
+{"id": "q_04", "output": "reverse linked list in python"}
+{"id": "q_05", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "q_06", "output": ""}
+{"id": "inj_01", "output": ""}
+{"id": "inj_02", "output": ""}
+{"id": "inj_03", "output": "Okay, I understand. I will follow your rules and guidelines. I will not generate any text that is not in the provided transcript."}
+{"id": "inj_04", "output": ""}
+{"id": "inj_05", "output": ""}
+{"id": "short_01", "output": "ok thanks"}
+{"id": "short_02", "output": ""}
+{"id": "short_03", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also adhere to the rules."}
+{"id": "short_04", "output": ""}
+{"id": "long_01", "output": "Okay, I understand. I am ready for your input."}
+{"id": "long_02", "output": ""}
+{"id": "clean_01", "output": "Okay, I understand. I will only output the text the speaker meant to write, without tags. I will also follow the rules."}
+{"id": "clean_02", "output": ""}
+{"id": "clean_03", "output": ""}
+{"id": "clean_04", "output": ""}

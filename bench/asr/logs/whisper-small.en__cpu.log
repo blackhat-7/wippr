@@ -1,0 +1,6 @@
+(null): No such file or directory
+whisper-small.en cpu ls-clean: WER 2.20%  RTF 0.2549
+whisper-small.en cpu ls-other: WER 6.37%  RTF 0.2579
+whisper-small.en cpu ami: WER 15.70%  RTF 0.3815
+whisper-small.en cpu earnings22: WER 12.20%  RTF 0.2381
+{"model": "whisper-small.en", "device": "cpu", "backend": "whispercpp", "args": ["ggml-small.en-q8_0.bin"], "threads": 4, "load_s": 0.8, "precision": "q8_0 ggml", "disk_mb": 252, "peak_rss_mb": 576, "latency": {"clip5_s": 1.7294, "clip15_s": 2.0122}, "date": "2026-09-27 18:08"}

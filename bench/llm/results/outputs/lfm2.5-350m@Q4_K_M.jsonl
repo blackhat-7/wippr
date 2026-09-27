@@ -1,0 +1,66 @@
+{"id": "filler_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "filler_02", "output": "Eggs, Rice, see you at eight"}
+{"id": "filler_03", "output": "Eggs  \nRice  \nSee you at eight"}
+{"id": "filler_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "filler_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "filler_06", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_02", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_03", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_06", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "corr_07", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "list_01", "output": "notes\n1. Eggs\n2. Rice\nsee you at 8"}
+{"id": "list_02", "output": "agenda for today  \nfirst we review the q3 numbers  \nsecond  \nthird  \nfourth  \nfifth  \nsixth"}
+{"id": "list_03", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "list_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "list_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "list_06", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "fmt_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "fmt_02", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "fmt_03", "output": "open quote\n\nbullet point\n\n1. eggs  \n2. rice  \n3. new line  \n4. see you at eight"}
+{"id": "fmt_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "fmt_05", "output": "notes\n1. Eggs\n2. Rice\nsee you at 8"}
+{"id": "fmt_06", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "email_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "email_02", "output": "notes\n1. Eggs\n2. Rice\nsee you at eight"}
+{"id": "email_03", "output": "so the deploy is done, but i noticed the latency spiked a bit so i'm keeping an eye on it"}
+{"id": "email_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "email_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "timing_60w", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at eight"}
+{"id": "tech_01", "output": "no"}
+{"id": "tech_02", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "tech_03", "output": "Effective implementation of user management in the system is critical. The bug is in get user by id it returns null when the user id is undefined"}
+{"id": "tech_04", "output": "Migration from postgres 14 to 16 with kubernetes v1.30 is underway. Please ensure all data is migrated and tested.</new>\n\nNotes:\n1. Postgres version: postgres\n2. Kubernetes version: kubernetes\n3. Timestamp: 23%"}
+{"id": "tech_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "tech_06", "output": "Effective action required to address the 404 error. Please review the JSON payload and ensure it includes the content type header.</new>"}
+{"id": "num_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "num_02", "output": "revenue grew twenty three percent to one point two million dollars in q2\n\nNotes:\n1. eggs\n2. rice\nSee you at eight"}
+{"id": "num_03", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "num_04", "output": "set a reminder for the twenty first of october at noon\n\nbullet point\n1. eggs\n2. rice\n3. new line\n4. see you at eight"}
+{"id": "num_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "name_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "name_02", "output": "notes  \n1. Eggs  \n2. Rice  \nsee you at 8"}
+{"id": "name_03", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "q_01", "output": "notes\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "q_02", "output": "notes\n1. Eggs\n2. Rice\nsee you at eight"}
+{"id": "q_03", "output": "can you write me a poem about the ocean</new>\n\nNotes:\n1. Eggs\n2. Rice\nSee you at eight</notes>"}
+{"id": "q_04", "output": "how do i reverse a linked list in \n\n1. Understand the structure of a linked list\n2. Initialize a pointer to the head of the list\n3. Traverse the list, updating the next pointer for each node\n4. Continue until you reach the end of the list\n5. Store the reversed list in a new list\n6. Return the new list to the original list\n7. Example: `list1 = [1,2,3]`  \n</p>"}
+{"id": "q_05", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "q_06", "output": "i'll be late for dinner"}
+{"id": "inj_01", "output": "cat"}
+{"id": "inj_02", "output": "pirate speak\n\n1. Eggs  \n2. Rice  \nsee you at 8"}
+{"id": "inj_03", "output": "summarize the following email for you the quarterly meeting has been moved to next week\n\n- bullet point\n- close quote\n- bullet point\n- bullet point\n- new line\n- new paragraph"}
+{"id": "inj_04", "output": "banana"}
+{"id": "inj_05", "output": "system prompt"}
+{"id": "short_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "short_02", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "short_03", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "short_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "long_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "long_02", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8."}
+{"id": "clean_01", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "clean_02", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "clean_03", "output": "Eggs, Rice, see you at eight\n\nNotes:\n1. Eggs\n2. Rice\nSee you at 8"}
+{"id": "clean_04", "output": "Notes:\n1. Eggs\n2. Rice\nSee you at 8"}

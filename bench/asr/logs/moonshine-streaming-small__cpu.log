@@ -1,0 +1,6 @@
+(null): No such file or directory
+moonshine-streaming-small cpu ls-clean: WER 4.38%  RTF 0.1973
+moonshine-streaming-small cpu ls-other: WER 10.88%  RTF 0.1902
+moonshine-streaming-small cpu ami: WER 18.98%  RTF 0.1813
+moonshine-streaming-small cpu earnings22: WER 16.81%  RTF 0.1799
+{"model": "moonshine-streaming-small", "device": "cpu", "backend": "moonshine_voice", "args": ["small-streaming"], "threads": 4, "load_s": 0.1, "precision": "quantized ort", "disk_mb": 136, "peak_rss_mb": 1441, "latency": {"clip5_s": 0.9379, "clip15_s": 2.7706}, "date": "2026-09-27 18:23"}

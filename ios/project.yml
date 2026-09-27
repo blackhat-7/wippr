@@ -1,0 +1,51 @@
+name: Wippr
+options:
+  bundleIdPrefix: cx.immortal
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: "" # set your team ID, or pick it in Xcode
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  Wippr:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    dependencies:
+      - target: WipprWidgets
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: wippr
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSMicrophoneUsageDescription: wippr records your voice and turns it into text on this iPhone. Audio never leaves the device.
+        NSSpeechRecognitionUsageDescription: wippr transcribes your voice on this iPhone.
+        NSSupportsLiveActivities: true
+        UIBackgroundModes: [audio]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr
+
+  WipprWidgets:
+    type: app-extension
+    platform: iOS
+    sources: [Widgets, Shared]
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: wippr
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cx.immortal.wippr.widgets
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) WIDGET_EXTENSION

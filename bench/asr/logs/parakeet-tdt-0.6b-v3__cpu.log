@@ -1,0 +1,6 @@
+(null): No such file or directory
+parakeet-tdt-0.6b-v3 cpu ls-clean: WER 1.65%  RTF 0.1343
+parakeet-tdt-0.6b-v3 cpu ls-other: WER 4.57%  RTF 0.1431
+parakeet-tdt-0.6b-v3 cpu ami: WER 10.35%  RTF 0.2192
+parakeet-tdt-0.6b-v3 cpu earnings22: WER 13.84%  RTF 0.1578
+{"model": "parakeet-tdt-0.6b-v3", "device": "cpu", "backend": "sherpa_offline", "args": ["sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8"], "threads": 4, "load_s": 1.1, "precision": "int8 onnx", "disk_mb": 640, "peak_rss_mb": 2068, "latency": {"clip5_s": 1.403, "clip15_s": 1.3462}, "date": "2026-09-27 17:46"}
