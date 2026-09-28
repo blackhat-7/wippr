@@ -208,10 +208,15 @@ final class DictationController {
                 KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
             case .command:
                 // Apple's transcript stays as another hearing. It often misses a short word ("exit"), so Whisper runs
-                // even when Apple heard nothing; far more words than Apple heard means Whisper made them up.
+                // even when Apple heard nothing. Whisper is for commands, which are short: on long speech it can
+                // return one letter ("p"), so it's skipped there, and its words must roughly match Apple's count.
                 var heard = [raw]
-                if let whispered = await CommandTranscriber.shared.transcribe(samples),
-                   whispered.split(separator: " ").count <= raw.split(separator: " ").count * 2 + 3 {
+                let whispered = Double(samples.count) <= 6 * CommandTranscriber.sampleRate ? await CommandTranscriber.shared.transcribe(samples) : nil
+                trace("apple", raw)
+                trace("whisper", whispered ?? "(none)")
+                let appleWords = raw.split(separator: " ").count
+                if let whispered, case let words = whispered.split(separator: " ").count,
+                   words <= appleWords * 2 + 3, appleWords < 4 || words * 2 >= appleWords {
                     heard.insert(whispered, at: 0)
                 }
                 if let shortcut = Shortcuts.match(heard[0]) {
@@ -221,9 +226,11 @@ final class DictationController {
                 // Nil means prose (e.g. a prompt for an agent in the terminal): typed like dictation, from Apple's
                 // transcript, which hears prose better than the shell-primed Whisper.
                 guard let written = await CommandWriter.write(heard: heard, screen: command.text ?? "") else {
+                    trace("prose", raw)
                     await typeCleaned(raw)
                     break
                 }
+                trace("command", written)
                 if !written.isEmpty { KeyboardHandoff.send(written, command: true) }
             case .cancel:
                 break
@@ -236,9 +243,27 @@ final class DictationController {
         set(.ready)
     }
 
+    /// Debug builds log dictated text, to see what went wrong on a device; release builds never log it.
+    /// Also appended to Library/Caches/trace.log, which `xcrun devicectl device copy from` can fetch without sudo.
+    private func trace(_ step: String, _ text: String) {
+        #if DEBUG
+        log.notice("\(step, privacy: .public): \(text, privacy: .public)")
+        let file = URL.cachesDirectory.appending(path: "trace.log")
+        let line = Data("\(Date.now.formatted(.iso8601)) \(step): \(text)\n".utf8)
+        if let handle = try? FileHandle(forWritingTo: file) {
+            handle.seekToEndOfFile()
+            handle.write(line)
+            try? handle.close()
+        } else {
+            try? line.write(to: file)
+        }
+        #endif
+    }
+
     /// Dictation: cleans the transcript, types it and copies it.
     private func typeCleaned(_ raw: String) async {
         let text = await (cleaner ?? Cleaner()).clean(raw)
+        trace("typed", text)
         if !text.isEmpty {
             KeyboardHandoff.send(text)
             copy(text)
