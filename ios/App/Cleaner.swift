@@ -1,23 +1,39 @@
 import FoundationModels
 
-/// Turns a raw transcript into what the speaker meant, using Apple's on-device model.
-/// Any failure (no Apple Intelligence, guardrails, rate limits) returns the raw transcript.
+/// Turns a raw transcript into what the speaker meant.
+/// iOS 27 with the model installed: S1-mini on the Neural Engine (`NeuralEngine`, best in `bench/e2e`).
+/// Otherwise, or if that fails: Apple's on-device model. Any other failure returns the raw transcript.
 @MainActor
 final class Cleaner {
-    private let session: LanguageModelSession?
+    private var session: LanguageModelSession?
 
-    static var isAvailable: Bool {
+    /// Apple Intelligence is on and its model is ready (also what edit mode needs).
+    static var appleAvailable: Bool {
         if case .available = SystemLanguageModel.default.availability { return true }
         return false
     }
 
+    static var isAvailable: Bool { NeuralEngine.isAvailable || appleAvailable }
+
+    /// What cleans the text, for the UI; nil when nothing can.
+    static var engine: String? {
+        NeuralEngine.isAvailable ? "S1-mini · Neural Engine" : appleAvailable ? "Apple Intelligence" : nil
+    }
+
     init() {
-        session = Self.isAvailable ? LanguageModelSession(instructions: Self.instructions) : nil
-        session?.prewarm()
+        if NeuralEngine.isAvailable {
+            NeuralEngine.prewarm() // loads the model while the user speaks
+        } else {
+            session = Self.appleSession()
+            session?.prewarm()
+        }
     }
 
     func clean(_ raw: String) async -> String {
-        guard let session, !raw.isEmpty else { return raw }
+        guard !raw.isEmpty else { return raw }
+        if let text = await NeuralEngine.clean(raw) { return text }
+        if session == nil { session = Self.appleSession() }
+        guard let session else { return raw }
         do {
             #if compiler(>=6.4) // Xcode 27 SDK renamed it; back-deployed to iOS 26
             let options = GenerationOptions(samplingMode: .greedy)
@@ -33,6 +49,10 @@ final class Cleaner {
         } catch {
             return raw
         }
+    }
+
+    private static func appleSession() -> LanguageModelSession? {
+        appleAvailable ? LanguageModelSession(instructions: instructions) : nil
     }
 
     /// Same prompt as `bench/llm/bench.py` (SYSTEM_PROMPT), so on-device results compare with the benchmark.

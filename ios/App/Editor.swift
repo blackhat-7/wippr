@@ -8,7 +8,7 @@ enum Editor {
     static let maxText = 6000
 
     static func edit(_ text: String, instruction: String) async -> String? {
-        guard Cleaner.isAvailable, !instruction.isEmpty else { return nil }
+        guard Cleaner.appleAvailable, !instruction.isEmpty else { return nil }
         let session = LanguageModelSession(instructions: instructions)
         do {
             #if compiler(>=6.4) // Xcode 27 SDK renamed it; back-deployed to iOS 26

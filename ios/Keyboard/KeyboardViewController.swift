@@ -13,9 +13,13 @@ final class KeyboardViewController: UIInputViewController {
     /// The visible "Hold to talk" button.
     private let pill = UIView()
     private var delete = UIButton()
+    /// Switches to the next keyboard (usually the standard one) for fixing text by hand; long-press lists them.
+    private let typing = UIButton(configuration: .plain())
+    /// Delete and the keyboard switch, left of the button.
+    private let leftKeys = UIStackView()
     private let keys = UIStackView()
     private var placement: [NSLayoutConstraint] = []
-    /// The whole keyboard except the three keys: press anywhere to talk.
+    /// The whole keyboard except the keys: press anywhere to talk.
     private let hold = UIControl()
     private var pressedAt: Date?
     private let press = UIImpactFeedbackGenerator(style: .medium)
@@ -75,8 +79,15 @@ final class KeyboardViewController: UIInputViewController {
 
         delete = key("delete.left", #selector(deleteDown), for: .touchDown)
         delete.addTarget(self, action: #selector(deleteUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
-        delete.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(delete)
+        typing.setImage(UIImage(systemName: "keyboard"), for: .normal)
+        typing.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
+        typing.accessibilityLabel = "Switch to typing keyboard"
+        leftKeys.addArrangedSubview(delete)
+        leftKeys.addArrangedSubview(typing)
+        leftKeys.spacing = 0
+        leftKeys.alignment = .center
+        leftKeys.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(leftKeys)
         keys.addArrangedSubview(globe)
         keys.addArrangedSubview(key("return", #selector(insertReturn)))
         keys.spacing = 8
@@ -91,13 +102,13 @@ final class KeyboardViewController: UIInputViewController {
             hold.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             hold.topAnchor.constraint(equalTo: view.topAnchor),
             hold.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            delete.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            delete.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            leftKeys.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            leftKeys.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             keys.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             keys.topAnchor.constraint(equalTo: view.topAnchor),
             keys.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             // The visible button spans everything between the keys; the whole strip still listens.
-            orb.leadingAnchor.constraint(greaterThanOrEqualTo: delete.trailingAnchor, constant: 8),
+            orb.leadingAnchor.constraint(greaterThanOrEqualTo: leftKeys.trailingAnchor, constant: 8),
             orb.trailingAnchor.constraint(equalTo: pill.leadingAnchor, constant: -8),
             orb.centerYAnchor.constraint(equalTo: pill.centerYAnchor),
             orb.heightAnchor.constraint(equalTo: pill.heightAnchor),
@@ -119,12 +130,12 @@ final class KeyboardViewController: UIInputViewController {
         width.priority = UILayoutPriority(999) // shrinks in narrow windows (Slide Over, split view)
         placement = if traitCollection.userInterfaceIdiom == .pad {
             switch KeyboardHandoff.buttonPosition() {
-            case .left: [width, orb.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8)]
+            case .left: [width, orb.leadingAnchor.constraint(equalTo: leftKeys.trailingAnchor, constant: 8)]
             case .center: [width, pill.centerXAnchor.constraint(equalTo: view.centerXAnchor)]
             case .right: [width, pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8)]
             }
         } else {
-            [orb.leadingAnchor.constraint(equalTo: delete.trailingAnchor, constant: 8),
+            [orb.leadingAnchor.constraint(equalTo: leftKeys.trailingAnchor, constant: 8),
              pill.trailingAnchor.constraint(equalTo: keys.leadingAnchor, constant: -8)]
         }
         NSLayoutConstraint.activate(placement)

@@ -90,7 +90,7 @@ struct HomeView: View {
         let cleanup = StatusCard(
             label: "Cleanup", ok: status.cleanupAvailable,
             title: status.cleanupAvailable ? "On-device" : "Off",
-            detail: status.cleanupAvailable ? "Apple Intelligence · on-device"
+            detail: status.cleanupAvailable ? "\(Cleaner.engine ?? "On-device") · on-device"
                 : "Not available on this device · text is typed without cleanup")
         if wide {
             VStack(spacing: 12) {

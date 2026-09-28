@@ -10,6 +10,9 @@ options:
 packages:
   Whisper:
     path: Packages/Whisper # whisper.cpp for command mode
+  CoreAIModels: # Apple's Core AI runtime, for S1-mini on the Neural Engine (NeuralCleaner, iOS 27)
+    url: https://github.com/apple/coreai-models
+    revision: e7b24da85ea64a77d26324d7ce9607de9b955f57
 
 settings:
   base:
@@ -30,10 +33,15 @@ targets:
       - Shared
       - Keyboard/OrbView.swift
       - Keyboard/Orb.metal
+      - NeuralCleaner/NeuralCleaning.swift
     dependencies:
       - target: WipprKeyboard
       - package: Whisper
         product: whisper
+      # Embedded, not linked: it needs iOS 27 and is loaded at runtime (App/NeuralEngine.swift).
+      - target: NeuralCleaner
+        link: false
+        embed: true
     entitlements:
       path: App/Wippr.entitlements
       properties:
@@ -86,3 +94,17 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).keyboard
+
+  NeuralCleaner:
+    type: framework
+    platform: iOS
+    deploymentTarget: "27.0"
+    sources: [NeuralCleaner]
+    dependencies:
+      - package: CoreAIModels
+        product: CoreAILM
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).neuralcleaner
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"

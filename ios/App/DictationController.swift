@@ -36,6 +36,10 @@ final class DictationController {
                 Task { @MainActor in await DictationController.shared.restartMic() }
             }
         }
+        // Neural Engine memory counts against the app on iOS 27; free the model rather than get killed.
+        NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main) { _ in
+            NeuralEngine.unload()
+        }
     }
 
     /// One-time setup, run from the app in the foreground.
@@ -51,7 +55,7 @@ final class DictationController {
             problems.append("Speech model unavailable: \(error.localizedDescription)")
         }
         if !Cleaner.isAvailable {
-            problems.append("Apple Intelligence is unavailable, so text is typed without cleanup.")
+            problems.append("No cleanup model: Apple Intelligence is off, so text is typed without cleanup.")
         }
         await appDidBecomeActive()
         return problems

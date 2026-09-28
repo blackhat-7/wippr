@@ -28,9 +28,14 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 - [x] On-device ASR (Apple SpeechTranscriber) → `ios/App/Transcriber.swift`
 - [x] On-device cleanup LLM (Apple Foundation Models) → `ios/App/Cleaner.swift`
 - [x] Update cleanup prompt from `bench-cleanup-llm.md` results (v2 tagged prompt ported to Cleaner.swift)
-- [ ] A/B Apple Foundation Models vs the bench winner on device with `bench/llm/cases.jsonl` (winner: S1-mini Q4_K_M, its own prompt + control line)
-- [ ] Fallback cleanup path: S1-mini Q4_K_M via llama.cpp CPU-only (Metal is blocked in background) if AFM loses the A/B
-- [ ] Deterministic pre-pass for spoken punctuation ("comma", "period", "new line", "new paragraph", "number one…") before the LLM — S1-mini and Qwen3.5-2B miss these
+- [-] A/B Apple Foundation Models vs the bench winner on device — superseded 2026-09-28: S1-mini replaces AFM for cleanup
+- [x] Cleanup on S1-mini Q4_K_M via llama.cpp CPU-only (`ios/App/LocalCleaner.swift`, `ios/Packages/Llama`); AFM only while the model downloads + edit mode
+- [x] Pre-pass: list rules only (`ios/App/Prepass.swift`); the full spoken-punctuation pass didn't help end-to-end (`learnings/bench-e2e.md`)
+- [x] End-to-end bench: TTS → Parakeet → cleanup → judge (`bench/e2e`, `learnings/bench-e2e.md`)
+- [ ] Device: first build with the llama.xcframework (CI now builds for device; no simulator slice), model download, `cleaned: … ms` log, tune `n_threads` (2 vs 4)
+- [ ] Device: S1-mini works with the app in the background (no Metal), memory stays OK next to SpeechTranscriber
+- [ ] Record real dictation of `cases.jsonl` (a few voices) and rerun `bench/e2e` on it — TTS audio is too clean
+- [ ] ASR: pass contact names / custom vocabulary to SpeechTranscriber (`AnalysisContext` contextual strings) — ASR word errors are now the biggest loss
 - [x] Deliver text: clipboard + iOS 27 "Paste from wippr"; retry on app open if the background write is refused
 - [x] Wake word → not needed: Siri App Shortcut "Dictate with wippr" (see `ios-platform-constraints.md` §4)
 - [x] Verify every Apple API against docs (can't compile on Linux) → `learnings/ios-api-verification.md` (no fixes needed; all files pass `swiftc -parse`; unverified items listed there)
@@ -39,6 +44,7 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 
 - [x] Compile check in CI (GitHub Actions `macos-26`, Xcode 26.6, `.github/workflows/ios-build.yml`) — app + widget build clean for the simulator, no code warnings (2026-09-27). Xcode 27 SDK not yet tested.
 - [x] Build on a Mac with Xcode (`cd ios && xcodegen`), sign, run on device (iPhone 18 Pro Max, iOS 27.0, Xcode 27 SDK — `learnings/device-testing.md`)
+- [ ] Keyboard: "switch to typing keyboard" key right of delete (tap = next keyboard, hold = list) — test on device
 - [x] Keyboard mic button → app (mic kept on in the background) → text typed into the focused field (2026-09-27 redesign; hold-to-talk works on device)
 - [ ] Edit mode (slide up while holding): rewrite selection / text before cursor, generate into empty field, terminal commands, undo — test on device
 - [ ] Background mic survives app switching, screen lock, a phone call; restarts after interruption

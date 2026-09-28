@@ -1,0 +1,17 @@
+[project]
+name = "wippr-bench-e2e"
+version = "0.1.0"
+description = "End-to-end dictation bench for wippr: TTS audio -> ASR -> cleanup LLM -> judge"
+requires-python = "==3.12.*"
+dependencies = [
+  "soundfile",
+  "numpy",
+  "jiwer",
+  "whisper-normalizer>=0.1.15",
+  "rapidfuzz",
+  "huggingface_hub",
+  "scipy>=1.18.1",
+]
+
+[tool.uv]
+package = false

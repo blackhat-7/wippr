@@ -1,0 +1,66 @@
+{
+ "s1-mini": {
+  "cold": {
+   "wall_ms": 816,
+   "prompt_n": 142,
+   "prompt_ms": 196.3,
+   "predicted_n": 64,
+   "predicted_ms": 613.0
+  },
+  "warm": {
+   "wall_ms": 663,
+   "prompt_n": 73,
+   "prompt_ms": 97.8,
+   "predicted_n": 64,
+   "predicted_ms": 561.0
+  }
+ },
+ "budgie-nano": {
+  "cold": {
+   "wall_ms": 798,
+   "prompt_n": 147,
+   "prompt_ms": 184.3,
+   "predicted_n": 70,
+   "predicted_ms": 609.0
+  },
+  "warm": {
+   "wall_ms": 718,
+   "prompt_n": 73,
+   "prompt_ms": 97.2,
+   "predicted_n": 70,
+   "predicted_ms": 616.6
+  }
+ },
+ "speako-mini": {
+  "cold": {
+   "wall_ms": 1397,
+   "prompt_n": 318,
+   "prompt_ms": 597.4,
+   "predicted_n": 59,
+   "predicted_ms": 797.1
+  },
+  "warm": {
+   "wall_ms": 1038,
+   "prompt_n": 76,
+   "prompt_ms": 177.1,
+   "predicted_n": 59,
+   "predicted_ms": 858.0
+  }
+ },
+ "qwen3.5-0.8b": {
+  "cold": {
+   "wall_ms": 2431,
+   "prompt_n": 558,
+   "prompt_ms": 1512.2,
+   "predicted_n": 62,
+   "predicted_ms": 916.1
+  },
+  "warm": {
+   "wall_ms": 1136,
+   "prompt_n": 86,
+   "prompt_ms": 283.5,
+   "predicted_n": 62,
+   "predicted_ms": 849.7
+  }
+ }
+}

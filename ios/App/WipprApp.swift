@@ -4,6 +4,12 @@ import SwiftUI
 struct WipprApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
+    init() {
+        #if DEBUG
+        CleanupBench.runIfRequested()
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

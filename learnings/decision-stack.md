@@ -1,5 +1,7 @@
 # Phone stack decision
 
+> **Changed 2026-09-28:** cleanup now ships **S1-mini Q4_K_M via llama.cpp, CPU-only** (`ios/App/LocalCleaner.swift`), with the list rules before it (`ios/App/Prepass.swift`). Apple Foundation Models is only the fallback while the 484 MB model downloads, and it still does edit mode. Why: the user doubted AFM's quality, and it can't be benchmarked. S1-mini scored best of the phone-sized models end-to-end (4.18, `bench-e2e.md`). CPU is the only backend that is always allowed in the background (`ios-llm-runtime.md`). ASR is unchanged (SpeechTranscriber).
+
 **Decision (2026-09-27, confirmed by the finished benchmarks)**
 
 | Stage | Ships in v0.1 | Bundled fallback, if device tests demand one |
