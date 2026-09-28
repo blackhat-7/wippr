@@ -36,17 +36,17 @@ final class DictationController {
                 Task { @MainActor in await DictationController.shared.restartMic() }
             }
         }
-        // Experimental models: Neural Engine memory counts against the app. On a warning, free them, picked or not:
-        // on a 4 GB iPad keeping them got the app killed, which turns the mic off. A picked one reloads on its next
-        // use, and Apple's model stands in until it's ready.
+        // Experimental models: Neural Engine memory counts against the app. On a warning, free the ones that
+        // aren't picked (a picked one would only reload on its next use, and Apple's model would stand in).
+        // Devices too small to hold one (4 GB) don't offer them at all (`NeuralSlot.fitsThisDevice`).
         NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main) { _ in
             Task { @MainActor in
                 DictationController.shared.log.notice("memory warning")
                 #if DEBUG
                 print("memory warning")
                 #endif
-                NeuralEngine.cleaner.unload()
-                NeuralEngine.transcriber.unload()
+                if CleanupModel.current != .s1mini { NeuralEngine.cleaner.unload() }
+                if TranscriberModel.current != .parakeet { NeuralEngine.transcriber.unload() }
             }
         }
     }
