@@ -30,6 +30,8 @@ struct HomeView: View {
                 cards(status)
                 problems(status)
                 shortcutList
+                CommandModelCard()
+                    .padding(.top, wide ? 44 : 32)
                 tips
             }
             .padding(.horizontal, wide ? 0 : 16)
@@ -217,6 +219,8 @@ struct HomeView: View {
                 title: "Undo an edit", detail: "Tap the bar within 5 seconds."),
             Tip(icon: AnyView(TipIcon(symbol: "command", color: .white, fill: Theme.key)),
                 title: "Say a shortcut", detail: "One word types keys like Ctrl+B. Set them up above."),
+            Tip(icon: AnyView(TipIcon(symbol: "terminal", color: .white, fill: Theme.key)),
+                title: "Talk to your terminal", detail: "In Termius or any terminal, say a command: \"git push dash dash force\"."),
         ]
         return VStack(alignment: .leading, spacing: wide ? 12 : 8) {
             Text("Tips").textStyle(.label, Theme.tertiary)
@@ -250,6 +254,66 @@ struct HomeView: View {
         }
         .padding(.top, wide ? 44 : 32)
         .padding(.horizontal, wide ? 0 : 8)
+    }
+}
+
+/// Downloads Whisper for command mode (`CommandTranscriber`). Never automatic: it's 264 MB.
+private struct CommandModelCard: View {
+    @Environment(\.wide) private var wide
+    @State private var ready = CommandTranscriber.isDownloaded
+    /// 0…1 while downloading.
+    @State private var progress: Double?
+    @State private var failed = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: wide ? 12 : 8) {
+            Text("Terminal commands").textStyle(.label, Theme.tertiary)
+                .padding(.horizontal, wide ? 0 : 8)
+            HStack(spacing: 14) {
+                Text(failed ? "Download failed. Check your connection and try again."
+                     : "A 264 MB on-device model makes dictated commands much more accurate.")
+                    .textStyle(.caption, Theme.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                if ready {
+                    HStack(spacing: 6) {
+                        StatusBadge(ok: true, size: 18)
+                        Text("Ready").textStyle(.rowStrong)
+                    }
+                } else if let progress {
+                    Text(progress, format: .percent.precision(.fractionLength(0)))
+                        .textStyle(.rowStrong, Theme.secondary)
+                        .monospacedDigit()
+                } else {
+                    Button("Download", action: download)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .tint(Theme.key)
+                }
+            }
+            .padding(18)
+            .overlay(alignment: .bottom) {
+                if let progress, !ready {
+                    ProgressView(value: progress).tint(Theme.accent).padding(.horizontal, 18).padding(.bottom, 8)
+                }
+            }
+            .card(radius: 24)
+        }
+    }
+
+    private func download() {
+        failed = false
+        progress = 0
+        Task {
+            do {
+                try await CommandTranscriber.download { progress = $0 }
+                ready = true
+                CommandTranscriber.shared.preload()
+            } catch {
+                failed = true
+            }
+            progress = nil
+        }
     }
 }
 
