@@ -57,9 +57,14 @@ enum CleanupBench {
             setvbuf(stdout, nil, _IONBF, 0) // print straight to the devicectl console
             // Only the model under test: the other settings are Apple's for the run, so no other experimental model
             // loads next to it (two big ones together can exceed the app's memory limit).
-            let keys = [CleanupModel.key, TranscriberModel.key]
+            // `style=<writing style>` and `custom=<text>` set the writing style for the run.
+            let option = { (name: String) in rest.first { $0.hasPrefix(name + "=") }.map { String($0.dropFirst(name.count + 1)) } }
+            let keys = [CleanupModel.key, TranscriberModel.key, WritingStyle.key, WritingStyle.customKey]
             let previous = keys.map { UserDefaults.standard.string(forKey: $0) }
-            for other in keys { UserDefaults.standard.set(other == key ? model : "apple", forKey: other) }
+            for other in keys.prefix(2) { UserDefaults.standard.set(other == key ? model : "apple", forKey: other) }
+            UserDefaults.standard.set(option("style") ?? WritingStyle.standard.rawValue, forKey: WritingStyle.key)
+            UserDefaults.standard.set(option("custom") ?? "", forKey: WritingStyle.customKey)
+            limit = option("limit").flatMap(Int.init) ?? .max
             Task {
                 defer { for (k, v) in zip(keys, previous) { UserDefaults.standard.set(v, forKey: k) } } // leave Home's choices as they were
                 if let slot = slot(flag, model) {
@@ -114,6 +119,8 @@ enum CleanupBench {
     }
 
     private static let docs = URL.documentsDirectory
+    /// `limit=<n>`: only the first n cases (quick checks).
+    private static var limit = Int.max
 
     /// Appends one JSON line per result, saving as it goes in case the run stalls.
     private static func writer(_ name: String) -> ([String: Any]) -> Void {
@@ -132,8 +139,9 @@ enum CleanupBench {
         print("bench: \(cases.count) cases, cleanup \(model), \(label)")
         let custom = model == "applecustom" ? prompt("cleanup-prompt.json") : nil
         if model == "applecustom", custom == nil { return print("bench: no cleanup-prompt.json") }
-        let write = writer("bench-out-\(model)-\(label).jsonl")
-        for id in cases.keys.sorted() {
+        let style = WritingStyle.current.rawValue
+        let write = writer("bench-out-\(model)-\(label)\(style == "standard" ? "" : "-" + style).jsonl")
+        for id in cases.keys.sorted().prefix(limit) {
             await ready(benchSlot)
             if let custom {
                 let start = Date.now

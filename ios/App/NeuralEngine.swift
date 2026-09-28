@@ -11,16 +11,16 @@ enum NeuralEngine {
     /// Parakeet TDT v2, streaming float16 (speech recognition).
     @MainActor static let transcriber = NeuralSlot(folder: "parakeet-ios", className: "WipprNeuralTranscriber", source: .parakeet)
 
-    /// S1-mini's trained system prompt and control line; its model card says not to change them.
+    /// S1-mini's trained system prompt; its model card says not to change it. The control line comes from the
+    /// writing style (`WritingStyle.s1Control`), always one of the trained values.
     static let s1System = "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text."
-    static let s1Control = "[Styling: semi-formal] [Structure: lists] [Context: general]\n"
 
     /// S1-mini's cleanup (after the list rules); nil until the model has loaded, or if it fails.
     @MainActor static func clean(_ raw: String) async -> String? {
         guard !raw.isEmpty, let model = cleaner.ready as? NeuralLanguageModel else { return nil }
         let text = Prepass.lists(raw)
         // About twice the input's tokens (~4 bytes each) + 64, so a repetition loop stops early.
-        return await respond(model, to: s1Control + text, instructions: s1System,
+        return await respond(model, to: WritingStyle.current.s1Control + text, instructions: s1System,
                              maxTokens: min(1024, text.utf8.count / 2 + 64), bundle: cleaner.bundleURL)
     }
 

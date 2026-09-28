@@ -7,6 +7,8 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
     /// Experimental, for testing: which model cleans dictation (Apple Intelligence by default).
+    @AppStorage(WritingStyle.key) private var writingStyle = WritingStyle.standard
+    @AppStorage(WritingStyle.customKey) private var customStyle = ""
     @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
     @AppStorage(TranscriberModel.key) private var transcriberModel = TranscriberModel.apple
     /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
@@ -34,6 +36,7 @@ struct HomeView: View {
                 .padding(.horizontal, wide ? 0 : 8)
                 cards(status)
                 problems(status)
+                styleSection(status)
                 shortcutList
                 CommandModelCard()
                     .padding(.top, wide ? 44 : 32)
@@ -150,6 +153,64 @@ struct HomeView: View {
             .padding(.top, 16)
             .padding(.horizontal, wide ? 0 : 8)
         }
+    }
+
+    /// How the cleaned-up text reads: S1-mini's trained registers, email layout, or the user's own description.
+    private func styleSection(_ status: SetupStatus) -> some View {
+        VStack(alignment: .leading, spacing: wide ? 12 : 8) {
+            Text("Writing style").textStyle(.label, Theme.tertiary)
+                .padding(.horizontal, wide ? 0 : 8)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(writingStyle.name.replacingOccurrences(of: "…", with: "")).textStyle(.rowStrong)
+                        Text(writingStyle.example).textStyle(.caption, Theme.tertiary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 8)
+                    Menu {
+                        ForEach(WritingStyle.offered) { style in
+                            Button {
+                                writingStyle = style
+                            } label: {
+                                if style == writingStyle { Label(style.name, systemImage: "checkmark") } else { Text(style.name) }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Change")
+                            Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
+                        }
+                        .textStyle(.rowStrong, Theme.accent)
+                        .frame(minHeight: 44)
+                        .contentShape(.rect)
+                    }
+                }
+                if writingStyle == .custom {
+                    TextField("", text: $customStyle, prompt: Text("Describe it, e.g. \u{201C}British spelling, no exclamation marks\u{201D}").foregroundStyle(Theme.faint), axis: .vertical)
+                        .textStyle(TextStyle(size: 16, tracking: -0.01, lineHeight: 21))
+                        .tint(Theme.accent)
+                        .lineLimit(1...4)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 14)
+                        .background(Theme.surface, in: .rect(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Theme.border))
+                    Text(Cleaner.isAvailable
+                         ? "Custom styles use Apple Intelligence (S1-mini only knows the listed styles)."
+                         : "Custom styles need Apple Intelligence, which isn't on here, so Standard is used.")
+                        .textStyle(.caption, Theme.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else if !status.cleanupAvailable, cleanupModel != .s1mini {
+                    Text("Styles apply when text is cleaned up, which needs Apple Intelligence or S1-mini (Experimental).")
+                        .textStyle(.caption, Theme.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
+            .card(radius: 24)
+        }
+        .padding(.top, wide ? 44 : 32)
     }
 
     /// Phrase → keys rows; tap to edit, long-press to delete.
