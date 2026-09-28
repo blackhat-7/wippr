@@ -64,3 +64,24 @@ enum TranscriberModel: String, CaseIterable, Identifiable {
         UserDefaults.standard.string(forKey: key).flatMap(TranscriberModel.init) ?? .apple
     }
 }
+
+/// Which recognizer hears commands in terminals (command mode), separate from dictation's. Whisper is the default and
+/// is used once downloaded; Apple's hears commands as English words ("get status").
+enum TerminalTranscriber: String, CaseIterable, Identifiable {
+    case whisper, apple
+
+    static let key = "terminalTranscriber"
+
+    var id: String { rawValue }
+
+    var name: String {
+        switch self {
+        case .whisper: "Whisper small.en · CPU"
+        case .apple: "Apple SpeechTranscriber"
+        }
+    }
+
+    static var current: TerminalTranscriber {
+        UserDefaults.standard.string(forKey: key).flatMap(TerminalTranscriber.init) ?? .whisper
+    }
+}

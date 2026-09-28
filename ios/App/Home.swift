@@ -11,6 +11,7 @@ struct HomeView: View {
     @AppStorage(WritingStyle.customKey) private var customStyle = ""
     @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
     @AppStorage(TranscriberModel.key) private var transcriberModel = TranscriberModel.apple
+    @AppStorage(TerminalTranscriber.key) private var terminalTranscriber = TerminalTranscriber.whisper
     /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
     @State private var typed: KeyboardHandoff.Typed?
     @State private var shortcuts = Shortcuts.all
@@ -309,7 +310,10 @@ struct HomeView: View {
                     .textStyle(.caption, Theme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
-                ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber],
+                ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber],
+                         unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
+                // Apple's stands in for Whisper until it's downloaded.
+                ModelRow(title: "Terminal transcriber", selection: $terminalTranscriber, slots: [:],
                          unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
                 ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner],
                          unavailable: CPUCleaner.shared.isInstalled ? [:] : [.s1miniCPU: "Download it below"])
@@ -576,7 +580,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     }
 
     private func name(_ choice: Choice) -> String {
-        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? choice.rawValue
+        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? TerminalTranscriber)?.name ?? choice.rawValue
     }
 
     /// The picked Neural Engine model's load state (reasons for the others are in the menu).
