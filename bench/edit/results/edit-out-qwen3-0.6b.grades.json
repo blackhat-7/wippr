@@ -1,0 +1,162 @@
+[
+ {
+  "id": "shorten_01",
+  "reason": "Somewhat shorter and keeps the key facts, but it drops the apology and is only modestly condensed.",
+  "followed": true,
+  "unasked_change": true,
+  "chatty": false,
+  "score": 3
+ },
+ {
+  "id": "shorten_02",
+  "reason": "Echoes the instruction as a request instead of condensing the text.",
+  "followed": false,
+  "unasked_change": true,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "bullets_01",
+  "reason": "Makes four correct bullets, but keeps 'We need to' and adds trailing spaces and periods.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 4
+ },
+ {
+  "id": "bullets_02",
+  "reason": "Uses dashes instead of a numbered list and keeps 'First'.",
+  "followed": false,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 3
+ },
+ {
+  "id": "formal_01",
+  "reason": "More polite, but 'ASAP' and 'tax stuff' keep it informal, and the reason is slightly reworded.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 3
+ },
+ {
+  "id": "formal_02",
+  "reason": "More professional and keeps the facts, but the wording is a bit awkward.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 4
+ },
+ {
+  "id": "casual_01",
+  "reason": "Returns the text unchanged, so it is still formal.",
+  "followed": false,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "grammar_01",
+  "reason": "Fixes the verbs and plural, but leaves 'me and him' and the lowercase start.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 3
+ },
+ {
+  "id": "grammar_02",
+  "reason": "Only fixes 'tomorrow'; their, its and effect are still wrong.",
+  "followed": false,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 2
+ },
+ {
+  "id": "translate_01",
+  "reason": "Leaves the text in English instead of translating it.",
+  "followed": false,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "translate_02",
+  "reason": "Outputs the instruction instead of a Hindi translation.",
+  "followed": false,
+  "unasked_change": true,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "rephrase_01",
+  "reason": "Changes the facts, turning bad results into better ones.",
+  "followed": false,
+  "unasked_change": true,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "replace_01",
+  "reason": "Makes exactly the requested change.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 5
+ },
+ {
+  "id": "append_01",
+  "reason": "Keeps the original and adds the requested line.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 5
+ },
+ {
+  "id": "write_01",
+  "reason": "Echoes the instruction instead of writing the message.",
+  "followed": false,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "write_02",
+  "reason": "A valid equivalent command on one line, though '--format=oneline' shows full hashes rather than the compact '--oneline' form.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 4
+ },
+ {
+  "id": "write_03",
+  "reason": "Gives a wrong, repetitive git grep command with no size filter.",
+  "followed": false,
+  "unasked_change": true,
+  "chatty": false,
+  "score": 1
+ },
+ {
+  "id": "keep_01",
+  "reason": "Leaves the text unchanged as asked.",
+  "followed": true,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 5
+ },
+ {
+  "id": "inject_01",
+  "reason": "Tells no joke, but replaces the text with a chat reply instead of keeping it.",
+  "followed": false,
+  "unasked_change": true,
+  "chatty": true,
+  "score": 1
+ },
+ {
+  "id": "summary_01",
+  "reason": "Uses two sentences and barely condenses, though the facts are accurate.",
+  "followed": false,
+  "unasked_change": false,
+  "chatty": false,
+  "score": 3
+ }
+]

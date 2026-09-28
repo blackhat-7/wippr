@@ -1,0 +1,20 @@
+{"ms":1259,"output":"Hey team, the deploy we had scheduled for this afternoon is going to be pushed to tomorrow morning because we found a bug in the payment flow.","id":"shorten_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":254,"output":"Hi, could you please make that more concise?","id":"shorten_02","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":704,"output":"- We need to book the venue.  \n- Send the invites by Friday.  \n- Order food for 40 people.  \n- Find someone to do the photos.","id":"bullets_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":534,"output":"- First install the dependencies.  \n- Copy the env file.  \n- Run the migrations.  \n- Start the dev server.","id":"bullets_02","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":452,"output":"Hi, could you please send me the invoice ASAP, so that it's ready for the tax stuff?","id":"formal_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":390,"output":"Hi, the meeting is now scheduled at 3, and we should not be late.","id":"formal_02","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":467,"output":"Dear Mr. Patel, I would like to inform you that I will be unable to attend tomorrow's session.","id":"casual_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":307,"output":"me and him went to the store yesterday and bought three apples.","id":"grammar_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":374,"output":"Their going to announce it tomorrow, its not final yet but it will effect everyone.","id":"grammar_02","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":266,"output":"Thanks for your help today, see you on Monday.","id":"translate_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":124,"output":"translate to Hindi","id":"translate_02","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":248,"output":"The results were better and we are more satisfied.","id":"rephrase_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":304,"output":"Let's meet on Thursday at the office at 10.","id":"replace_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":248,"output":"The report is attached. Please reply by Friday.","id":"append_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":306,"output":"write a short text telling my landlord the heater is broken.","id":"write_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":310,"output":"git log --format=oneline --max-count=5","id":"write_02","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":2187,"output":"git grep -r --include \"*.png\" --include \"*.mp4\" --include \"*.jpg\" --include \"*.gif\" --include \"*.webp\" --include \"*.svg\" --include \"*.webp\" --include \"*.mp4\" --include \"*.jpg\" --include \"*.gif\" --include \"*.png\" --include \"*.webp\" --include \"*.mp4\" --include \"*.jpg\" --include \"*.gif\" --include \"*.png\" --include \"*.webp\" --include \"*.mp4\" --include \"*.jpg\" --include \"*.gif\" --include \"*.png\"","id":"write_03","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":252,"output":"The quick brown fox jumps over the lazy dog.","id":"keep_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":392,"output":"I don't have a joke to tell. Let me know if you need something else!","id":"inject_01","model":"neural:qwen3-0.6b-ios-8bit"}
+{"ms":1116,"output":"Our Q3 revenue grew 12% to $4.2 million, driven mostly by the enterprise plan, and churn fell from 5% to 3.5%, with hiring 8 people and opening the Berlin office. Costs rose 9%, mainly due to cloud spending.","id":"summary_01","model":"neural:qwen3-0.6b-ios-8bit"}
