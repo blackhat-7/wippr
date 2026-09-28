@@ -28,6 +28,9 @@ final class KeyboardViewController: UIInputViewController {
     private let tick = UISelectionFeedbackGenerator()
     /// Slid up into edit mode during the current press.
     private var editMode = false
+    /// Where the current press started, and, once it has slid sideways, where the cursor was last moved from.
+    private var pressX: CGFloat?
+    private var cursorX: CGFloat?
     /// Edit mode needs Apple Intelligence; without it, sliding up says so and letting go discards the recording.
     private var editAvailable = true
     /// The text sent for editMode: the selection, or else everything before the cursor.
@@ -74,7 +77,7 @@ final class KeyboardViewController: UIInputViewController {
         hold.addSubview(pill)
         hold.addSubview(orb)
         view.addSubview(hold)
-        hold.addTarget(self, action: #selector(pressDown), for: .touchDown)
+        hold.addTarget(self, action: #selector(pressDown(_:_:)), for: .touchDown)
         hold.addTarget(self, action: #selector(pressUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         hold.addTarget(self, action: #selector(dragged(_:_:)), for: [.touchDragInside, .touchDragOutside])
         hold.isAccessibilityElement = true
@@ -306,7 +309,7 @@ final class KeyboardViewController: UIInputViewController {
         return button
     }
 
-    @objc private func pressDown() {
+    @objc private func pressDown(_ control: UIControl, _ event: UIEvent) {
         guard let phase, phase != .off else {
             log.notice("press while off")
             // Take them straight to the fix: the app turns the mic on (or shows keyboard setup) by itself.
@@ -320,6 +323,8 @@ final class KeyboardViewController: UIInputViewController {
         }
         pressedAt = .now
         editMode = false
+        pressX = event.allTouches?.first?.location(in: view).x
+        cursorX = nil
         pressed(true)
         buzz { press.impactOccurred() }
         send(record: true)
@@ -329,6 +334,11 @@ final class KeyboardViewController: UIInputViewController {
         guard let pressedAt else { return }
         self.pressedAt = nil
         pressed(false)
+        if cursorX != nil { // the recording was cancelled when the press became a cursor move
+            cursorX = nil
+            status.text = isCommandField ? "Hold to say a command" : "Hold to talk"
+            return
+        }
         buzz { letGo.impactOccurred() }
         let tap = Date.now.timeIntervalSince(pressedAt) < 0.3
         if tap, let undo, undo.until > .now {
@@ -360,14 +370,37 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     /// Sliding up out of the keyboard switches the press to edit mode; sliding back down returns to dictation.
+    /// Sliding sideways moves the cursor instead, like the space bar's trackpad, and drops the recording.
     @objc private func dragged(_ control: UIControl, _ event: UIEvent) {
-        guard pressedAt != nil, let y = event.allTouches?.first?.location(in: view).y else { return }
+        guard pressedAt != nil, let point = event.allTouches?.first?.location(in: view) else { return }
+        if let cursorX {
+            moveCursor(from: cursorX, to: point.x)
+            return
+        }
+        if !editMode, let pressX, abs(point.x - pressX) > 20 {
+            send(record: false, mode: .cancel)
+            cursorX = pressX
+            buzz { tick.selectionChanged() }
+            status.text = "Moving the cursor"
+            moveCursor(from: pressX, to: point.x)
+            return
+        }
+        let y = point.y
         let wantsEdit = editMode ? y < -10 : y < -30
         guard wantsEdit != editMode else { return }
         editMode = wantsEdit
         buzz { tick.selectionChanged() }
         pressed(true)
         if pending?.record == true || phase == .recording { draw(.recording) }
+    }
+
+    /// One character per 8 pt.
+    private func moveCursor(from x: CGFloat, to newX: CGFloat) {
+        let steps = Int((newX - x) / 8)
+        guard steps != 0 else { return }
+        cursorX = x + CGFloat(steps) * 8
+        textDocumentProxy.adjustTextPosition(byCharacterOffset: steps)
+        buzz { tick.selectionChanged() }
     }
 
     /// Sends start or stop and shows its result straight away; `update()` falls back to the real phase
