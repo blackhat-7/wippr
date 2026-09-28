@@ -63,6 +63,9 @@ struct HomeView: View {
             if model == .s1mini { NeuralEngine.cleaner.load() } else { NeuralEngine.cleaner.unload() }
             if model == .s1miniCPU { CPUCleaner.shared.preload() } else { CPUCleaner.shared.unload() }
         }
+        .onChange(of: terminalTranscriber) { _, choice in
+            if choice == .whisper { CommandTranscriber.shared.preload() } else { CommandTranscriber.shared.unload() }
+        }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
         }

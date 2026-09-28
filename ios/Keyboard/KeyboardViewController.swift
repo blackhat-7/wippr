@@ -29,7 +29,7 @@ final class KeyboardViewController: UIInputViewController {
     /// Slid up into edit mode during the current press.
     private var editMode = false
     /// Where the current press started, and, once it has slid sideways, where the cursor was last moved from.
-    private var pressX: CGFloat?
+    private var pressPoint: CGPoint?
     private var cursorX: CGFloat?
     /// Edit mode needs Apple Intelligence; without it, sliding up says so and letting go discards the recording.
     private var editAvailable = true
@@ -229,7 +229,7 @@ final class KeyboardViewController: UIInputViewController {
         let space = latest.keys != true && before.last.map { !$0.isWhitespace } ?? false
         let typed = space ? " " + latest.text : latest.text
         textDocumentProxy.insertText(typed)
-        lastTyped = typed
+        if latest.keys != true { lastTyped = typed } // shortcut keys aren't text to delete
         KeyboardHandoff.markTyped(latest.id)
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
@@ -288,6 +288,13 @@ final class KeyboardViewController: UIInputViewController {
         }
         for _ in 0..<count { textDocumentProxy.deleteBackward() }
         if delete == .that { lastTyped = nil }
+        undo = nil // what it would undo may be gone
+        guard count > 0 || (before.isEmpty && isCommandField && delete != .that) else {
+            buzz { notify.notificationOccurred(.error) }
+            orb.shake()
+            status.text = "Nothing to delete"
+            return
+        }
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
         log.notice("delete \(delete.rawValue, privacy: .public): \(count) chars")
@@ -296,6 +303,7 @@ final class KeyboardViewController: UIInputViewController {
     private func undoEdit() {
         guard let undo else { return }
         self.undo = nil
+        lastTyped = nil
         for _ in undo.inserted { textDocumentProxy.deleteBackward() }
         textDocumentProxy.insertText(undo.original)
         buzz { letGo.impactOccurred() }
@@ -323,7 +331,7 @@ final class KeyboardViewController: UIInputViewController {
         }
         pressedAt = .now
         editMode = false
-        pressX = event.allTouches?.first?.location(in: view).x
+        pressPoint = event.allTouches?.first?.location(in: view)
         cursorX = nil
         pressed(true)
         buzz { press.impactOccurred() }
@@ -377,12 +385,13 @@ final class KeyboardViewController: UIInputViewController {
             moveCursor(from: cursorX, to: point.x)
             return
         }
-        if !editMode, let pressX, abs(point.x - pressX) > 20 {
+        // Clearly sideways, not drift while holding or on the way up to edit mode.
+        if !editMode, let start = pressPoint, abs(point.x - start.x) > 20, abs(point.x - start.x) > 2 * abs(point.y - start.y) {
             send(record: false, mode: .cancel)
-            cursorX = pressX
+            cursorX = start.x
             buzz { tick.selectionChanged() }
             status.text = "Moving the cursor"
-            moveCursor(from: pressX, to: point.x)
+            moveCursor(from: start.x, to: point.x)
             return
         }
         let y = point.y

@@ -39,7 +39,7 @@ final class CPUCleaner {
                 }
                 isInstalled = true
                 download = nil
-                preload()
+                if CleanupModel.current == .s1miniCPU { preload() }
             } catch {
                 download = .failed(error.localizedDescription)
             }

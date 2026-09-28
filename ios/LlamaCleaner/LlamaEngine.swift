@@ -45,7 +45,7 @@ public final class LlamaEngine: @unchecked Sendable {
         }
         var contextParams = llama_context_default_params()
         contextParams.n_ctx = 2048
-        contextParams.n_batch = 512
+        contextParams.n_batch = 2048 // the whole prompt goes to one llama_decode, which takes at most n_batch tokens
         contextParams.n_threads = 4
         contextParams.n_threads_batch = 4
         guard let context = llama_init_from_model(model, contextParams) else {
@@ -62,7 +62,13 @@ public final class LlamaEngine: @unchecked Sendable {
 
     /// On `queue` only. Greedy, like the benchmark; S1-mini's chat template with thinking off.
     private func generate(system: String, user: String, maxTokens: Int, file: URL) -> String? {
-        guard loaded(file), let model, let context, let sampler else { return nil }
+        // Not loaded yet (just picked, or freed on a memory warning): load it next and return nil now, so the
+        // caller uses Apple's model (or raw text) instead of waiting seconds for the load.
+        guard model != nil else {
+            queue.async { _ = self.loaded(file) }
+            return nil
+        }
+        guard let model, let context, let sampler else { return nil }
         let start = ContinuousClock.now
         let vocab = llama_model_get_vocab(model)
         let prompt = "<|im_start|>system\n\(system)<|im_end|>\n<|im_start|>user\n\(user)<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"

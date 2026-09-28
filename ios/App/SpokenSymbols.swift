@@ -67,7 +67,7 @@ enum SpokenSymbols {
                 push(brackets[next!]!.open); glue = true; i += 1 // "open paren": glued to what follows
             case "close" where isBracket(next), "right" where isBracket(next):
                 push(brackets[next!]!.close, attach: true); i += 1
-            case "space":
+            case "space" where !inQuote: // inside quotes it's the word: "free up space"
                 push(" ", attach: true); glue = true // a real space: "dot space close paren" → ". )"
             case "star", "asterisk":
                 push("*")

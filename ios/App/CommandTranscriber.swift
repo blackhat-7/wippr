@@ -42,6 +42,9 @@ final class CommandTranscriber: @unchecked Sendable {
         queue.async { _ = self.loadedContext() }
     }
 
+    /// Frees the model when terminals stop using it (Terminal transcriber → Off).
+    func unload() { queue.async { self.free("when turned off") } }
+
     /// On `queue` only.
     private func free(_ reason: StaticString) {
         guard let context else { return }
@@ -182,7 +185,8 @@ final class WhisperModel: DownloadableModel {
         downloadProgress = 0
         Task {
             do {
-                try await CommandTranscriber.download { self.downloadProgress = $0 }
+                // A progress update can arrive after the download ended; only a running one shows.
+                try await CommandTranscriber.download { if self.downloadProgress != nil { self.downloadProgress = $0 } }
                 isInstalled = true
                 CommandTranscriber.shared.preload()
             } catch {
