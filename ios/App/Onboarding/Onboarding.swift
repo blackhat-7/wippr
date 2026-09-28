@@ -56,6 +56,8 @@ struct OnboardingView: View {
             // A relaunch mid-way resumes; the done screen only makes sense right after Settings.
             let saved = OnboardingStep(rawValue: storedStep) ?? .welcome
             step = saved == .keyboardDone ? .keyboard : saved
+            // Past the keyboard step without Full Access confirmed: the keyboard can't work, so check it first.
+            if step.rawValue > OnboardingStep.keyboard.rawValue, !SetupStatus.shared.fullAccess { step = .keyboard }
             practice.target = step
             practice.askPermission = { go { askingMic = true } }
         }
