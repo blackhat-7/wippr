@@ -1,7 +1,9 @@
 import SwiftUI
 
 /// 05 Turn on the keyboard: one trip to Settings (Keyboards → noboard, Allow Full Access, come back).
-/// The guide video floats over Settings in PiP; on return the status is re-read and the done screen follows.
+/// The guide video floats over Settings in PiP. The keyboard doesn't work at all without Full Access, and the app
+/// can only see it once the keyboard has appeared with it on, so after the keyboard is added the user switches to
+/// it in a box on this page; the step moves on only when Full Access is confirmed.
 struct KeyboardStep: View {
     @Environment(\.wide) private var wide
     @Environment(\.scenePhase) private var scenePhase
@@ -9,6 +11,8 @@ struct KeyboardStep: View {
     /// Made on appear (not in init, which SwiftUI repeats).
     @State private var guide: GuidePlayer?
     @State private var wentToSettings = false
+    @FocusState private var checking: Bool
+    @State private var checkText = ""
     /// Back from Settings with the keyboard added.
     let added: () -> Void
     /// The keyboard was already added before this visit.
@@ -28,13 +32,18 @@ struct KeyboardStep: View {
             VStack(alignment: .leading, spacing: wide ? 16 : 12) {
                 whyFullAccess
                 statusRow(added: status.keyboardAdded)
+                if status.keyboardAdded {
+                    fullAccessRow(on: status.fullAccess)
+                    if !status.fullAccess { fullAccessCheck }
+                }
             }
             .padding(.horizontal, wide ? 24 : 0)
             .padding(.bottom, 16)
             if wide { Spacer(minLength: 24) }
         } footer: {
-            PrimaryButton(status.keyboardAdded ? "Continue" : "Open Settings") {
-                if status.keyboardAdded { return skip() }
+            PrimaryButton(status.keyboardAdded && status.fullAccess ? "Continue" : "Open Settings") {
+                if status.keyboardAdded, status.fullAccess { return skip() }
+                checking = false
                 wentToSettings = true
                 guide?.startPiP()
                 if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
@@ -61,10 +70,17 @@ struct KeyboardStep: View {
     }
 
     private func check() {
-        SetupStatus.shared.refresh()
-        if wentToSettings, SetupStatus.shared.keyboardAdded {
-            wentToSettings = false
-            added()
+        let status = SetupStatus.shared
+        status.refresh()
+        if status.keyboardAdded, status.fullAccess {
+            // Confirmed: back from Settings, or the keyboard just appeared in the check box.
+            if wentToSettings || checking {
+                wentToSettings = false
+                checking = false
+                added()
+            }
+        } else if wentToSettings, status.keyboardAdded, !checking {
+            checking = true // bring up a keyboard so the user can switch to noboard and confirm Full Access
         }
     }
 
@@ -108,6 +124,40 @@ struct KeyboardStep: View {
         .padding(.top, wide ? 24 : 14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .overlay(alignment: .top) { Theme.border.frame(height: 1) }
+    }
+
+    private func fullAccessRow(on: Bool) -> some View {
+        HStack(spacing: 10) {
+            Circle().fill(on ? Theme.success : Theme.mic).frame(width: 8, height: 8)
+            Text(on ? "Full Access on" : "Full Access not confirmed")
+                .textStyle(TextStyle(size: wide ? 17 : 15, weight: .medium, tracking: -0.01, lineHeight: 20))
+            Spacer()
+            Text(on ? "Done" : "Required").textStyle(.label, on ? Theme.success : Theme.mic)
+        }
+        .padding(.vertical, wide ? 18 : 14)
+        .padding(.horizontal, wide ? 20 : 16)
+        .card(radius: wide ? 20 : 16)
+        .animation(.easeOut, value: on)
+    }
+
+    /// Tap in, switch to noboard with the globe key: with Full Access on, the keyboard marks itself seen and the
+    /// step moves on. Without it, noboard's bar says "Tap to finish setting up noboard", which brings them back here.
+    private var fullAccessCheck: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("noboard doesn't work without Full Access. To check it's on, tap below and switch to noboard with the globe key.")
+                .textStyle(wide ? TextStyle(size: 16, lineHeight: 22) : .caption, Theme.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            TextField("", text: $checkText, prompt: Text("Tap here, then 🌐 to noboard").foregroundStyle(Theme.faint))
+                .textStyle(TextStyle(size: 17, tracking: -0.01, lineHeight: 22))
+                .tint(Theme.accent)
+                .focused($checking)
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(Theme.surface, in: .rect(cornerRadius: 16))
+                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(checking ? Theme.accent : Theme.border))
+                .contentShape(.rect)
+                .onTapGesture { checking = true }
+        }
     }
 
     private func statusRow(added: Bool) -> some View {
@@ -262,7 +312,7 @@ struct KeyboardDoneStep: View {
                     .symbolEffect(.bounce, value: elapsed > 0)
                 VStack(spacing: 0) {
                     doneRow("noboard keyboard", on: status.keyboardAdded, off: "Not added")
-                    doneRow("Allow Full Access", on: status.fullAccess, off: "Checked in step 6")
+                    doneRow("Allow Full Access", on: status.fullAccess, off: "Not confirmed")
                         .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
                 }
             }
