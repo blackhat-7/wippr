@@ -207,12 +207,14 @@ final class DictationController {
                 // Empty text tells the keyboard the edit failed, so it leaves the field alone.
                 KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
             case .command:
-                // Apple's transcript stays as another hearing. Apple hearing nothing means silence,
-                // where Whisper tends to make up words.
+                // Apple's transcript stays as another hearing. It often misses a short word ("exit"), so Whisper runs
+                // even when Apple heard nothing. Whisper is for commands, which are short: on long speech it can
+                // return one letter ("p"), so it's skipped there, and its words must roughly match Apple's count.
                 var heard = [raw]
-                // Far more words than Apple heard means Whisper made them up; Apple's transcript is used instead.
-                if !raw.isEmpty, let whispered = await CommandTranscriber.shared.transcribe(samples),
-                   whispered.split(separator: " ").count <= raw.split(separator: " ").count * 2 + 3 {
+                let whispered = Double(samples.count) <= 6 * CommandTranscriber.sampleRate ? await CommandTranscriber.shared.transcribe(samples) : nil
+                let appleWords = raw.split(separator: " ").count
+                if let whispered, case let words = whispered.split(separator: " ").count,
+                   words <= appleWords * 2 + 3, appleWords < 4 || words * 2 >= appleWords {
                     heard.insert(whispered, at: 0)
                 }
                 if let shortcut = Shortcuts.match(heard[0]) {
