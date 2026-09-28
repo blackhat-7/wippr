@@ -6,7 +6,8 @@ import Foundation
 @objc(WipprNeuralCleaning)
 public protocol NeuralCleaning: NSObjectProtocol {
     /// Loads the model (compiles it for the Neural Engine the first time) so the next `clean` is fast.
-    func prewarm(_ bundle: URL)
+    /// Calls back with nil once it's loaded, or the error.
+    func prewarm(_ bundle: URL, completion: @escaping (String?) -> Void)
     /// The cleaned text, or nil on any failure.
     func clean(_ text: String, bundle: URL, completion: @escaping (String?) -> Void)
     /// Frees the model's memory; the next `clean` reloads it.

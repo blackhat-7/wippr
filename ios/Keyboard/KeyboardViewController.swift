@@ -217,9 +217,12 @@ final class KeyboardViewController: UIInputViewController {
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let space = latest.keys != true && before.last.map { !$0.isWhitespace } ?? false
         textDocumentProxy.insertText(space ? " " + latest.text : latest.text)
+        KeyboardHandoff.markTyped(latest.id)
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
-        log.notice("inserted \(latest.text.count) chars")
+        let insert = Int(Date.now.timeIntervalSince(latest.date) * 1000)
+        let total = latest.released.map { Int(Date.now.timeIntervalSince($0) * 1000) } ?? -1
+        log.notice("inserted \(latest.text.count) chars; insert \(insert) ms, total from key release \(total) ms")
     }
 
     /// Replaces the edited text if the field still holds it; otherwise just types the result.

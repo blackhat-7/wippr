@@ -28,12 +28,15 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 - [x] On-device ASR (Apple SpeechTranscriber) → `ios/App/Transcriber.swift`
 - [x] On-device cleanup LLM (Apple Foundation Models) → `ios/App/Cleaner.swift`
 - [x] Update cleanup prompt from `bench-cleanup-llm.md` results (v2 tagged prompt ported to Cleaner.swift)
-- [-] A/B Apple Foundation Models vs the bench winner on device — superseded 2026-09-28: S1-mini replaces AFM for cleanup
-- [x] Cleanup on S1-mini Q4_K_M via llama.cpp CPU-only (`ios/App/LocalCleaner.swift`, `ios/Packages/Llama`); AFM only while the model downloads + edit mode
+- [ ] A/B Apple Foundation Models vs S1-mini on device: Home → Experimental → Cleanup model (testing only; AFM stays the default and the shipping path)
+- [-] S1-mini via llama.cpp CPU-only — dropped 2026-09-28 for the Neural Engine path below
+- [x] Experimental: S1-mini on the Neural Engine via Core AI, iOS 27 (`ios/NeuralCleaner/`, loaded at runtime by `ios/App/NeuralEngine.swift`); model exported with `coreai.llm.export --platform iOS`, copied into the app container by hand
 - [x] Pre-pass: list rules only (`ios/App/Prepass.swift`); the full spoken-punctuation pass didn't help end-to-end (`learnings/bench-e2e.md`)
 - [x] End-to-end bench: TTS → Parakeet → cleanup → judge (`bench/e2e`, `learnings/bench-e2e.md`)
-- [ ] Device: first build with the llama.xcframework (CI now builds for device; no simulator slice), model download, `cleaned: … ms` log, tune `n_threads` (2 vs 4)
-- [ ] Device: S1-mini works with the app in the background (no Metal), memory stays OK next to SpeechTranscriber
+- [ ] S1-mini on the Neural Engine: the palettized iOS export is much worse than the benched GGUF (see `learnings/bench-e2e.md`, on-device section); try an 8-bit export
+- [ ] S1-mini in the background: needs `com.apple.developer.background-tasks.continued-processing.inference` on the App ID (signing refused it for team CRH6P5D9K2)
+- [ ] S1-mini: ship or download the model (today it's copied into the container by hand)
+- [ ] CI: Xcode 26.6 can't build the iOS 27 NeuralCleaner target
 - [ ] Record real dictation of `cases.jsonl` (a few voices) and rerun `bench/e2e` on it — TTS audio is too clean
 - [ ] ASR: pass contact names / custom vocabulary to SpeechTranscriber (`AnalysisContext` contextual strings) — ASR word errors are now the biggest loss
 - [x] Deliver text: clipboard + iOS 27 "Paste from wippr"; retry on app open if the background write is refused

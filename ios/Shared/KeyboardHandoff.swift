@@ -31,6 +31,14 @@ enum KeyboardHandoff {
         var keys: Bool?
         /// True when `text` is a written command: typed as is, and a quick tap removes it.
         var command: Bool?
+        /// When the key was let go (the stop command's date), so the keyboard can time the whole dictation.
+        var released: Date?
+    }
+
+    /// When the keyboard typed a text, so the app can show how long the last dictation took end to end.
+    struct Typed: Codable {
+        var id: UUID
+        var date: Date
     }
 
     private struct Status: Codable {
@@ -53,9 +61,15 @@ enum KeyboardHandoff {
 
     // App → keyboard
 
-    static func send(_ text: String, edit: Bool = false, keys: Bool = false, command: Bool = false) {
-        write(Text(id: UUID(), text: text, date: .now, edit: edit, keys: keys, command: command), to: "text")
+    @discardableResult
+    static func send(_ text: String, edit: Bool = false, keys: Bool = false, command: Bool = false,
+                     released: Date? = nil) -> UUID {
+        let id = UUID()
+        write(Text(id: id, text: text, date: .now, edit: edit, keys: keys, command: command, released: released), to: "text")
+        return id
     }
+
+    static func typed() -> Typed? { read(Typed.self, from: "typed") }
 
     static func latestText() -> Text? {
         guard let text = read(Text.self, from: "text"), Date.now.timeIntervalSince(text.date) < maxAge else { return nil }
@@ -107,6 +121,8 @@ enum KeyboardHandoff {
     }
 
     static func command() -> Command? { read(Command.self, from: "command") }
+
+    static func markTyped(_ id: UUID) { write(Typed(id: id, date: .now), to: "typed") }
 
     private static let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String)
     private static let log = Logger(subsystem: "cx.immortal.wippr", category: "handoff")

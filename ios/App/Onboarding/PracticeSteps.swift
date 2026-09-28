@@ -144,7 +144,7 @@ struct MicPermissionStep: View {
             Spacer(minLength: 24)
             VStack(spacing: 0) {
                 SpecRow(label: "Recognition", value: "Apple · on-device")
-                SpecRow(label: "Cleanup", value: Cleaner.engine ?? "Off on this \(deviceName)")
+                SpecRow(label: "Cleanup", value: Cleaner.isAvailable ? "Apple Intelligence" : "Off on this \(deviceName)")
                 SpecRow(label: "Audio sent anywhere", value: "Never")
                     .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
                 Text(working ? "Downloading Apple's speech model…" : "The first time, iOS downloads Apple's speech model.")

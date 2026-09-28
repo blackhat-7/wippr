@@ -36,9 +36,9 @@ final class DictationController {
                 Task { @MainActor in await DictationController.shared.restartMic() }
             }
         }
-        // Neural Engine memory counts against the app on iOS 27; free the model rather than get killed.
+        // Experimental S1-mini: Neural Engine memory counts against the app; free the model rather than get killed.
         NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main) { _ in
-            NeuralEngine.unload()
+            Task { @MainActor in NeuralEngine.shared.unload() }
         }
     }
 
@@ -55,7 +55,7 @@ final class DictationController {
             problems.append("Speech model unavailable: \(error.localizedDescription)")
         }
         if !Cleaner.isAvailable {
-            problems.append("No cleanup model: Apple Intelligence is off, so text is typed without cleanup.")
+            problems.append("Apple Intelligence is unavailable, so text is typed without cleanup.")
         }
         await appDidBecomeActive()
         return problems
@@ -147,8 +147,12 @@ final class DictationController {
             cleaner = nil
             set(.ready)
         }
+        let start = Date.now
         guard let raw = try? await transcriber.stop(), !raw.isEmpty else { return nil }
-        return await (cleaner ?? Cleaner()).clean(raw)
+        let transcribed = Date.now
+        let text = await (cleaner ?? Cleaner()).clean(raw)
+        DictationTiming.record(released: start, picked: start, transcribed: transcribed, cleaned: .now, id: nil)
+        return text
     }
 
     /// After practice, turns the mic back off unless the user chose to keep it on.
@@ -198,15 +202,18 @@ final class DictationController {
         let samples = audio?.samples ?? []
         audio = nil
         set(.processing)
+        let released = command.date ?? .now // a stop command's date is when the key was let go
+        let picked = Date.now
         do {
             let raw = try await transcriber.stop()
+            let transcribed = Date.now
             switch command.mode ?? .dictate {
             case .dictate:
                 if let shortcut = Shortcuts.match(raw) {
                     KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
                     break
                 }
-                await typeCleaned(raw)
+                await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed)
             case .edit:
                 // Empty text tells the keyboard the edit failed, so it leaves the field alone.
                 KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
@@ -228,7 +235,7 @@ final class DictationController {
                 // Nil means prose (e.g. a prompt for an agent in the terminal): typed like dictation, from Apple's
                 // transcript, which hears prose better than the shell-primed Whisper.
                 guard let written = await CommandWriter.write(heard: heard, screen: command.text ?? "") else {
-                    await typeCleaned(raw)
+                    await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed)
                     break
                 }
                 if !written.isEmpty { KeyboardHandoff.send(written, command: true) }
@@ -243,12 +250,14 @@ final class DictationController {
         set(.ready)
     }
 
-    /// Dictation: cleans the transcript, types it and copies it.
-    private func typeCleaned(_ raw: String) async {
+    /// Dictation: cleans the transcript, types it and copies it. The dates time the stages (`DictationTiming`).
+    private func typeCleaned(_ raw: String, released: Date, picked: Date, transcribed: Date) async {
         let text = await (cleaner ?? Cleaner()).clean(raw)
+        let cleaned = Date.now
         if !text.isEmpty {
-            KeyboardHandoff.send(text)
+            let id = KeyboardHandoff.send(text, released: released)
             copy(text)
+            DictationTiming.record(released: released, picked: picked, transcribed: transcribed, cleaned: cleaned, id: id)
         }
     }
 

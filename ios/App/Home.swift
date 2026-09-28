@@ -6,6 +6,10 @@ struct HomeView: View {
     @Environment(\.wide) private var wide
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
+    /// Experimental, for testing: which model cleans dictation (Apple Intelligence by default).
+    @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
+    /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
+    @State private var typed: KeyboardHandoff.Typed?
     @State private var shortcuts = Shortcuts.all
     /// The shortcut open in the editor; a new one isn't in `shortcuts` yet.
     @State private var editing: Shortcut?
@@ -33,6 +37,7 @@ struct HomeView: View {
                 CommandModelCard()
                     .padding(.top, wide ? 44 : 32)
                 tips
+                experimental
             }
             .padding(.horizontal, wide ? 0 : 16)
             .padding(.top, wide ? 24 : 0)
@@ -43,10 +48,16 @@ struct HomeView: View {
         .scrollBounceBehavior(.basedOnSize)
         .background(Theme.background)
         .onChange(of: scenePhase, initial: true) { _, phase in
-            if phase == .active { status.refresh() }
+            if phase == .active {
+                status.refresh()
+                typed = KeyboardHandoff.typed()
+            }
         }
         .onChange(of: shortcuts) { _, shortcuts in Shortcuts.all = shortcuts }
         .sheet(item: $editing) { ShortcutEditor($0, in: $shortcuts) }
+        .onChange(of: cleanupModel, initial: true) { _, model in
+            if model == .s1mini { NeuralEngine.shared.load() } else { NeuralEngine.shared.unload() }
+        }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
         }
@@ -90,7 +101,7 @@ struct HomeView: View {
         let cleanup = StatusCard(
             label: "Cleanup", ok: status.cleanupAvailable,
             title: status.cleanupAvailable ? "On-device" : "Off",
-            detail: status.cleanupAvailable ? "\(Cleaner.engine ?? "On-device") · on-device"
+            detail: status.cleanupAvailable ? "Apple Intelligence · on-device"
                 : "Not available on this device · text is typed without cleanup")
         if wide {
             VStack(spacing: 12) {
@@ -208,6 +219,71 @@ struct HomeView: View {
         }
         .padding(.horizontal, wide ? 0 : 8)
         .padding(.top, 4)
+    }
+
+    /// For testing only: pick the cleanup model and see how long the last cleanup took.
+    private var experimental: some View {
+        let neural = NeuralEngine.shared
+        let unavailable = NeuralEngine.unavailableReason
+        var notes: [String] = []
+        if cleanupModel == .s1mini {
+            switch neural.state {
+            case .loading: notes.append("Loading… Apple Intelligence cleans until S1-mini is ready. The first load can take minutes.")
+            case .failed(let error): notes.append("S1-mini didn't load (\(error)), so Apple Intelligence cleans.")
+            case .idle, .ready: break
+            }
+        } else if let unavailable {
+            notes.append("S1-mini: \(unavailable).")
+        }
+        if let last = CleanupStats.shared.last {
+            notes.append("Last cleanup: \(last.ms) ms · \(last.model == .off ? "none (raw text)" : last.model.name)")
+        }
+        if let t = DictationTimings.shared.last {
+            let s = { (x: TimeInterval) in String(format: "%.2f s", x) }
+            var line = "Last dictation: pickup \(s(t.pickup)) · ASR \(s(t.asr)) · cleanup \(s(t.cleanup))"
+            if let done = t.typed(typed) { line += " · insert \(s(done.insert)) · total \(s(done.total))" }
+            notes.append(line)
+        }
+        return VStack(alignment: .leading, spacing: wide ? 12 : 8) {
+            Text("Experimental").textStyle(.label, Theme.tertiary)
+                .padding(.horizontal, wide ? 0 : 8)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Cleanup model").textStyle(.rowStrong)
+                        Text("For testing. Edit mode always uses Apple Intelligence.").textStyle(.caption, Theme.tertiary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 8)
+                    Menu {
+                        ForEach(CleanupModel.allCases) { model in
+                            Button {
+                                cleanupModel = model
+                            } label: {
+                                if model == cleanupModel { Label(model.name, systemImage: "checkmark") } else { Text(model.name) }
+                            }
+                            .disabled(model == .s1mini && unavailable != nil)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(cleanupModel.name).lineLimit(1)
+                            Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
+                        }
+                        .textStyle(.rowStrong, Theme.accent)
+                        .frame(minHeight: 44)
+                        .contentShape(.rect)
+                    }
+                }
+                ForEach(notes, id: \.self) { note in
+                    Text(note).textStyle(.caption, Theme.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
+            .card(radius: 24)
+        }
+        .padding(.top, wide ? 44 : 32)
     }
 
     private var tips: some View {

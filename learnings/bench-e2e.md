@@ -2,7 +2,7 @@
 
 **TL;DR (2026-09-28)**
 - The 66 cleanup cases (`bench/llm/cases.jsonl`) were spoken with Kokoro TTS (2 voices, clean and 10 dB pink noise), transcribed with Parakeet, cleaned with 7 LLMs, and graded by the same Claude Opus judge as `bench-cleanup-llm.md`.
-- **Pick: S1-mini Q4_K_M + the list rules (`ios/App/Prepass.swift`): 4.18/5 end-to-end** on Parakeet v2 output (4.44 on the hand-written text). This is what the app now ships (`ios/App/LocalCleaner.swift`, llama.cpp CPU-only). Qwen3.5-4B is better (4.36) but ~7× larger and too slow on a phone CPU.
+- **Pick: S1-mini Q4_K_M + the list rules (`ios/App/Prepass.swift`): 4.18/5 end-to-end** on Parakeet v2 output (4.44 on the hand-written text). On the phone it runs on the Neural Engine via Core AI (iOS 27, experimental, Home → Experimental); an earlier llama.cpp CPU version was dropped. Apple Foundation Models stays the default. Qwen3.5-4B is better (4.36) but ~7× larger and too slow on a phone CPU.
 - **The LLM is worth +0.8.** Parakeet text alone scores 3.38. With S1-mini it reaches 4.14, or 4.18 with the list rules.
 - **ASR costs every LLM ~0.25.** S1-mini goes 4.38 → 4.14, Qwen3.5-4B 4.64 → 4.36. Most of the losses are ASR word errors no cleanup can undo ("useEffect" → "use of FectHook", "API" → "PI", "comma" → "Common", "Mei" → "May"), plus wrong ASR sentence breaks ("running on. Staging").
 - **The new 2026 fine-tunes lose to S1-mini here.** BudgieScribe-Nano-en: 3.97 text / 3.61 ASR. speakoflow-mini: 3.17 text / 3.89 ASR. It is also ~1.5× slower on CPU (Qwen3.5 architecture).
@@ -43,7 +43,7 @@ Full table (29+ runs, all variants and categories): `bench/e2e/results/summary.m
 
 v3 has slightly lower WER, but its text cleans worse (3.95 vs 4.14). Its errors land on words that matter (technical terms: 2.7 vs 3.7).
 
-**Phone-proxy speed** (60-word case, 4 desktop P-cores, CPU only, llama.cpp b10709): S1-mini 663 ms warm / 816 ms cold; BudgieScribe-Nano 718 / 798; speakoflow-mini 1038 / 1397; Qwen3.5-0.8B 1136 / 2431. Qwen3.5-architecture models are slower on CPU at the same size. An iPhone uses its 2 P-cores (`LocalCleaner` picks `activeProcessorCount - 4`), so expect ~1 s. Tune the thread count on device from the `cleaned: … ms` log line.
+**Phone-proxy speed** (60-word case, 4 desktop P-cores, CPU only, llama.cpp b10709): S1-mini 663 ms warm / 816 ms cold; BudgieScribe-Nano 718 / 798; speakoflow-mini 1038 / 1397; Qwen3.5-0.8B 1136 / 2431. Qwen3.5-architecture models are slower on CPU at the same size. (These CPU numbers are from when llama.cpp was the plan; the app now uses the Neural Engine instead. On-device numbers are in the section below.)
 
 ## Caveats
 
