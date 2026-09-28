@@ -309,6 +309,8 @@ struct HomeView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
                 ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
+                ModelRow(title: "Terminal transcriber", selection: .constant(.whisper), slots: [:],
+                         unavailable: CommandTranscriber.isDownloaded ? [:] : [TerminalTranscriber.whisper: "Download it under Terminal commands"])
                 ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner],
                          unavailable: CPUCleaner.shared.isInstalled ? [:] : [.s1miniCPU: "Download it below"])
                 CPUCleanerDownload()
@@ -518,7 +520,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(name(selection)).lineLimit(1)
+                        Text(reason(selection).map { "\(name(selection)) (\($0))" } ?? name(selection)).lineLimit(1)
                         Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
                     }
                     .textStyle(.rowStrong, Theme.accent)
@@ -574,7 +576,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     }
 
     private func name(_ choice: Choice) -> String {
-        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? choice.rawValue
+        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? TerminalTranscriber)?.name ?? choice.rawValue
     }
 
     /// The picked Neural Engine model's load state (reasons for the others are in the menu).

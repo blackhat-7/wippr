@@ -63,3 +63,12 @@ enum TranscriberModel: String, CaseIterable, Identifiable {
         UserDefaults.standard.string(forKey: key).flatMap(TranscriberModel.init) ?? .apple
     }
 }
+
+/// Command mode's recognizer, shown on Home so its download is easy to find. Only Whisper: Apple's is used
+/// automatically until it's downloaded, and for speech too long for a command.
+enum TerminalTranscriber: String, CaseIterable, Identifiable {
+    case whisper
+
+    var id: String { rawValue }
+    var name: String { "Whisper small.en · CPU" }
+}
