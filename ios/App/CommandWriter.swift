@@ -10,14 +10,25 @@ enum CommandWriter {
     /// The command to type, or nil when the speech is prose rather than a command.
     /// `heard`: the transcript, then the recognizer's alternatives. `screen`: text before the cursor, often the prompt.
     static func write(heard: [String], screen: String = "") async -> String? {
-        let typed = SpokenSymbols.apply(heard.first ?? "")
-        guard !typed.isEmpty, !isProse(typed) else { return nil }
+        let spoken = SpokenSymbols.apply(heard.first ?? "")
+        guard !spoken.isEmpty, !isProse(spoken) else { return nil }
         // Keystrokes ("control b percent" → Ctrl+B %) have no names to fix.
-        if typed.unicodeScalars.contains(where: { $0.value < 32 }) { return typed }
+        if spoken.unicodeScalars.contains(where: { $0.value < 32 }) { return spoken }
+        let typed = soundAlikeCommands(spoken)
         guard Cleaner.isAvailable, let fixed = await fixNames(typed, alternatives: heard.dropFirst().map(SpokenSymbols.apply), screen: screen),
               symbols(fixed) == symbols(typed), similarity(fixed.lowercased(), typed) >= 0.5
         else { return typed }
         return fixed
+    }
+
+    /// Replaces a word in a command position (first, or after sudo, |, &&, ||, ;) with the known command it
+    /// sounds like: "demux a" → "tmux a". The model keeps real words like "demux", so this runs first.
+    private static func soundAlikeCommands(_ command: String) -> String {
+        var words = command.split(separator: " ").map(String.init)
+        for i in words.indices where i == 0 || ["sudo", "|", "&&", "||", ";"].contains(words[i - 1]) {
+            if let known = ShellVocabulary.command(soundingLike: words[i]) { words[i] = known }
+        }
+        return words.joined(separator: " ")
     }
 
     @Generable
