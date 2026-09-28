@@ -69,3 +69,19 @@ uv run pipeline.py judge && uv run pipeline.py report
 uv run cputime.py s1-mini budgie-nano  # phone-proxy CPU timing
 uv run prepass.py                      # pre-pass unit tests
 ```
+
+## On device (iPhone 18 Pro Max, iOS 27, 2026-09-28)
+
+Same 66 Parakeet v2 transcripts, run in the app (Debug `-cleanupBench`), graded by the same Claude judge.
+
+| Cleanup on the phone | judge 1-5 | >=4 | answered | dropped | median ms | p90 ms | max ms |
+|---|---|---|---|---|---|---|---|
+| S1-mini, Core AI **8-bit** palettized (616 MB), Neural Engine | **4.20** | 50 | 0 | 0 | 317 | 547 | 3827 |
+| Apple Foundation Models (the shipping default) | 3.50 | 36 | 8 | 8 | 1068 | 1594 | 4425 |
+| S1-mini, Core AI mixed 4/8-bit (Apple's `qwen3_0_6b_mixed_4bit_8bit.yaml`, 447 MB) | 3.21 | 35 | 4 | 19 | 250 | 488 | 8212 |
+
+- **Use 8-bit.** Apple's mixed 4/8-bit recipe breaks this fine-tune: repetition loops, answered prompts, dropped words, lowercase starts. 8-bit matches the GGUF bench (4.18) and 54/66 outputs are identical to it. The prompt was verified token by token (ends `<think>\n\n</think>\n\n`), so it isn't the template.
+- 8-bit config: `kmeans_palettization_config` with `n_bits: 8`, `per_grouped_channel`, `group_size: 8`, embeddings skipped. Re-apply the no-thinking `chat_template.jinja` patch after every export.
+- First load compiles for the device: ~5 min (4/8-bit), ~17 min (8-bit). It's cached in `Library/Caches/coreai-cache`; later loads take ~2.9 s.
+- The compiled cache contains an MPSGraph (GPU) delegate, so part of the model may run on the GPU; check before relying on it in the background.
+- `devicectl device copy to --remove-existing-content true` clears the **whole app data container**, not just the destination folder.
