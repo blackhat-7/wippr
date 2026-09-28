@@ -497,7 +497,8 @@ private struct ModelRow<Choice: CaseIterable & Identifiable & RawRepresentable &
 where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     let title: String
     @Binding var selection: Choice
-    /// The Neural Engine options and their models: each disabled, with the reason, when it can't run here.
+    /// The Neural Engine options and their models: disabled, with the reason, when they can't run here yet, and
+    /// hidden where they never can (too little memory).
     let slots: [Choice: NeuralSlot]
     /// Other options that can't be picked yet, with the reason (Whisper before its download).
     var unavailable: [Choice: String] = [:]
@@ -508,13 +509,14 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                 Text(title).textStyle(.rowStrong)
                 Spacer(minLength: 8)
                 Menu {
-                    ForEach(Choice.allCases) { choice in
+                    ForEach(Choice.allCases.filter(isOffered)) { choice in
                         Button {
                             selection = choice
                         } label: {
-                            if choice == selection { Label(name(choice), systemImage: "checkmark") } else { Text(name(choice)) }
+                            let label = reason(choice).map { "\(name(choice)) (\($0))" } ?? name(choice)
+                            if choice == selection { Label(label, systemImage: "checkmark") } else { Text(label) }
                         }
-                        .disabled(slots[choice]?.unavailableReason != nil || unavailable[choice] != nil)
+                        .disabled(reason(choice) != nil)
                     }
                 } label: {
                     HStack(spacing: 4) {
@@ -526,7 +528,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     .contentShape(.rect)
                 }
             }
-            ForEach(slots.keys.sorted { $0.rawValue < $1.rawValue }, id: \.self) { choice in
+            ForEach(slots.keys.filter(isOffered).sorted { $0.rawValue < $1.rawValue }, id: \.self) { choice in
                 if let slot = slots[choice], slot.source != nil { downloadRow(choice, slot) }
             }
             if let note {
@@ -564,19 +566,22 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
         }
     }
 
+    private func isOffered(_ choice: Choice) -> Bool { slots[choice] == nil || NeuralSlot.fitsThisDevice }
+
+    /// Why `choice` can't be picked yet, shown in the menu; a missing Neural Engine model has a Download button below.
+    private func reason(_ choice: Choice) -> String? {
+        if let reason = unavailable[choice] { return reason }
+        guard let reason = slots[choice]?.unavailableReason else { return nil }
+        return reason == "Model not installed" ? "Download it below" : reason
+    }
+
     private func name(_ choice: Choice) -> String {
         (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? choice.rawValue
     }
 
+    /// The picked Neural Engine model's load state (reasons for the others are in the menu).
     private var note: String? {
-        guard let slot = slots[selection] else {
-            // A missing model gets a Download button instead of a note.
-            let reasons = slots.compactMap { choice, slot in
-                slot.unavailableReason.flatMap { $0 == "Model not installed" && slot.source != nil ? nil : "\(name(choice)): \($0)." }
-            }
-            let other = unavailable.map { choice, reason in "\(name(choice)): \(reason)." }
-            return (reasons + other).isEmpty ? nil : (reasons + other).sorted().joined(separator: " ")
-        }
+        guard let slot = slots[selection] else { return nil }
         switch slot.state {
         case .loading: return "Loading… Apple's model is used until it's ready. The first load can take many minutes."
         case .failed(let error): return "Didn't load (\(error)), so Apple's model is used."

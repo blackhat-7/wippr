@@ -44,6 +44,10 @@ enum NeuralEngine {
 /// One experimental model: where its files are, and its load state for the UI.
 @MainActor @Observable
 final class NeuralSlot {
+    /// Loading one took ~2.9 GB, and a 4 GB iPad (10th gen) killed the app for it, turning the mic off. Home hides
+    /// these models there, and one picked before this check won't load.
+    static let fitsThisDevice = ProcessInfo.processInfo.physicalMemory > 5 << 30
+
     enum State: Equatable {
         case idle, loading, ready
         case failed(String)
@@ -105,6 +109,7 @@ final class NeuralSlot {
 
     /// Why this model can't be used on this device, or nil if it can.
     var unavailableReason: String? {
+        guard Self.fitsThisDevice else { return "Needs more memory" }
         guard #available(iOS 27, *) else { return "Needs iOS 27" }
         guard isInstalled else { return "Model not installed" }
         return nil
