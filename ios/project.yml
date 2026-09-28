@@ -7,6 +7,10 @@ options:
     iOS: "26.0"
   createIntermediateGroups: true
 
+packages:
+  Whisper:
+    path: Packages/Whisper # whisper.cpp for command mode
+
 settings:
   base:
     SWIFT_VERSION: "5.0"
@@ -28,6 +32,8 @@ targets:
       - Keyboard/Orb.metal
     dependencies:
       - target: WipprKeyboard
+      - package: Whisper
+        product: whisper
     entitlements:
       path: App/Wippr.entitlements
       properties:

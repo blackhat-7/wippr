@@ -15,6 +15,8 @@ enum KeyboardHandoff {
         case dictate
         /// The speech is an instruction: rewrite `Command.text` (or, if empty, write what it asks for).
         case edit
+        /// The speech is a shell command for a terminal: `Command.text` is the text before the cursor.
+        case command
         /// Discard the recording (the key was tapped to undo).
         case cancel
     }
@@ -27,6 +29,8 @@ enum KeyboardHandoff {
         var edit: Bool?
         /// True when `text` is a shortcut's keys: typed as is, with no space before it.
         var keys: Bool?
+        /// True when `text` is a written command: typed as is, and a quick tap removes it.
+        var command: Bool?
     }
 
     private struct Status: Codable {
@@ -40,7 +44,7 @@ enum KeyboardHandoff {
         /// When the key went down; the app replays audio from here. Optional so older files still decode.
         var date: Date?
         var mode: Mode?
-        /// The text to edit (the selection, or the text before the cursor).
+        /// The text to edit (the selection, or the text before the cursor), or for `command` the text before the cursor.
         var text: String?
     }
 
@@ -49,8 +53,8 @@ enum KeyboardHandoff {
 
     // App → keyboard
 
-    static func send(_ text: String, edit: Bool = false, keys: Bool = false) {
-        write(Text(id: UUID(), text: text, date: .now, edit: edit, keys: keys), to: "text")
+    static func send(_ text: String, edit: Bool = false, keys: Bool = false, command: Bool = false) {
+        write(Text(id: UUID(), text: text, date: .now, edit: edit, keys: keys, command: command), to: "text")
     }
 
     static func latestText() -> Text? {
