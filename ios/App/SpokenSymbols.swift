@@ -70,6 +70,9 @@ enum SpokenSymbols {
                 push("<"); i += 1
             case "semicolon":
                 push(";", attach: true)
+            case "double" where next == "quote":
+                i += 1
+                fallthrough
             case "quote":
                 if inQuote { push("\"", attach: true) } else { push("\""); glue = true }
                 inQuote.toggle()
