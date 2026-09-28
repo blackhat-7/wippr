@@ -24,9 +24,11 @@ enum SpokenSymbols {
             let word = words[i], next = i + 1 < words.count ? words[i + 1] : nil
             switch word {
             case "dash" where next == "dash":
-                push("--"); glue = true; i += 1
+                glue = false; push("--"); glue = true; i += 1 // a flag starts a new word, even after "dot"
+            case "dash" where joinsWords(out, next), "-" where joinsWords(out, next):
+                push("-", attach: true); glue = true // "remote dash control" → "remote-control"
             case "dash", "-":
-                push("-"); glue = true
+                glue = false; push("-"); glue = true
                 // Spelled letters after a dash are one flag: "dash l a" → "-la".
                 var letters = ""
                 while i + 1 < words.count, words[i + 1].count == 1, words[i + 1].first!.isLetter {
@@ -43,7 +45,7 @@ enum SpokenSymbols {
                 push(word == "underscore" ? "_" : "=", attach: true); glue = true
             case "dollar", "plus":
                 push(word == "dollar" ? "$" : "+"); glue = true
-            case "control", "ctrl" where next.map { $0.count == 1 && $0.first!.isLetter } ?? false:
+            case "control" where isLetter(next), "ctrl" where isLetter(next):
                 // "control b" → Ctrl+B, the byte a terminal gets (0x02), e.g. tmux's prefix.
                 push(String(UnicodeScalar(next!.first!.asciiValue! - 96))); glue = true; i += 1
             case "escape":
@@ -88,6 +90,17 @@ enum SpokenSymbols {
         }
         return out.joined(separator: " ")
     }
+
+    /// A dash between two words, not after a command or before a letter: "pre dash commit", "tmux kill dash session",
+    /// but "ls dash la" and "checkout dash b" are flags.
+    private static func joinsWords(_ out: [String], _ next: String?) -> Bool {
+        guard let previous = out.last, let next, next.count > 1, next.allSatisfy(\.isLetter), previous.allSatisfy(\.isLetter) else { return false }
+        let commandPosition = out.count == 1 || ["sudo", "|", "&&", "||", ";"].contains(out[out.count - 2])
+        return !(commandPosition && ShellVocabulary.commands.contains(previous))
+    }
+
+    /// A single letter: "b" in "control b".
+    private static func isLetter(_ word: String?) -> Bool { word.map { $0.count == 1 && $0.first!.isLetter } ?? false }
 
     /// "l", ":w": a lone letter at the end, so the next spelled letter joins it ("l s" → "ls", ": w q" → ":wq").
     private static func endsInSpelledLetter(_ word: String) -> Bool {
