@@ -198,8 +198,6 @@ final class DictationController {
             let transcriber: any SpeechInput
             if TranscriberModel.current == .parakeet, let parakeet = ParakeetTranscriber() {
                 transcriber = parakeet
-            } else if TranscriberModel.current == .whisper, let whisper = WhisperTranscriber() {
-                transcriber = whisper
             } else {
                 transcriber = try await Transcriber()
             }

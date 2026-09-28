@@ -5,7 +5,6 @@ import whisper
 
 /// Command mode's recognizer: whisper.cpp small.en, primed with `ShellVocabulary.whisperPrompt`, hears commands far
 /// better than Apple's. An optional download; without it command mode uses Apple's transcript.
-/// Experimental: it can also transcribe ordinary dictation (`transcribeDictation`, Home → Experimental → Transcriber).
 /// CPU only: in the background iOS blocks the GPU (Metal) and the Neural Engine.
 final class CommandTranscriber: @unchecked Sendable {
     static let shared = CommandTranscriber()
@@ -87,17 +86,7 @@ final class CommandTranscriber: @unchecked Sendable {
         }
     }
 
-    /// Ordinary dictation: no shell prompt, any length, all segments. Nil if the model is missing or nothing was heard.
-    func transcribeDictation(_ samples: [Float]) async -> String? {
-        await withCheckedContinuation { continuation in
-            queue.async {
-                continuation.resume(returning: self.run(samples, dictation: true))
-                if !Self.staysLoaded { self.free("after use") }
-            }
-        }
-    }
-
-    private func run(_ samples: [Float], dictation: Bool = false) -> String? {
+    private func run(_ samples: [Float]) -> String? {
         // Whisper makes up words ("Thank you.") on silence, so skip audio that never gets louder than room noise.
         guard Self.hasSpeech(samples), let context = loadedContext() else { return nil }
         let start = ContinuousClock.now
@@ -108,19 +97,19 @@ final class CommandTranscriber: @unchecked Sendable {
         // Below ~10 s (512) Whisper returns lone letters ("p", "s"); 512 is also what bench/command measured.
         params.audio_ctx = Int32(min(max(Int(seconds * 50) + 64, 512), 1500))
         params.no_timestamps = true
-        params.single_segment = !dictation // dictation can run past one 30 s window
+        params.single_segment = true
         params.suppress_blank = true
         params.suppress_nst = true
         // Whisper can get stuck repeating a word ("mic mic mic…"). Commands are short, so stop early; its temperature
         // fallback (on by default) re-decodes such loops.
-        params.max_tokens = dictation ? 0 : 48 // 0: no limit
+        params.max_tokens = 48
         params.print_progress = false
         params.print_realtime = false
         params.print_timestamps = false
         let status = "en".withCString { language in
             ShellVocabulary.whisperPrompt.withCString { prompt in
                 params.language = language
-                params.initial_prompt = dictation ? nil : prompt
+                params.initial_prompt = prompt
                 return whisper_full(context, params, samples, Int32(samples.count))
             }
         }
@@ -176,15 +165,14 @@ final class CommandTranscriber: @unchecked Sendable {
     }
 }
 
-/// Collects a dictation's audio as whisper's 16 kHz mono samples, up to 30 s (whisper's window) by default.
+/// Collects a dictation's audio as whisper's 16 kHz mono samples, up to 30 s (whisper's window).
 /// `append` runs on the mic's audio thread.
 final class CommandAudio: @unchecked Sendable {
-    private let maxSamples: Int
+    private let maxSamples = Int(CommandTranscriber.sampleRate * 30)
     private let converter: AVAudioConverter?
     private let collected = OSAllocatedUnfairLock<[Float]>(initialState: [])
 
-    init(micFormat: AVAudioFormat, maxSeconds: Double = 30) {
-        maxSamples = Int(CommandTranscriber.sampleRate * maxSeconds)
+    init(micFormat: AVAudioFormat) {
         let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: CommandTranscriber.sampleRate, channels: 1, interleaved: false)!
         converter = AVAudioConverter(from: micFormat, to: format)
     }

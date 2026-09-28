@@ -67,7 +67,6 @@ struct HomeView: View {
         }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
-            if model == .whisper { CommandTranscriber.shared.preload() }
         }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
@@ -310,8 +309,7 @@ struct HomeView: View {
                     .textStyle(.caption, Theme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
-                ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber],
-                         unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
+                ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
                 // Apple's stands in for Whisper until it's downloaded.
                 ModelRow(title: "Terminal transcriber", selection: $terminalTranscriber, slots: [:],
                          unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
