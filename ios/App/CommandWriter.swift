@@ -11,24 +11,43 @@ enum CommandWriter {
     /// `heard`: the transcript, then the recognizer's alternatives. `screen`: text before the cursor, often the prompt.
     static func write(heard: [String], screen: String = "") async -> String? {
         let spoken = SpokenSymbols.apply(heard.first ?? "")
-        guard !spoken.isEmpty, !isProse(spoken) else { return nil }
         // Keystrokes ("control b percent" → Ctrl+B %) have no names to fix.
         if spoken.unicodeScalars.contains(where: { $0.value < 32 }) { return spoken }
         let typed = soundAlikeCommands(spoken)
+        guard !typed.isEmpty, !isProse(typed) else { return nil }
         guard Cleaner.isAvailable, let fixed = await fixNames(typed, alternatives: heard.dropFirst().map(SpokenSymbols.apply), screen: screen),
-              symbols(fixed) == symbols(typed), similarity(fixed.lowercased(), typed) >= 0.5
+              symbols(fixed) == symbols(typed), similarity(fixed.lowercased(), typed) >= 0.5, onlyFixesNames(typed, fixed)
         else { return typed }
         return fixed
     }
 
-    /// Replaces a word in a command position (first, or after sudo, |, &&, ||, ;) with the known command it
-    /// sounds like: "demux a" → "tmux a". The model keeps real words like "demux", so this runs first.
+    /// Replaces the word (or two words) in a command position (first, or after sudo, |, &&, ||, ;) with the known
+    /// command it sounds like: "demux a" → "tmux a", "beat up" → "btop". The model keeps real words like "demux",
+    /// so this runs first.
     private static func soundAlikeCommands(_ command: String) -> String {
         var words = command.split(separator: " ").map(String.init)
-        for i in words.indices where i == 0 || ["sudo", "|", "&&", "||", ";"].contains(words[i - 1]) {
-            if let known = ShellVocabulary.command(soundingLike: words[i]) { words[i] = known }
+        var i = 0
+        while i < words.count {
+            if i == 0 || ["sudo", "|", "&&", "||", ";"].contains(words[i - 1]) {
+                let joined = i + 1 < words.count && words[i + 1].count > 1 ? words[i] + words[i + 1] : ""
+                if let known = ShellVocabulary.commands.contains(joined) ? joined : ShellVocabulary.command(soundingLike: joined, maxDistance: 3),
+                   known != words[i] { // "echo hi" sounds like "echo": not a join
+                    words.replaceSubrange(i...i + 1, with: [known])
+                } else if let known = ShellVocabulary.command(soundingLike: words[i]) {
+                    words[i] = known
+                }
+            }
+            i += 1
         }
         return words.joined(separator: " ")
+    }
+
+    /// The model may replace misheard words (two can become one name: "cube control" → "kubectl"), but not delete
+    /// words or change known commands: it once turned "go build" into "golang build" and dropped "hi" from "echo hi".
+    private static func onlyFixesNames(_ typed: String, _ fixed: String) -> Bool {
+        let before = typed.split(separator: " ").map(String.init), after = fixed.split(separator: " ").map(String.init)
+        let removed = before.filter { !after.contains($0) }, added = after.filter { !before.contains($0) }
+        return !removed.contains(where: ShellVocabulary.commands.contains) && removed.count <= 2 * added.count
     }
 
     @Generable

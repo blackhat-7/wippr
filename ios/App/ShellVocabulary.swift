@@ -21,10 +21,11 @@ enum ShellVocabulary {
 
     /// The known command that sounds like `word` and is spelled within 2 letters of it, if exactly one is closest:
     /// "demux" → "tmux", "get" / "jit" → "git". The user's own names ("nv", "mdr") match none, so they stay as heard.
-    static func command(soundingLike word: String) -> String? {
+    /// `maxDistance` is 3 for two heard words joined ("beat up" → "beatup" → "btop").
+    static func command(soundingLike word: String, maxDistance: Int = 2) -> String? {
         guard !commands.contains(word), word.count >= 2, word.allSatisfy(\.isLetter) else { return nil }
         let key = soundKey(word)
-        let candidates = Set(commands.filter { soundKey($0) == key }).map { ($0, editDistance($0, word)) }.filter { $0.1 <= 2 }
+        let candidates = Set(commands.filter { soundKey($0) == key }).map { ($0, editDistance($0, word)) }.filter { $0.1 <= maxDistance }
         guard let best = candidates.map(\.1).min() else { return nil }
         let closest = candidates.filter { $0.1 == best }
         return closest.count == 1 ? closest[0].0 : nil

@@ -45,12 +45,15 @@ enum SpokenSymbols {
                 push(word == "underscore" ? "_" : "=", attach: true); glue = true
             case "dollar", "plus":
                 push(word == "dollar" ? "$" : "+"); glue = true
-            case "control" where isLetter(next), "ctrl" where isLetter(next):
+            case "control" where isControlKey(words, i), "ctrl" where isControlKey(words, i):
                 // "control b" → Ctrl+B, the byte a terminal gets (0x02), e.g. tmux's prefix.
                 push(String(UnicodeScalar(next!.first!.asciiValue! - 96))); glue = true; i += 1
             case "escape":
                 push("\u{1B}"); glue = true
-            case "percent":
+            case "per" where next == "cent":
+                i += 1
+                fallthrough
+            case "percent", "percentage":
                 push("%", attach: glue)
             case "colon":
                 push(":", attach: glue); glue = true
@@ -99,8 +102,20 @@ enum SpokenSymbols {
         return !(commandPosition && ShellVocabulary.commands.contains(previous))
     }
 
-    /// A single letter: "b" in "control b".
-    private static func isLetter(_ word: String?) -> Bool { word.map { $0.count == 1 && $0.first!.isLetter } ?? false }
+    /// "control b" followed by nothing, a spelled key or a symbol word. Anything else ("control b percentage" before
+    /// "percentage" was known) is typed as words: sent as keys, tmux would run "p" and the rest would be typed.
+    private static func isControlKey(_ words: [String], _ i: Int) -> Bool {
+        guard i + 1 < words.count, words[i + 1].count == 1, words[i + 1].first!.isLetter else { return false }
+        guard i + 2 < words.count else { return true }
+        let after = words[i + 2]
+        return after.count == 1 || symbolWords.contains(after) || after.allSatisfy { !$0.isLetter }
+    }
+
+    private static let symbolWords: Set = [
+        "dash", "slash", "dot", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
+        "percent", "percentage", "per", "escape", "underscore", "equals", "dollar", "plus", "semicolon", "ampersand",
+        "and", "or", "greater", "less", "control", "ctrl",
+    ]
 
     /// "l", ":w": a lone letter at the end, so the next spelled letter joins it ("l s" → "ls", ": w q" → ":wq").
     private static func endsInSpelledLetter(_ word: String) -> Bool {
