@@ -71,6 +71,7 @@ final class DictationController {
 
     /// Retries a refused clipboard write and turns the mic back on if it should be on.
     func appDidBecomeActive() async {
+        KeyboardHandoff.setEditAvailable(Cleaner.isAvailable)
         if let pendingCopy {
             UIPasteboard.general.string = pendingCopy
             self.pendingCopy = nil
@@ -95,6 +96,7 @@ final class DictationController {
         try mic.start()
         micSince = .now
         lastCommand = KeyboardHandoff.command()?.id // ignore taps from while the mic was off
+        KeyboardHandoff.setEditAvailable(Cleaner.isAvailable)
         set(.ready)
         poll = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
             Task { @MainActor in DictationController.shared.tick() }

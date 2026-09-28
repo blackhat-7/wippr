@@ -71,6 +71,12 @@ enum KeyboardHandoff {
 
     static func typed() -> Typed? { read(Typed.self, from: "typed") }
 
+    /// Whether edit mode can run (it needs Apple Intelligence). Written by the app when it comes to the foreground
+    /// and when the mic starts; true until the app has said otherwise.
+    static func setEditAvailable(_ available: Bool) { write(available, to: "edit-available") }
+
+    static func editAvailable() -> Bool { read(Bool.self, from: "edit-available") ?? true }
+
     static func latestText() -> Text? {
         guard let text = read(Text.self, from: "text"), Date.now.timeIntervalSince(text.date) < maxAge else { return nil }
         return text
