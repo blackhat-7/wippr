@@ -5,12 +5,14 @@ import whisper
 
 /// Command mode's recognizer: whisper.cpp small.en, primed with `ShellVocabulary.whisperPrompt`, hears commands far
 /// better than Apple's. An optional download; without it command mode uses Apple's transcript.
+/// Experimental: it can also transcribe ordinary dictation (`transcribeDictation`, Home → Experimental → Transcriber).
 /// CPU only: in the background iOS blocks the GPU (Metal) and the Neural Engine.
 final class CommandTranscriber: @unchecked Sendable {
     static let shared = CommandTranscriber()
 
     static let modelName = "ggml-small.en-q8_0.bin"
-    static let modelURL = URL(string: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/\(modelName)")!
+    /// Pinned to a revision of the official whisper.cpp model repo (MIT), so the file can't change under the app.
+    static let modelURL = URL(string: "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/\(modelName)")!
     static var modelFile: URL { .applicationSupportDirectory.appending(path: modelName) }
     static var isDownloaded: Bool { FileManager.default.fileExists(atPath: modelFile.path) }
 
@@ -74,7 +76,14 @@ final class CommandTranscriber: @unchecked Sendable {
         }
     }
 
-    private func run(_ samples: [Float]) -> String? {
+    /// Ordinary dictation: no shell prompt, any length, all segments. Nil if the model is missing or nothing was heard.
+    func transcribeDictation(_ samples: [Float]) async -> String? {
+        await withCheckedContinuation { continuation in
+            queue.async { continuation.resume(returning: self.run(samples, dictation: true)) }
+        }
+    }
+
+    private func run(_ samples: [Float], dictation: Bool = false) -> String? {
         // Whisper makes up words ("Thank you.") on silence, so skip audio that never gets louder than room noise.
         guard Self.hasSpeech(samples), let context = loadedContext() else { return nil }
         let start = ContinuousClock.now
@@ -85,19 +94,19 @@ final class CommandTranscriber: @unchecked Sendable {
         // Below ~10 s (512) Whisper returns lone letters ("p", "s"); 512 is also what bench/command measured.
         params.audio_ctx = Int32(min(max(Int(seconds * 50) + 64, 512), 1500))
         params.no_timestamps = true
-        params.single_segment = true
+        params.single_segment = !dictation // dictation can run past one 30 s window
         params.suppress_blank = true
         params.suppress_nst = true
         // Whisper can get stuck repeating a word ("mic mic mic…"). Commands are short, so stop early; its temperature
         // fallback (on by default) re-decodes such loops.
-        params.max_tokens = 48
+        params.max_tokens = dictation ? 0 : 48 // 0: no limit
         params.print_progress = false
         params.print_realtime = false
         params.print_timestamps = false
         let status = "en".withCString { language in
             ShellVocabulary.whisperPrompt.withCString { prompt in
                 params.language = language
-                params.initial_prompt = prompt
+                params.initial_prompt = dictation ? nil : prompt
                 return whisper_full(context, params, samples, Int32(samples.count))
             }
         }
@@ -153,14 +162,15 @@ final class CommandTranscriber: @unchecked Sendable {
     }
 }
 
-/// Collects a dictation's audio as whisper's 16 kHz mono samples, up to 30 s (whisper's window).
+/// Collects a dictation's audio as whisper's 16 kHz mono samples, up to 30 s (whisper's window) by default.
 /// `append` runs on the mic's audio thread.
 final class CommandAudio: @unchecked Sendable {
-    private static let maxSamples = Int(CommandTranscriber.sampleRate * 30)
+    private let maxSamples: Int
     private let converter: AVAudioConverter?
     private let collected = OSAllocatedUnfairLock<[Float]>(initialState: [])
 
-    init(micFormat: AVAudioFormat) {
+    init(micFormat: AVAudioFormat, maxSeconds: Double = 30) {
+        maxSamples = Int(CommandTranscriber.sampleRate * maxSeconds)
         let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: CommandTranscriber.sampleRate, channels: 1, interleaved: false)!
         converter = AVAudioConverter(from: micFormat, to: format)
     }
@@ -172,7 +182,7 @@ final class CommandAudio: @unchecked Sendable {
               let channel = converted.floatChannelData?[0] else { return }
         let new = UnsafeBufferPointer(start: channel, count: Int(converted.frameLength))
         collected.withLockUnchecked { samples in
-            samples.append(contentsOf: new.prefix(Self.maxSamples - samples.count))
+            samples.append(contentsOf: new.prefix(maxSamples - samples.count))
         }
     }
 }

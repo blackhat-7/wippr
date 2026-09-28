@@ -7,7 +7,7 @@ import UIKit
 /// Debug builds only: benches on the device, reading inputs from Documents and writing results next to them.
 ///
 /// - `-cleanupBench apple|s1mini [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
-/// - `-asrBench apple|parakeet [realtime]`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
+/// - `-asrBench apple|parakeet|whisper [realtime]`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
 /// - `-editBench apple`: `edit-in.json` ([{"id", "text", "instruction"}]) through `Editor`.
 /// - `-editBench neural:<folder>`: the same cases through a Core AI model in `Application Support/<folder>`, with
 ///   Apple's edit instructions and message format (or `edit-prompt.json` if present), for picking an editor.
@@ -175,7 +175,9 @@ enum CleanupBench {
                 let file = try AVAudioFile(forReading: url)
                 let format = file.processingFormat
                 let transcriber: any SpeechInput
-                if model == "parakeet", let parakeet = ParakeetTranscriber() { transcriber = parakeet } else { transcriber = try await Transcriber() }
+                if model == "parakeet", let parakeet = ParakeetTranscriber() { transcriber = parakeet }
+                else if model == "whisper", let whisper = WhisperTranscriber() { transcriber = whisper }
+                else { transcriber = try await Transcriber() }
                 let start = Date.now
                 let sink = try await transcriber.start(micFormat: format)
                 let frames = AVAudioFrameCount(format.sampleRate / 10)
@@ -190,7 +192,7 @@ enum CleanupBench {
                 let end = Date.now
                 let stopMs = Int(end.timeIntervalSince(fed) * 1000), totalMs = Int(end.timeIntervalSince(start) * 1000)
                 let audioMs = Int(Double(file.length) / format.sampleRate * 1000)
-                let by = transcriber is ParakeetTranscriber ? "parakeet" : "apple"
+                let by = TranscriberModel.of(transcriber).rawValue
                 write(["id": id, "text": text, "stop_ms": stopMs, "total_ms": totalMs, "audio_ms": audioMs, "model": by])
                 print("bench: \(id) stop \(stopMs) ms, total \(totalMs) ms for \(audioMs) ms audio by \(by)")
             } catch {

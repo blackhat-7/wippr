@@ -162,7 +162,7 @@ final class DictationController {
         let transcribed = Date.now
         let text = await (cleaner ?? Cleaner()).clean(raw)
         DictationTiming.record(released: start, picked: start, transcribed: transcribed, cleaned: .now, id: nil,
-                               asr: transcriber is ParakeetTranscriber ? .parakeet : .apple)
+                               asr: TranscriberModel.of(transcriber))
         return text
     }
 
@@ -197,6 +197,8 @@ final class DictationController {
             let transcriber: any SpeechInput
             if TranscriberModel.current == .parakeet, let parakeet = ParakeetTranscriber() {
                 transcriber = parakeet
+            } else if TranscriberModel.current == .whisper, let whisper = WhisperTranscriber() {
+                transcriber = whisper
             } else {
                 transcriber = try await Transcriber()
             }
@@ -231,7 +233,7 @@ final class DictationController {
                     break
                 }
                 await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
-                                  asr: transcriber is ParakeetTranscriber ? .parakeet : .apple)
+                                  asr: TranscriberModel.of(transcriber))
             case .edit:
                 // Empty text tells the keyboard the edit failed, so it leaves the field alone.
                 KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
@@ -254,7 +256,7 @@ final class DictationController {
                 // transcript, which hears prose better than the shell-primed Whisper.
                 guard let written = await CommandWriter.write(heard: heard, screen: command.text ?? "") else {
                     await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
-                                      asr: transcriber is ParakeetTranscriber ? .parakeet : .apple)
+                                      asr: TranscriberModel.of(transcriber))
                     break
                 }
                 if !written.isEmpty { KeyboardHandoff.send(written, command: true) }

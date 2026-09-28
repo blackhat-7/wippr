@@ -50,3 +50,24 @@ final class ParakeetTranscriber: SpeechInput {
         return text
     }
 }
+
+/// Experimental, for testing: whisper.cpp small.en on the CPU (any iOS 26+ iPhone), the same model file command mode
+/// downloads. Not streaming: it collects the audio and transcribes it all after the key is let go.
+final class WhisperTranscriber: SpeechInput {
+    private var audio: CommandAudio?
+
+    /// nil until the model is downloaded (Home → Terminal commands); the caller uses Apple's Transcriber meanwhile.
+    init?() {
+        guard CommandTranscriber.isDownloaded else { return nil }
+    }
+
+    func start(micFormat: AVAudioFormat) async throws -> Mic.Sink {
+        let audio = CommandAudio(micFormat: micFormat, maxSeconds: 300)
+        self.audio = audio
+        return { audio.append($0) }
+    }
+
+    func stop() async throws -> String {
+        await CommandTranscriber.shared.transcribeDictation(audio?.samples ?? []) ?? ""
+    }
+}

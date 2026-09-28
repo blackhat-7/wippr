@@ -65,6 +65,7 @@ struct HomeView: View {
         }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
+            if model == .whisper { CommandTranscriber.shared.preload() }
         }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
@@ -295,7 +296,7 @@ struct HomeView: View {
         }
         if let t = DictationTimings.shared.last {
             let s = { (x: TimeInterval) in String(format: "%.2f s", x) }
-            var line = "Last dictation: pickup \(s(t.pickup)) · ASR \(s(t.asr)) (\(t.asrModel == .parakeet ? "Parakeet" : "Apple")) · cleanup \(s(t.cleanup))"
+            var line = "Last dictation: pickup \(s(t.pickup)) · ASR \(s(t.asr)) (\(t.asrModel.name)) · cleanup \(s(t.cleanup))"
             if let done = t.typed(typed) { line += " · insert \(s(done.insert)) · total \(s(done.total))" }
             timing.append(line)
         }
@@ -307,7 +308,8 @@ struct HomeView: View {
                     .textStyle(.caption, Theme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
-                ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
+                ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber],
+                         unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
                 ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner])
                 ForEach(timing, id: \.self) { line in
                     Text(line).textStyle(.caption, Theme.secondary)
@@ -465,6 +467,8 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     @Binding var selection: Choice
     /// The Neural Engine options and their models: each disabled, with the reason, when it can't run here.
     let slots: [Choice: NeuralSlot]
+    /// Other options that can't be picked yet, with the reason (Whisper before its download).
+    var unavailable: [Choice: String] = [:]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -478,7 +482,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                         } label: {
                             if choice == selection { Label(name(choice), systemImage: "checkmark") } else { Text(name(choice)) }
                         }
-                        .disabled(slots[choice]?.unavailableReason != nil)
+                        .disabled(slots[choice]?.unavailableReason != nil || unavailable[choice] != nil)
                     }
                 } label: {
                     HStack(spacing: 4) {
@@ -538,7 +542,8 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
             let reasons = slots.compactMap { choice, slot in
                 slot.unavailableReason.flatMap { $0 == "Model not installed" && slot.source != nil ? nil : "\(name(choice)): \($0)." }
             }
-            return reasons.isEmpty ? nil : reasons.sorted().joined(separator: " ")
+            let other = unavailable.map { choice, reason in "\(name(choice)): \(reason)." }
+            return (reasons + other).isEmpty ? nil : (reasons + other).sorted().joined(separator: " ")
         }
         switch slot.state {
         case .loading: return "Loading… Apple's model is used until it's ready. The first load can take many minutes."

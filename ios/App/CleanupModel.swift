@@ -37,7 +37,7 @@ final class CleanupStats {
 
 /// Experimental, for testing: which model transcribes dictation. Apple's SpeechTranscriber is the default.
 enum TranscriberModel: String, CaseIterable, Identifiable {
-    case apple, parakeet
+    case apple, parakeet, whisper
 
     static let key = "transcriberModel"
 
@@ -47,7 +47,13 @@ enum TranscriberModel: String, CaseIterable, Identifiable {
         switch self {
         case .apple: "Apple SpeechTranscriber"
         case .parakeet: "Parakeet · Neural Engine"
+        case .whisper: "Whisper small.en · CPU"
         }
+    }
+
+    /// Which one a dictation actually used (a picked model that isn't ready falls back to Apple's).
+    static func of(_ transcriber: any SpeechInput) -> TranscriberModel {
+        transcriber is ParakeetTranscriber ? .parakeet : transcriber is WhisperTranscriber ? .whisper : .apple
     }
 
     static var current: TranscriberModel {
