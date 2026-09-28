@@ -70,6 +70,8 @@ enum SpokenSymbols {
             case "close" where next.map(Self.brackets.keys.contains) ?? false,
                  "right" where next.map(Self.brackets.keys.contains) ?? false:
                 push(Self.brackets[next!]!.close, attach: true); i += next == "square" ? 2 : 1
+            case "space":
+                push(" ", attach: true); glue = true // a real space: "dot space close paren" → ". )"
             case "star", "asterisk":
                 push("*")
             case "at" where next.map(isHost) ?? false:
@@ -125,7 +127,7 @@ enum SpokenSymbols {
     }
 
     private static let symbolWords: Set = [
-        "dash", "slash", "backslash", "back", "backward", "forward", "dot", "open", "close", "left", "right", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
+        "dash", "slash", "backslash", "back", "backward", "forward", "dot", "open", "close", "left", "right", "space", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
         "percent", "percentage", "per", "escape", "underscore", "equals", "dollar", "plus", "semicolon", "ampersand",
         "and", "or", "greater", "less", "control", "ctrl",
     ]
@@ -144,6 +146,7 @@ enum SpokenSymbols {
     /// "paren", "bracket", "curly"… → their characters. "square bracket" is [ ].
     private static let brackets: [String: (open: String, close: String)] = [
         "paren": ("(", ")"), "parenthesis": ("(", ")"), "parens": ("(", ")"), "bracket": ("(", ")"),
+        "parent": ("(", ")"), "parents": ("(", ")"), // how speech recognition writes "paren"
         "square": ("[", "]"), "brace": ("{", "}"), "curly": ("{", "}"),
     ]
 
