@@ -75,7 +75,8 @@ final class CommandTranscriber: @unchecked Sendable {
     }
 
     private func run(_ samples: [Float]) -> String? {
-        guard !samples.isEmpty, let context = loadedContext() else { return nil }
+        // Whisper makes up words ("Thank you.") on silence, so skip audio that never gets louder than room noise.
+        guard Self.hasSpeech(samples), let context = loadedContext() else { return nil }
         let start = ContinuousClock.now
         let seconds = Double(samples.count) / Self.sampleRate
         var params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY)
@@ -109,6 +110,15 @@ final class CommandTranscriber: @unchecked Sendable {
             .trimmingCharacters(in: .whitespacesAndNewlines))
         log.notice("\(seconds, format: .fixed(precision: 1)) s audio, ctx \(params.audio_ctx): \((ContinuousClock.now - start) / .milliseconds(1), format: .fixed(precision: 0)) ms")
         return text.isEmpty ? nil : text
+    }
+
+    /// True if some 20 ms of `samples` is louder than -40 dBFS (quiet speech; a quiet room is around -60).
+    static func hasSpeech(_ samples: [Float]) -> Bool {
+        let window = Int(sampleRate / 50)
+        return stride(from: 0, to: samples.count - window + 1, by: window).contains { start in
+            let power = samples[start..<start + window].reduce(0) { $0 + $1 * $1 } / Float(window)
+            return 10 * log10(max(power, 1e-10)) > -40
+        }
     }
 
     /// Keeps one of a word or phrase (up to 4 words) repeated 3+ times in a row: "mic mic mic mic" → "mic".
