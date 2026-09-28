@@ -19,6 +19,7 @@ targets:
   Wippr:
     type: application
     platform: iOS
+    scheme: {} # so xcodebuild and Xcode have a Wippr scheme to build and run
     sources:
       - path: App
         excludes: ["Resources/.gitkeep"] # guide videos go in App/Resources (see Onboarding/GuidePlayer.swift)
