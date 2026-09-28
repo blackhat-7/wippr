@@ -45,7 +45,7 @@ final class DictationController {
                 print("memory warning")
                 #endif
                 if CleanupModel.current != .s1mini { NeuralEngine.cleaner.unload() }
-                if EditModel.current != .qwen { NeuralEngine.editor.unload() }
+                if EditModel.current != .qwen, CleanupModel.current != .qwen { NeuralEngine.qwen.unload() }
                 if TranscriberModel.current != .parakeet { NeuralEngine.transcriber.unload() }
             }
         }

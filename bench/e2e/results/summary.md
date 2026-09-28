@@ -27,6 +27,7 @@
 | budgie-nano | parakeet-tdt-0.6b-v2:us-f | pre | 3.77 | 41 | 0 | 4 | 2 | 4 | 72 | 3.8 | 3.4 | 3.2 | 3.8 | 4.6 | 3.3 | 1.5 |
 | budgie-nano | parakeet-tdt-0.6b-v2:us-f | strip | 3.76 | 41 | 0 | 5 | 1 | 2 | 67 | 4.0 | 4.1 | 3.5 | 2.5 | 3.6 | 3.2 | 2.0 |
 | budgie-nano | parakeet-tdt-0.6b-v2:us-f | plain | 3.61 | 37 | 0 | 3 | 1 | 4 | 74 | 3.8 | 3.4 | 2.8 | 2.5 | 4.6 | 3.3 | 1.5 |
+| device-qwen3-1.7b-6bit | parakeet-tdt-0.6b-v2:us-f | plain | 3.55 | 35 | 3 | 4 | 3 | 6 | - | 3.5 | 2.7 | 3.3 | 3.0 | 4.4 | 3.3 | 2.0 |
 | qwen3.5-0.8b | parakeet-tdt-0.6b-v2:us-f | plain | 3.55 | 34 | 1 | 5 | 0 | 10 | 105 | 3.3 | 1.7 | 3.3 | 3.0 | 4.6 | 3.3 | 2.0 |
 | device-apple-fm | parakeet-tdt-0.6b-v2:us-f | plain | 3.50 | 36 | 8 | 8 | 8 | 4 | - | 4.2 | 4.0 | 2.5 | 3.2 | 4.4 | 3.3 | 2.5 |
 | none | parakeet-tdt-0.6b-v2:us-f | pre | 3.50 | 31 | 0 | 0 | 0 | 10 | - | 2.8 | 2.0 | 3.5 | 3.8 | 4.2 | 3.0 | 2.0 |

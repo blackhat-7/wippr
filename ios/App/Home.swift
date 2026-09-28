@@ -60,12 +60,13 @@ struct HomeView: View {
         // Experimental models load in the background when picked, and free their memory when not.
         .onChange(of: cleanupModel, initial: true) { _, model in
             if model == .s1mini { NeuralEngine.cleaner.load() } else { NeuralEngine.cleaner.unload() }
+            if model == .qwen || editModel == .qwen { NeuralEngine.qwen.load() } else { NeuralEngine.qwen.unload() }
         }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
         }
         .onChange(of: editModel, initial: true) { _, model in
-            if model == .qwen { NeuralEngine.editor.load() } else { NeuralEngine.editor.unload() }
+            if model == .qwen || cleanupModel == .qwen { NeuralEngine.qwen.load() } else { NeuralEngine.qwen.unload() }
         }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
@@ -250,9 +251,9 @@ struct HomeView: View {
                     .textStyle(.caption, Theme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
-                ModelRow(title: "Transcriber", selection: $transcriberModel, experimental: .parakeet, slot: NeuralEngine.transcriber)
-                ModelRow(title: "Cleanup model", selection: $cleanupModel, experimental: .s1mini, slot: NeuralEngine.cleaner)
-                ModelRow(title: "Edit model", selection: $editModel, experimental: .qwen, slot: NeuralEngine.editor)
+                ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
+                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner, .qwen: NeuralEngine.qwen])
+                ModelRow(title: "Edit model", selection: $editModel, slots: [.qwen: NeuralEngine.qwen])
                 ForEach(timing, id: \.self) { line in
                     Text(line).textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -407,12 +408,10 @@ private struct ModelRow<Choice: CaseIterable & Identifiable & RawRepresentable &
 where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     let title: String
     @Binding var selection: Choice
-    /// The Neural Engine option: disabled, with the reason, when it can't run here.
-    let experimental: Choice
-    let slot: NeuralSlot
+    /// The Neural Engine options and their models: each disabled, with the reason, when it can't run here.
+    let slots: [Choice: NeuralSlot]
 
     var body: some View {
-        let unavailable = slot.unavailableReason
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 10) {
                 Text(title).textStyle(.rowStrong)
@@ -424,7 +423,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                         } label: {
                             if choice == selection { Label(name(choice), systemImage: "checkmark") } else { Text(name(choice)) }
                         }
-                        .disabled(choice == experimental && unavailable != nil)
+                        .disabled(slots[choice]?.unavailableReason != nil)
                     }
                 } label: {
                     HStack(spacing: 4) {
@@ -436,7 +435,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     .contentShape(.rect)
                 }
             }
-            if let note = note(unavailable) {
+            if let note {
                 Text(note).textStyle(.caption, Theme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 6)
@@ -449,8 +448,11 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
         (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? EditModel)?.name ?? choice.rawValue
     }
 
-    private func note(_ unavailable: String?) -> String? {
-        guard selection == experimental else { return unavailable.map { "\(name(experimental)): \($0)." } }
+    private var note: String? {
+        guard let slot = slots[selection] else {
+            let reasons = slots.compactMap { choice, slot in slot.unavailableReason.map { "\(name(choice)): \($0)." } }
+            return reasons.isEmpty ? nil : reasons.sorted().joined(separator: " ")
+        }
         switch slot.state {
         case .loading: return "Loading… Apple's model is used until it's ready. The first load can take many minutes."
         case .failed(let error): return "Didn't load (\(error)), so Apple's model is used."

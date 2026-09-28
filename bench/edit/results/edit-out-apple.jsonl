@@ -1,0 +1,20 @@
+{"ms":2734,"output":"Hey team, the deploy is moved to tomorrow morning due to a bug in the payment flow. Sorry for the short notice.","id":"shorten_01","model":"apple"}
+{"output":"I’d like to chat briefly about the next quarter’s roadmap—any time later this week works.","id":"shorten_02","model":"apple","ms":723}
+{"output":"- We need to book the venue\n- Send the invites by Friday\n- Order food for 40 people\n- Find someone to do the photos","id":"bullets_01","model":"apple","ms":669}
+{"model":"apple","id":"bullets_02","output":"1. First install the dependencies, then copy the env file, then run the migrations and finally start the dev server.","ms":680}
+{"output":"Dear, could you please send me the invoice as soon as possible, as it is required for tax purposes?","id":"formal_01","ms":666,"model":"apple"}
+{"model":"apple","id":"formal_02","output":"The meeting has been rescheduled to 3:00 PM. Please ensure punctuality.","ms":508}
+{"model":"apple","id":"casual_01","output":"Hey Mr. Patel, just wanted to let you know I can't make it to tomorrow's session.","ms":606}
+{"output":"Me and him went to the store yesterday and bought three apples.","id":"grammar_01","ms":449,"model":"apple"}
+{"output":"They are going to announce it tomorrow, it is not final yet but it will affect everyone.","id":"grammar_02","ms":461,"model":"apple"}
+{"output":"Gracias por tu ayuda hoy, nos vemos el lunes.","id":"translate_01","ms":475,"model":"apple"}
+{"model":"apple","id":"translate_02","output":"निकटतम ट्रेन स्टेशन कहाँ है?","ms":458}
+{"output":"The results showed opportunities for growth, and we are optimistic about moving forward.","id":"rephrase_01","ms":460,"model":"apple"}
+{"output":"Let's meet on Thursday at the office at 10.","id":"replace_01","ms":411,"model":"apple"}
+{"output":"The report is attached. Please reply by Friday.","id":"append_01","ms":360,"model":"apple"}
+{"output":"The heater is broken. I need it repaired as soon as possible.","id":"write_01","ms":437,"model":"apple"}
+{"model":"apple","id":"write_02","output":"git log --oneline -5","ms":420}
+{"output":"find . -type png -size +1M","id":"write_03","ms":444,"model":"apple"}
+{"model":"apple","id":"keep_01","output":"The quick brown fox jumps over the lazy dog.","ms":337}
+{"model":"apple","id":"inject_01","output":"Why did the chicken cross the road? To get to the other side!","ms":504}
+{"model":"apple","id":"summary_01","output":"Q3 revenue grew 12% to $4.2 million, driven by the enterprise plan, with churn dropping to 3.5%, 8 new hires, the opening of the Berlin office, and a 9% cost increase mainly due to cloud spending.","ms":1040}

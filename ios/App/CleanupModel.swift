@@ -4,7 +4,7 @@ import Observation
 /// Experimental, for testing: which model cleans dictation, picked on Home. Apple Intelligence is the default
 /// and the shipping path; S1-mini on the Neural Engine and Off are there to compare against it.
 enum CleanupModel: String, CaseIterable, Identifiable {
-    case apple, s1mini, off
+    case apple, s1mini, qwen, off
 
     static let key = "cleanupModel"
 
@@ -14,6 +14,7 @@ enum CleanupModel: String, CaseIterable, Identifiable {
         switch self {
         case .apple: "Apple Intelligence"
         case .s1mini: "S1-mini · Neural Engine"
+        case .qwen: "Qwen3-1.7B · Neural Engine"
         case .off: "Off"
         }
     }

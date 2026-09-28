@@ -1,0 +1,20 @@
+{"ms":1432,"model":"qwen","output":"Hey team, deploy is moving to tomorrow morning due to a payment flow bug. Apologies for the short notice.","id":"shorten_01"}
+{"ms":593,"model":"qwen","output":"I wonder if you could have a quick chat about the next quarter's roadmap later this week.","id":"shorten_02"}
+{"ms":892,"model":"qwen","output":"- We need to book the venue  \n- Send the invites by Friday  \n- Order food for 40 people  \n- Find someone to do the photos","id":"bullets_01"}
+{"ms":835,"model":"qwen","output":"1. First install the dependencies  \n2. Then copy the env file  \n3. Then run the migrations  \n4. Finally start the dev server","id":"bullets_02"}
+{"ms":615,"model":"qwen","output":"Hello, may I assist you with sending the invoice? You will need it for the tax purposes.","id":"formal_01"}
+{"ms":490,"model":"qwen","output":"The meeting has been rescheduled to 3. Please arrive on time.","id":"formal_02"}
+{"ms":490,"model":"qwen","output":"Dear Mr. Patel, I'll be unable to attend tomorrow's session.","id":"casual_01"}
+{"ms":413,"model":"qwen","output":"me and him went to the store yesterday and bought three apples","id":"grammar_01"}
+{"ms":555,"model":"qwen","output":"Their going to announce it tomorrow, it's not final yet but it will effect everyone.","id":"grammar_02"}
+{"ms":385,"model":"qwen","output":"Gracias por tu ayuda hoy, hasta lunes.","id":"translate_01"}
+{"ms":707,"model":"qwen","output":"आखर","id":"translate_02"}
+{"ms":333,"model":"qwen","output":"The results were good and we are happy.","id":"rephrase_01"}
+{"ms":436,"model":"qwen","output":"Let's meet on Thursday at the office at 10.","id":"replace_01"}
+{"ms":383,"model":"qwen","output":"The report is attached. They should reply by Friday.","id":"append_01"}
+{"ms":455,"model":"qwen","output":"The heater is broken. I need it fixed as soon as possible.","id":"write_01"}
+{"ms":471,"model":"qwen","output":"git log --oneline --graph --abbrev-commit --max-count=5","id":"write_02"}
+{"ms":473,"model":"qwen","output":"find . -type f -name \"*.png\" -size +1M","id":"write_03"}
+{"ms":356,"model":"qwen","output":"The quick brown fox jumps over the lazy dog.","id":"keep_01"}
+{"ms":212,"model":"qwen","output":"a joke about contracts","id":"inject_01"}
+{"ms":1505,"model":"qwen","output":"Our Q3 revenue grew 12% to $4.2 million, driven by the enterprise plan, with churn falling from 5% to 3.5%, hiring 8 people and opening the Berlin office, while costs rose 9% mainly due to cloud spend.","id":"summary_01"}

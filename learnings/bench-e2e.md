@@ -87,3 +87,27 @@ Same 66 Parakeet v2 transcripts, run in the app (Debug `-cleanupBench`), graded 
 - `devicectl device copy to --remove-existing-content true` clears the **whole app data container**, not just the destination folder.
 - **Background works** with `com.apple.developer.background-tasks.continued-processing.inference` (enabled on the App ID as Background Inference, 2026-09-28): the Debug bench in background mode (app backgrounded by opening Settings) ran all 66 cases on S1-mini 8-bit, median 322 ms, p90 700 ms, max 3.7 s, outputs identical to the foreground run. Not yet A/B-tested without the entitlement.
 - The compile cache lives in `Library/Caches/coreai-cache/<iOS build>/<bundle id>/…`: it survived an app reinstall (load 3.5 s). It should survive a reboot (not tested), but an iOS update changes the build key, which means a full recompile. iOS may also purge Caches under storage pressure.
+
+## On device, round 2 (2026-09-28): Parakeet, Qwen3-1.7B
+
+**ASR** (66 clips made with macOS `say` Samantha at 16 kHz from `tts.spoken()`, not the Kokoro clips; WER with the whisper normalizer; `-asrBench … realtime` feeds the clip at speaking pace like the mic):
+
+| Transcriber | WER | after release, median / p90 / max |
+|---|---|---|
+| Apple SpeechTranscriber (default) | 9.08% | 97 / 113 / 130 ms |
+| Parakeet TDT v2, Core AI streaming float16 (1.1 GB) | **5.30%** | 207 / 240 / 305 ms |
+
+- v2 has only a `.nemo` on HF: converted with transformers' `convert_nemo_to_hf.py` (v2 has no `<pad>`: use the blank id), then Apple's `models/parakeet/export.py --streaming --dtype float16` with the model choice relaxed. Needs `uv run --with librosa`.
+- `finishStream()` returns only the last segment; collect every `.finalized` segment (the first version lost everything before the last pause: 29.8% WER).
+- First load compiles ~37 s; cached 1.3–3.5 s. Its compiled cache is MPSGraph, i.e. probably GPU: check it in the background before relying on it from the keyboard.
+- Crash seen once: loading Parakeet right after Qwen hit `MPSGraphExecutable.mm: failed assertion 'Unable to use cached specializations and original module not available'` (SIGABRT).
+
+**Qwen3-1.7B, 6-bit (1.3 GB)**, one model for cleanup and edit:
+
+| Job | Qwen3-1.7B | reference |
+|---|---|---|
+| Cleanup (66 cases, Apple's cleanup prompt) | 3.55, median 619 ms | S1-mini 8-bit 4.20 (317 ms), Apple FM 3.50 |
+| Edit (20 cases in `bench/edit`, Claude judge) | 3.45, median 490 ms | Apple FM 4.10 (475 ms) |
+
+- Not worth it for either job. First load compiles for ~31 min with 4 memory warnings; loaded next to S1-mini, the app was killed (jetsam, SIGKILL). Cached load 3.5 s.
+- So: S1-mini for cleanup and Apple for edit keeps a single Neural Engine LLM in memory.

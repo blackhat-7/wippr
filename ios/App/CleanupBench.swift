@@ -5,7 +5,7 @@ import UIKit
 
 /// Debug builds only: benches on the device, reading inputs from Documents and writing results next to them.
 ///
-/// - `-cleanupBench apple|s1mini [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
+/// - `-cleanupBench apple|s1mini|qwen [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
 /// - `-asrBench apple|parakeet`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
 /// - `-editBench apple|qwen`: `edit-in.json` ([{"id", "text", "instruction"}]) through `Editor`.
 ///
@@ -22,10 +22,13 @@ enum CleanupBench {
             let model = rest.first ?? ""
             let background = rest.contains("background")
             setvbuf(stdout, nil, _IONBF, 0) // print straight to the devicectl console
-            let previous = UserDefaults.standard.string(forKey: key)
-            UserDefaults.standard.set(model, forKey: key)
+            // Only the model under test: the other settings are Apple's for the run, so no other experimental model
+            // loads next to it (two big ones together can exceed the app's memory limit).
+            let keys = [CleanupModel.key, TranscriberModel.key, EditModel.key]
+            let previous = keys.map { UserDefaults.standard.string(forKey: $0) }
+            for other in keys { UserDefaults.standard.set(other == key ? model : "apple", forKey: other) }
             Task {
-                defer { UserDefaults.standard.set(previous, forKey: key) } // leave Home's choice as it was
+                defer { for (k, v) in zip(keys, previous) { UserDefaults.standard.set(v, forKey: k) } } // leave Home's choices as they were
                 if let slot = slot(flag, model) {
                     let start = Date.now
                     await ready(slot)
@@ -65,8 +68,9 @@ enum CleanupBench {
     private static func slot(_ flag: String, _ model: String) -> NeuralSlot? {
         switch (flag, model) {
         case ("-cleanupBench", "s1mini"): NeuralEngine.cleaner
+        case ("-cleanupBench", "qwen"): NeuralEngine.qwen
         case ("-asrBench", "parakeet"): NeuralEngine.transcriber
-        case ("-editBench", "qwen"): NeuralEngine.editor
+        case ("-editBench", "qwen"): NeuralEngine.qwen
         default: nil
         }
     }

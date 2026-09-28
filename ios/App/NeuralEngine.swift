@@ -7,8 +7,8 @@ import Observation
 enum NeuralEngine {
     /// S1-mini, 8-bit (cleanup).
     @MainActor static let cleaner = NeuralSlot(folder: "s1-mini-ios", className: "WipprNeuralLanguageModel")
-    /// Qwen3-1.7B, 6-bit (edit mode).
-    @MainActor static let editor = NeuralSlot(folder: "qwen3-1.7b-ios", className: "WipprNeuralLanguageModel")
+    /// Qwen3-1.7B, 6-bit (edit mode, and cleanup with Apple's cleanup prompt).
+    @MainActor static let qwen = NeuralSlot(folder: "qwen3-1.7b-ios", className: "WipprNeuralLanguageModel")
     /// Parakeet TDT v2, streaming float16 (speech recognition).
     @MainActor static let transcriber = NeuralSlot(folder: "parakeet-ios", className: "WipprNeuralTranscriber")
 
@@ -25,15 +25,23 @@ enum NeuralEngine {
                              maxTokens: min(1024, text.utf8.count / 2 + 64), bundle: cleaner.bundleURL)
     }
 
+    /// Qwen3-1.7B cleanup, with the same instructions and prompt format as Apple's (`Cleaner`, no list pre-pass);
+    /// nil until the model has loaded, or if it fails.
+    @MainActor static func cleanWithQwen(_ raw: String) async -> String? {
+        guard !raw.isEmpty, let model = qwen.ready as? NeuralLanguageModel else { return nil }
+        return await respond(model, to: "<transcript>\n\(raw)\n</transcript>", instructions: Cleaner.instructions,
+                             maxTokens: min(1024, raw.utf8.count / 2 + 64), bundle: qwen.bundleURL)
+    }
+
     /// Qwen3-1.7B edit, with the same instructions and prompt format as Apple's (`Editor`);
     /// nil until the model has loaded, or if it fails.
     @MainActor static func edit(_ text: String, instruction: String) async -> String? {
-        guard !instruction.isEmpty, let model = editor.ready as? NeuralLanguageModel else { return nil }
+        guard !instruction.isEmpty, let model = qwen.ready as? NeuralLanguageModel else { return nil }
         let text = String(text.suffix(Editor.maxText))
         // The same user message as Apple's path in `Editor.edit`.
         let prompt = "<text>\n\(text)\n</text>\n<instruction>\n\(instruction)\n</instruction>"
         return await respond(model, to: prompt, instructions: Editor.instructions,
-                             maxTokens: min(2048, text.utf8.count / 2 + 512), bundle: editor.bundleURL)
+                             maxTokens: min(2048, text.utf8.count / 2 + 512), bundle: qwen.bundleURL)
     }
 
     private static func respond(_ model: NeuralLanguageModel, to prompt: String, instructions: String,
