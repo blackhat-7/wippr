@@ -8,8 +8,6 @@ enum Editor {
     static let maxText = 6000
 
     static func edit(_ text: String, instruction: String) async -> String? {
-        // Experimental, for testing: Qwen3-1.7B once it has loaded; Apple's model below until then or on failure.
-        if EditModel.current == .qwen, let result = await NeuralEngine.edit(text, instruction: instruction) { return result }
         guard Cleaner.isAvailable, !instruction.isEmpty else { return nil }
         let session = LanguageModelSession(instructions: instructions)
         do {

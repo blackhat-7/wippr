@@ -9,7 +9,6 @@ struct HomeView: View {
     /// Experimental, for testing: which model cleans dictation (Apple Intelligence by default).
     @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
     @AppStorage(TranscriberModel.key) private var transcriberModel = TranscriberModel.apple
-    @AppStorage(EditModel.key) private var editModel = EditModel.apple
     /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
     @State private var typed: KeyboardHandoff.Typed?
     @State private var shortcuts = Shortcuts.all
@@ -60,13 +59,9 @@ struct HomeView: View {
         // Experimental models load in the background when picked, and free their memory when not.
         .onChange(of: cleanupModel, initial: true) { _, model in
             if model == .s1mini { NeuralEngine.cleaner.load() } else { NeuralEngine.cleaner.unload() }
-            if model == .qwen || editModel == .qwen { NeuralEngine.qwen.load() } else { NeuralEngine.qwen.unload() }
         }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
-        }
-        .onChange(of: editModel, initial: true) { _, model in
-            if model == .qwen || cleanupModel == .qwen { NeuralEngine.qwen.load() } else { NeuralEngine.qwen.unload() }
         }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
@@ -247,13 +242,12 @@ struct HomeView: View {
             Text("Experimental").textStyle(.label, Theme.tertiary)
                 .padding(.horizontal, wide ? 0 : 8)
             VStack(alignment: .leading, spacing: 0) {
-                Text("For testing. Apple's models are the defaults; a picked model loads in the background and Apple's is used until it's ready.")
+                Text("For testing. Edit mode always uses Apple Intelligence. Apple's models are the defaults; a picked model loads in the background and Apple's is used until it's ready.")
                     .textStyle(.caption, Theme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
                 ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
-                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner, .qwen: NeuralEngine.qwen])
-                ModelRow(title: "Edit model", selection: $editModel, slots: [.qwen: NeuralEngine.qwen])
+                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner])
                 ForEach(timing, id: \.self) { line in
                     Text(line).textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -445,7 +439,7 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     }
 
     private func name(_ choice: Choice) -> String {
-        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? EditModel)?.name ?? choice.rawValue
+        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? choice.rawValue
     }
 
     private var note: String? {

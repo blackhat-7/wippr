@@ -1,13 +1,17 @@
 #if DEBUG
 import AVFoundation
 import Foundation
+import FoundationModels
 import UIKit
 
 /// Debug builds only: benches on the device, reading inputs from Documents and writing results next to them.
 ///
-/// - `-cleanupBench apple|s1mini|qwen [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
-/// - `-asrBench apple|parakeet`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
-/// - `-editBench apple|qwen`: `edit-in.json` ([{"id", "text", "instruction"}]) through `Editor`.
+/// - `-cleanupBench apple|s1mini [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
+/// - `-asrBench apple|parakeet [realtime]`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
+/// - `-editBench apple`: `edit-in.json` ([{"id", "text", "instruction"}]) through `Editor`.
+/// - `-cleanupBench applecustom` / `-editBench applecustom`: Apple's model with the prompt in `cleanup-prompt.json` /
+///   `edit-prompt.json` ({"instructions", "template"}; the template's `{text}` and `{instruction}` are filled in),
+///   for trying prompts without changing the app's.
 ///
 /// `background` waits until the app is in the background first. Results go to
 /// `Documents/bench-out-<model>-<foreground or background>.jsonl` (cleanup), `asr-out-<model>.jsonl`,
@@ -16,7 +20,7 @@ import UIKit
 enum CleanupBench {
     static func runIfRequested() {
         let args = ProcessInfo.processInfo.arguments
-        for (flag, key) in [("-cleanupBench", CleanupModel.key), ("-asrBench", TranscriberModel.key), ("-editBench", EditModel.key)] {
+        for (flag, key) in [("-cleanupBench", CleanupModel.key), ("-asrBench", TranscriberModel.key), ("-editBench", "editBench")] {
             guard let i = args.firstIndex(of: flag) else { continue }
             let rest = args.dropFirst(i + 1)
             let model = rest.first ?? ""
@@ -24,7 +28,7 @@ enum CleanupBench {
             setvbuf(stdout, nil, _IONBF, 0) // print straight to the devicectl console
             // Only the model under test: the other settings are Apple's for the run, so no other experimental model
             // loads next to it (two big ones together can exceed the app's memory limit).
-            let keys = [CleanupModel.key, TranscriberModel.key, EditModel.key]
+            let keys = [CleanupModel.key, TranscriberModel.key]
             let previous = keys.map { UserDefaults.standard.string(forKey: $0) }
             for other in keys { UserDefaults.standard.set(other == key ? model : "apple", forKey: other) }
             Task {
@@ -68,9 +72,7 @@ enum CleanupBench {
     private static func slot(_ flag: String, _ model: String) -> NeuralSlot? {
         switch (flag, model) {
         case ("-cleanupBench", "s1mini"): NeuralEngine.cleaner
-        case ("-cleanupBench", "qwen"): NeuralEngine.qwen
         case ("-asrBench", "parakeet"): NeuralEngine.transcriber
-        case ("-editBench", "qwen"): NeuralEngine.qwen
         default: nil
         }
     }
@@ -92,11 +94,21 @@ enum CleanupBench {
               let cases = try? JSONDecoder().decode([String: String].self, from: data)
         else { return print("bench: no bench-in.json") }
         print("bench: \(cases.count) cases, cleanup \(model), \(label)")
-        let cleaner = Cleaner()
+        let custom = model == "applecustom" ? prompt("cleanup-prompt.json") : nil
+        if model == "applecustom", custom == nil { return print("bench: no cleanup-prompt.json") }
         let write = writer("bench-out-\(model)-\(label).jsonl")
         for id in cases.keys.sorted() {
             await ready(benchSlot)
-            let text = await cleaner.clean(cases[id]!)
+            if let custom {
+                let start = Date.now
+                let text = await respond(custom, ["text": cases[id]!]) ?? cases[id]!
+                let ms = Int(Date.now.timeIntervalSince(start) * 1000)
+                write(["id": id, "output": text, "ms": ms, "model": model, "mode": label])
+                print("bench: \(id) \(ms) ms by \(model)")
+                continue
+            }
+            // A new Cleaner (and session) per case, as the app makes one per dictation.
+            let text = await Cleaner().clean(cases[id]!)
             let (by, ms) = CleanupModel.last ?? (.apple, 0)
             write(["id": id, "output": text, "ms": ms, "model": by.rawValue, "mode": label])
             print("bench: \(id) \(ms) ms by \(by.rawValue)")
@@ -154,32 +166,46 @@ enum CleanupBench {
         guard let data = try? Data(contentsOf: docs.appending(path: "edit-in.json")),
               let cases = try? JSONDecoder().decode([EditCase].self, from: data)
         else { return print("bench: no edit-in.json") }
+        let custom = model == "applecustom" ? prompt("edit-prompt.json") : nil
+        if model == "applecustom", custom == nil { return print("bench: no edit-prompt.json") }
         print("bench: \(cases.count) edit cases, \(model)")
         let write = writer("edit-out-\(model).jsonl")
         for c in cases {
-            await ready(benchSlot)
             let start = Date.now
-            // Which model answered: Qwen's own call, so a fallback to Apple shows up as "apple".
-            var by = "apple"
-            var output: String?
-            if model == "qwen", let result = await NeuralEngine.edit(c.text, instruction: c.instruction) {
-                output = result
-                by = "qwen"
+            let output = if let custom {
+                await respond(custom, ["text": String(c.text.suffix(Editor.maxText)), "instruction": c.instruction])
             } else {
-                output = await appleEdit(c.text, instruction: c.instruction)
+                await Editor.edit(c.text, instruction: c.instruction)
             }
             let ms = Int(Date.now.timeIntervalSince(start) * 1000)
-            write(["id": c.id, "output": output ?? NSNull(), "ms": ms, "model": by])
-            print("bench: \(c.id) \(ms) ms by \(by)")
+            write(["id": c.id, "output": output ?? NSNull(), "ms": ms, "model": model])
+            print("bench: \(c.id) \(ms) ms by \(model)")
         }
     }
 
-    /// Apple's path in `Editor.edit`, without the experimental routing in front of it.
-    private static func appleEdit(_ text: String, instruction: String) async -> String? {
-        let previous = UserDefaults.standard.string(forKey: EditModel.key)
-        UserDefaults.standard.set(EditModel.apple.rawValue, forKey: EditModel.key)
-        defer { UserDefaults.standard.set(previous, forKey: EditModel.key) }
-        return await Editor.edit(text, instruction: instruction)
+    /// A prompt to try: the session's instructions, and the user message with `{name}` placeholders.
+    private struct Prompt: Decodable {
+        var instructions: String
+        var template: String
+    }
+
+    private static func prompt(_ file: String) -> Prompt? {
+        (try? Data(contentsOf: docs.appending(path: file))).flatMap { try? JSONDecoder().decode(Prompt.self, from: $0) }
+    }
+
+    /// Apple's model, greedy, in a new session, like `Cleaner` and `Editor`; nil on failure or an empty reply.
+    private static func respond(_ prompt: Prompt, _ values: [String: String]) async -> String? {
+        var message = prompt.template
+        for (name, value) in values { message = message.replacingOccurrences(of: "{\(name)}", with: value) }
+        let session = LanguageModelSession(instructions: prompt.instructions)
+        do {
+            let response = try await session.respond(to: message, options: GenerationOptions(samplingMode: .greedy))
+            let text = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            return text.isEmpty ? nil : text
+        } catch {
+            print("bench: respond failed: \(error)")
+            return nil
+        }
     }
 }
 #endif
