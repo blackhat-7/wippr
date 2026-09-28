@@ -24,6 +24,8 @@ final class KeyboardViewController: UIInputViewController {
     private let tick = UISelectionFeedbackGenerator()
     /// Slid up into edit mode during the current press.
     private var editMode = false
+    /// Edit mode needs Apple Intelligence; without it, sliding up says so and letting go discards the recording.
+    private var editAvailable = true
     /// The text sent for editMode: the selection, or else everything before the cursor.
     private var target: (selected: String?, before: String)?
     /// The last edit or command, undoable with a quick tap for a few seconds.
@@ -134,6 +136,7 @@ final class KeyboardViewController: UIInputViewController {
         super.viewWillAppear(animated)
         placeButton()
         if hasFullAccess { KeyboardHandoff.markKeyboardSeen() }
+        editAvailable = KeyboardHandoff.editAvailable()
         log.notice("appear: full access \(self.hasFullAccess), status \(KeyboardHandoff.status().rawValue, privacy: .public)")
         let proxy = textDocumentProxy
         log.notice("traits: autocorrection \(proxy.autocorrectionType?.rawValue ?? -1), autocapitalization \(proxy.autocapitalizationType?.rawValue ?? -1), keyboard \(proxy.keyboardType?.rawValue ?? -1), content \(proxy.textContentType?.rawValue ?? "nil", privacy: .public), command \(self.isCommandField, privacy: .public)")
@@ -179,7 +182,9 @@ final class KeyboardViewController: UIInputViewController {
         status.text = switch phase {
         case .off: offHint
         case .ready: isCommandField ? "Hold to say a command" : "Hold to talk"
-        case .recording: editMode ? "Edit: say what to change" : isCommandField ? "Listening… (command)" : "Listening…  ↑ slide up to edit"
+        case .recording:
+            editMode ? (editAvailable ? "Edit: say what to change" : "Edit needs Apple Intelligence · let go to cancel")
+                : isCommandField ? "Listening… (command)" : editAvailable ? "Listening…  ↑ slide up to edit" : "Listening…"
         case .processing: target != nil ? "Editing…" : isCommandField ? "Writing command…" : "Writing…"
         }
     }
@@ -293,7 +298,14 @@ final class KeyboardViewController: UIInputViewController {
             undoEdit()
             return
         }
-        if editMode {
+        if editMode, !editAvailable {
+            // Without Apple Intelligence there's nothing to edit with; don't type the spoken instruction either.
+            send(record: false, mode: .cancel)
+            editMode = false
+            buzz { notify.notificationOccurred(.error) }
+            status.text = "Edit needs Apple Intelligence"
+            return
+        } else if editMode {
             let selected = textDocumentProxy.selectedText.flatMap { $0.isEmpty ? nil : $0 }
             let before = textDocumentProxy.documentContextBeforeInput ?? ""
             target = (selected, before)
