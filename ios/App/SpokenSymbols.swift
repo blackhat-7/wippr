@@ -58,8 +58,10 @@ enum SpokenSymbols {
                 push("@", attach: true); glue = true // "root at 10.0.0.2" → "root@10.0.0.2"
             case "pipe":
                 push("|")
-            case "and" where next == "and":
+            case "and" where next == "and", "ampersand" where next == "ampersand", "double" where next == "and" || next == "ampersand":
                 push("&&"); i += 1
+            case "ampersand":
+                push("&")
             case "or" where next == "or":
                 push("||"); i += 1
             case "greater" where next == "than":
