@@ -4,7 +4,7 @@ import Observation
 /// Experimental, for testing: which model cleans dictation, picked on Home. Apple Intelligence is the default
 /// and the shipping path; S1-mini on the Neural Engine and Off are there to compare against it.
 enum CleanupModel: String, CaseIterable, Identifiable {
-    case apple, s1mini, s1miniCPU, off
+    case s1mini, s1miniCPU, apple, off // best to worst: Home lists them in this order
 
     static let key = "cleanupModel"
 
@@ -41,7 +41,7 @@ final class CleanupStats {
 
 /// Experimental, for testing: which model transcribes dictation. Apple's SpeechTranscriber is the default.
 enum TranscriberModel: String, CaseIterable, Identifiable {
-    case apple, parakeet
+    case parakeet, apple // best to worst (WER 5.3% vs 9.1% on device)
 
     static let key = "transcriberModel"
 
@@ -67,7 +67,7 @@ enum TranscriberModel: String, CaseIterable, Identifiable {
 /// Command mode's recognizer. Off (Apple's transcript, nothing to download) unless Whisper is downloaded, which
 /// hears commands far better; a choice made on Home wins. Apple's also stands in for speech too long for a command.
 enum TerminalTranscriber: String, CaseIterable, Identifiable {
-    case off, whisper
+    case whisper, off
 
     static let key = "terminalTranscriber"
 
@@ -76,7 +76,7 @@ enum TerminalTranscriber: String, CaseIterable, Identifiable {
     var name: String {
         switch self {
         case .off: "Off"
-        case .whisper: CommandTranscriber.isDownloaded ? "Whisper small.en · CPU" : "Download Whisper (264 MB)"
+        case .whisper: "Whisper small.en · CPU"
         }
     }
 

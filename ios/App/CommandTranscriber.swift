@@ -1,4 +1,5 @@
 import AVFoundation
+import Observation
 import os
 import UIKit
 import whisper
@@ -162,6 +163,33 @@ final class CommandTranscriber: @unchecked Sendable {
         if context == nil { log.error("could not load \(Self.modelName, privacy: .public)") }
         else { log.notice("loaded in \((ContinuousClock.now - start) / .milliseconds(1), format: .fixed(precision: 0)) ms") }
         return context
+    }
+}
+
+/// Whisper's download for Home's Terminal transcriber menu (`DownloadableModel`).
+@MainActor @Observable
+final class WhisperModel: DownloadableModel {
+    static let shared = WhisperModel()
+
+    private(set) var isInstalled = CommandTranscriber.isDownloaded
+    private(set) var downloadProgress: Double?
+    private(set) var downloadError: String?
+    let downloadSize: Int64 = 264_477_561
+
+    func startDownload() {
+        guard !isInstalled, downloadProgress == nil else { return }
+        downloadError = nil
+        downloadProgress = 0
+        Task {
+            do {
+                try await CommandTranscriber.download { self.downloadProgress = $0 }
+                isInstalled = true
+                CommandTranscriber.shared.preload()
+            } catch {
+                downloadError = error.localizedDescription
+            }
+            downloadProgress = nil
+        }
     }
 }
 

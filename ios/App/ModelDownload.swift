@@ -1,5 +1,17 @@
 import Foundation
 
+/// A model the app downloads on request. Home's menus list it as "Name (download · size)"; picking it starts the
+/// download, and a progress line shows under the menu until it's done.
+@MainActor
+protocol DownloadableModel: AnyObject {
+    var isInstalled: Bool { get }
+    /// 0…1 while downloading.
+    var downloadProgress: Double? { get }
+    var downloadError: String? { get }
+    var downloadSize: Int64 { get }
+    func startDownload()
+}
+
 /// Where an experimental model's Core AI bundle is hosted: our converted copies on Hugging Face, pinned to a
 /// revision (licences and attribution in each repo's model card). The app downloads them on request (Home →
 /// Experimental), since they're too big to ship inside it.

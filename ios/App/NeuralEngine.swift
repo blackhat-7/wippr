@@ -145,3 +145,9 @@ final class NeuralSlot {
         state = .idle
     }
 }
+
+extension NeuralSlot: DownloadableModel {
+    var downloadProgress: Double? { if case .running(let fraction) = download { fraction } else { nil } }
+    var downloadError: String? { if case .failed(let error) = download { error } else { nil } }
+    var downloadSize: Int64 { source?.size ?? 0 }
+}

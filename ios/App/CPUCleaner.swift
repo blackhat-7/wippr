@@ -64,3 +64,9 @@ final class CPUCleaner {
                                     maxTokens: min(1024, text.utf8.count / 2 + 64), model: Self.modelFile)
     }
 }
+
+extension CPUCleaner: DownloadableModel {
+    var downloadProgress: Double? { if case .running(let fraction) = download { fraction } else { nil } }
+    var downloadError: String? { if case .failed(let error) = download { error } else { nil } }
+    var downloadSize: Int64 { Self.source.size }
+}

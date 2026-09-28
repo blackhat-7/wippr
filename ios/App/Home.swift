@@ -11,6 +11,7 @@ struct HomeView: View {
     @AppStorage(WritingStyle.customKey) private var customStyle = ""
     @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
     @AppStorage(TranscriberModel.key) private var transcriberModel = TranscriberModel.apple
+    @AppStorage(TerminalTranscriber.key) private var terminalTranscriber = TerminalTranscriber.current
     /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
     @State private var typed: KeyboardHandoff.Typed?
     @State private var shortcuts = Shortcuts.all
@@ -307,10 +308,9 @@ struct HomeView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
                 ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
-                TerminalTranscriberRow()
+                ModelRow(title: "Terminal transcriber", selection: $terminalTranscriber, downloads: [.whisper: WhisperModel.shared])
                 ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner],
-                         unavailable: CPUCleaner.shared.isInstalled ? [:] : [.s1miniCPU: "Download it below"])
-                CPUCleanerDownload()
+                         downloads: [.s1miniCPU: CPUCleaner.shared])
                 ForEach(timing, id: \.self) { line in
                     Text(line).textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -400,91 +400,16 @@ private struct TipIcon: View {
     }
 }
 
-/// S1-mini for the CPU: its download, with progress, until it's on the device.
-private struct CPUCleanerDownload: View {
-    private let cleaner = CPUCleaner.shared
-
-    var body: some View {
-        if !cleaner.isInstalled {
-            let size = ByteCountFormatter.string(fromByteCount: CPUCleaner.source.size, countStyle: .file)
-            Group {
-                switch cleaner.download {
-                case .running(let fraction):
-                    VStack(alignment: .leading, spacing: 4) {
-                        ProgressView(value: fraction).tint(Theme.accent)
-                        Text("Downloading S1-mini · CPU · \(Int(fraction * 100))% of \(size). Keep noboard open.")
-                            .textStyle(.caption, Theme.secondary)
-                    }
-                case .failed(let error):
-                    Button("Download failed (\(error)). Try again", systemImage: "arrow.clockwise") { cleaner.startDownload() }
-                        .textStyle(.caption, Theme.accent)
-                case nil:
-                    Button("Download S1-mini · CPU (\(size))", systemImage: "arrow.down.circle") { cleaner.startDownload() }
-                        .textStyle(.caption, Theme.accent)
-                }
-            }
-            .padding(.vertical, 8)
-            .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
-        }
-    }
-}
-
 /// Experimental: a model menu (Apple's default plus one Neural Engine model) with that model's load state under it.
-/// Command mode's recognizer: Off (Apple's transcript) or Whisper. Picking Whisper downloads it (264 MB) with
-/// progress here; Apple's is used until it's ready.
-private struct TerminalTranscriberRow: View {
-    @AppStorage(TerminalTranscriber.key) private var choice = TerminalTranscriber.current
-    /// 0…1 while downloading.
-    @State private var progress: Double?
-    @State private var failed = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ModelRow(title: "Terminal transcriber", selection: Binding(get: { choice }, set: pick), slots: [:])
-            if let progress {
-                VStack(alignment: .leading, spacing: 4) {
-                    ProgressView(value: progress).tint(Theme.accent)
-                    Text("Downloading Whisper · \(Int(progress * 100))% of 264 MB. Keep noboard open.")
-                        .textStyle(.caption, Theme.secondary)
-                }
-                .padding(.vertical, 8)
-            } else if failed {
-                Button("Whisper didn't download. Try again", systemImage: "arrow.clockwise", action: download)
-                    .textStyle(.caption, Theme.accent)
-                    .padding(.vertical, 8)
-            }
-        }
-    }
-
-    private func pick(_ new: TerminalTranscriber) {
-        choice = new
-        if new == .whisper, !CommandTranscriber.isDownloaded, progress == nil { download() }
-    }
-
-    private func download() {
-        failed = false
-        progress = 0
-        Task {
-            do {
-                try await CommandTranscriber.download { progress = $0 }
-                CommandTranscriber.shared.preload()
-            } catch {
-                failed = true
-            }
-            progress = nil
-        }
-    }
-}
-
 private struct ModelRow<Choice: CaseIterable & Identifiable & RawRepresentable & Hashable>: View
 where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     let title: String
     @Binding var selection: Choice
     /// The Neural Engine options and their models: disabled, with the reason, when they can't run here yet, and
     /// hidden where they never can (too little memory).
-    let slots: [Choice: NeuralSlot]
-    /// Other options that can't be picked yet, with the reason (Whisper before its download).
-    var unavailable: [Choice: String] = [:]
+    var slots: [Choice: NeuralSlot] = [:]
+    /// Other options the app downloads on request.
+    var downloads: [Choice: any DownloadableModel] = [:]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -495,9 +420,9 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     ForEach(Choice.allCases.filter(isOffered)) { choice in
                         Button {
                             selection = choice
+                            if let model = download(choice), !model.isInstalled { model.startDownload() }
                         } label: {
-                            let label = reason(choice).map { "\(name(choice)) (\($0))" } ?? name(choice)
-                            if choice == selection { Label(label, systemImage: "checkmark") } else { Text(label) }
+                            if choice == selection { Label(label(choice), systemImage: "checkmark") } else { Text(label(choice)) }
                         }
                         .disabled(reason(choice) != nil)
                     }
@@ -511,8 +436,8 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     .contentShape(.rect)
                 }
             }
-            ForEach(slots.keys.filter(isOffered).sorted { $0.rawValue < $1.rawValue }, id: \.self) { choice in
-                if let slot = slots[choice], slot.source != nil { downloadRow(choice, slot) }
+            ForEach(Choice.allCases.filter(isOffered)) { choice in
+                if let model = download(choice) { progress(choice, model) }
             }
             if let note {
                 Text(note).textStyle(.caption, Theme.secondary)
@@ -523,51 +448,50 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
         .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
     }
 
-    /// A Neural Engine model that isn't on the phone yet: download it from Hugging Face, with progress, or retry.
-    @ViewBuilder private func downloadRow(_ choice: Choice, _ slot: NeuralSlot) -> some View {
-        let size = ByteCountFormatter.string(fromByteCount: slot.source?.size ?? 0, countStyle: .file)
-        switch slot.download {
-        case .running(let fraction):
+    /// Only while a download runs or after it failed: a thin progress bar, or a retry.
+    @ViewBuilder private func progress(_ choice: Choice, _ model: any DownloadableModel) -> some View {
+        if let fraction = model.downloadProgress {
             VStack(alignment: .leading, spacing: 4) {
                 ProgressView(value: fraction).tint(Theme.accent)
-                Text("Downloading \(name(choice)) · \(Int(fraction * 100))% of \(size). Keep noboard open.")
-                    .textStyle(.caption, Theme.secondary)
+                Text("\(name(choice)) · \(Int(fraction * 100))%. Keep noboard open.").textStyle(.caption, Theme.secondary)
             }
             .padding(.bottom, 6)
-        case .failed(let error):
-            Button("Download failed (\(error)). Try again", systemImage: "arrow.clockwise") { slot.startDownload() }
+        } else if model.downloadError != nil {
+            Button("\(name(choice)) didn't download. Try again", systemImage: "arrow.clockwise") { model.startDownload() }
                 .textStyle(.caption, Theme.accent)
                 .padding(.bottom, 6)
-        case .none:
-            if !slot.isInstalled, slot.unavailableReason == "Model not installed" {
-                Button("Download \(name(choice)) (\(size), Wi-Fi recommended)", systemImage: "arrow.down.circle") {
-                    slot.startDownload()
-                }
-                .textStyle(.caption, Theme.accent)
-                .padding(.bottom, 6)
-            }
         }
     }
 
     private func isOffered(_ choice: Choice) -> Bool { slots[choice] == nil || NeuralSlot.fitsThisDevice }
 
-    /// Why `choice` can't be picked yet, shown in the menu; a missing Neural Engine model has a Download button below.
+    /// The model to download for `choice`, if it has one (a Neural Engine model, or one in `downloads`).
+    private func download(_ choice: Choice) -> (any DownloadableModel)? {
+        downloads[choice] ?? slots[choice].flatMap { $0.source == nil ? nil : $0 }
+    }
+
+    /// Why `choice` can't be picked, shown with it; a model that only needs downloading can be picked.
     private func reason(_ choice: Choice) -> String? {
-        if let reason = unavailable[choice] { return reason }
-        guard let reason = slots[choice]?.unavailableReason else { return nil }
-        return reason == "Model not installed" ? "Download it below" : reason
+        guard let reason = slots[choice]?.unavailableReason, reason != "Model not installed" else { return nil }
+        return reason
+    }
+
+    private func label(_ choice: Choice) -> String {
+        if let reason = reason(choice) { return "\(name(choice)) (\(reason))" }
+        guard let model = download(choice), !model.isInstalled else { return name(choice) }
+        return "\(name(choice)) (download · \(ByteCountFormatter.string(fromByteCount: model.downloadSize, countStyle: .file)))"
     }
 
     private func name(_ choice: Choice) -> String {
         (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? TerminalTranscriber)?.name ?? choice.rawValue
     }
 
-    /// The picked Neural Engine model's load state (reasons for the others are in the menu).
+    /// The picked Neural Engine model's load state.
     private var note: String? {
         guard let slot = slots[selection] else { return nil }
         switch slot.state {
         case .loading: return "Loading… Apple's model is used until it's ready. The first load can take many minutes."
-        case .failed(let error): return "Didn't load (\(error)), so Apple's model is used."
+        case .failed(let error): return error == "Model not installed" ? nil : "Didn't load (\(error)), so Apple's model is used."
         case .idle, .ready: return nil
         }
     }
