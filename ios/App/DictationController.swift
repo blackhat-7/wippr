@@ -241,8 +241,7 @@ final class DictationController {
                 // even when Apple heard nothing. Whisper is for commands, which are short: on long speech it can
                 // return one letter ("p"), so it's skipped there, and its words must roughly match Apple's count.
                 var heard = [raw]
-                let useWhisper = TerminalTranscriber.current == .whisper && Double(samples.count) <= 6 * CommandTranscriber.sampleRate
-                let whispered = useWhisper ? await CommandTranscriber.shared.transcribe(samples) : nil
+                let whispered = Double(samples.count) <= 6 * CommandTranscriber.sampleRate ? await CommandTranscriber.shared.transcribe(samples) : nil
                 let appleWords = raw.split(separator: " ").count
                 if let whispered, case let words = whispered.split(separator: " ").count,
                    words <= appleWords * 2 + 3, appleWords < 4 || words * 2 >= appleWords {
