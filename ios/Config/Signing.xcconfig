@@ -1,0 +1,6 @@
+// Signing team and bundle ID. The keyboard is $(APP_BUNDLE_ID).keyboard and the App Group is group.$(APP_BUNDLE_ID).
+// To build under your own Apple account, put your own values in Local.xcconfig next to this file (gitignored).
+DEVELOPMENT_TEAM = CRH6P5D9K2
+APP_BUNDLE_ID = com.satuke.noboard
+
+#include? "Local.xcconfig"

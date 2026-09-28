@@ -116,7 +116,7 @@ final class DictationController {
     /// Whether the noboard keyboard is added in Settings → General → Keyboard → Keyboards.
     static var keyboardAdded: Bool {
         (UserDefaults.standard.array(forKey: "AppleKeyboards") as? [String])?
-            .contains { $0.hasPrefix("com.satuke.noboard.keyboard") } ?? false
+            .contains { $0.hasPrefix(Bundle.main.bundleIdentifier! + ".keyboard") } ?? false
     }
 
     /// Starts a dictation from inside the app (onboarding's practice strip), turning the mic on for now if needed.

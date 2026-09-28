@@ -100,7 +100,7 @@ enum KeyboardHandoff {
 
     static func command() -> Command? { read(Command.self, from: "command") }
 
-    private static let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.satuke.noboard")
+    private static let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String)
     private static let log = Logger(subsystem: "cx.immortal.wippr", category: "handoff")
 
     private static func write(_ value: some Encodable, to name: String) {
