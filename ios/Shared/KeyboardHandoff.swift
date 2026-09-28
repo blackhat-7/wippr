@@ -33,6 +33,8 @@ enum KeyboardHandoff {
         var command: Bool?
         /// When the key was let go (the stop command's date), so the keyboard can time the whole dictation.
         var released: Date?
+        /// A spoken delete ("delete word"): the keyboard deletes instead of typing `text` (empty).
+        var delete: SpokenDelete?
     }
 
     /// When the keyboard typed a text, so the app can show how long the last dictation took end to end.
@@ -63,9 +65,10 @@ enum KeyboardHandoff {
 
     @discardableResult
     static func send(_ text: String, edit: Bool = false, keys: Bool = false, command: Bool = false,
-                     released: Date? = nil) -> UUID {
+                     released: Date? = nil, delete: SpokenDelete? = nil) -> UUID {
         let id = UUID()
-        write(Text(id: id, text: text, date: .now, edit: edit, keys: keys, command: command, released: released), to: "text")
+        write(Text(id: id, text: text, date: .now, edit: edit, keys: keys, command: command, released: released, delete: delete),
+              to: "text")
         return id
     }
 

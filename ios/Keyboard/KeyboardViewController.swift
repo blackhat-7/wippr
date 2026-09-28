@@ -34,6 +34,8 @@ final class KeyboardViewController: UIInputViewController {
     private var target: (selected: String?, before: String)?
     /// The last edit or command, undoable with a quick tap for a few seconds.
     private var undo: (inserted: String, original: String, until: Date)?
+    /// What noboard typed last, for "delete that".
+    private var lastTyped: String?
     /// What's drawn; nil until the first update so it always draws once.
     private var phase: KeyboardHandoff.Phase?
     /// Whether the drawn status is for a terminal field.
@@ -219,9 +221,12 @@ final class KeyboardViewController: UIInputViewController {
         UserDefaults.standard.set(latest.id.uuidString, forKey: "lastID")
         if latest.edit == true { return applyEdit(latest.text) }
         if latest.command == true { return insertCommand(latest.text) }
+        if let delete = latest.delete { return applyDelete(delete) }
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let space = latest.keys != true && before.last.map { !$0.isWhitespace } ?? false
-        textDocumentProxy.insertText(space ? " " + latest.text : latest.text)
+        let typed = space ? " " + latest.text : latest.text
+        textDocumentProxy.insertText(typed)
+        lastTyped = typed
         KeyboardHandoff.markTyped(latest.id)
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
@@ -259,11 +264,30 @@ final class KeyboardViewController: UIInputViewController {
     private func insertCommand(_ command: String) {
         let text = command.filter { !$0.isNewline }
         textDocumentProxy.insertText(text)
+        lastTyped = text
         undo = (text, "", .now + 5)
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
         status.text = "Command · tap to undo"
         log.notice("command \(text.count) chars")
+    }
+
+    /// A terminal shows the keyboard no text, so there "delete word" and "delete line" go to the shell (Ctrl+W, Ctrl+U).
+    private func applyDelete(_ delete: SpokenDelete) {
+        let before = textDocumentProxy.documentContextBeforeInput ?? ""
+        var count = delete.count(before: before, lastTyped: lastTyped)
+        if before.isEmpty, isCommandField {
+            switch delete {
+            case .word: textDocumentProxy.insertText("\u{17}")
+            case .sentence, .line: textDocumentProxy.insertText("\u{15}")
+            case .that: count = lastTyped?.count ?? 0
+            }
+        }
+        for _ in 0..<count { textDocumentProxy.deleteBackward() }
+        if delete == .that { lastTyped = nil }
+        buzz { notify.notificationOccurred(.success) }
+        orb.flash()
+        log.notice("delete \(delete.rawValue, privacy: .public): \(count) chars")
     }
 
     private func undoEdit() {

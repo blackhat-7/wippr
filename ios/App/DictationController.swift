@@ -231,6 +231,10 @@ final class DictationController {
                     KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
                     break
                 }
+                if let delete = SpokenDelete.match(raw) {
+                    KeyboardHandoff.send("", delete: delete)
+                    break
+                }
                 await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
                                   asr: TranscriberModel.of(transcriber))
             case .edit:
@@ -250,6 +254,10 @@ final class DictationController {
                 }
                 if let shortcut = Shortcuts.match(heard[0]) {
                     KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
+                    break
+                }
+                if let delete = SpokenDelete.match(heard[0]) ?? SpokenDelete.match(raw) {
+                    KeyboardHandoff.send("", delete: delete)
                     break
                 }
                 // Nil means prose (e.g. a prompt for an agent in the terminal): typed like dictation, from Apple's
