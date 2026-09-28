@@ -63,13 +63,10 @@ enum SpokenSymbols {
                 push("%", attach: glue)
             case "colon":
                 push(":", attach: glue); glue = true
-            case "open" where next.map(Self.brackets.keys.contains) ?? false,
-                 "left" where next.map(Self.brackets.keys.contains) ?? false:
-                // "open paren", "open square bracket", "open curly": the bracket, glued to what follows.
-                push(Self.brackets[next!]!.open); glue = true; i += next == "square" ? 2 : 1 // "square bracket"
-            case "close" where next.map(Self.brackets.keys.contains) ?? false,
-                 "right" where next.map(Self.brackets.keys.contains) ?? false:
-                push(Self.brackets[next!]!.close, attach: true); i += next == "square" ? 2 : 1
+            case "open" where isBracket(next), "left" where isBracket(next):
+                push(brackets[next!]!.open); glue = true; i += 1 // "open paren": glued to what follows
+            case "close" where isBracket(next), "right" where isBracket(next):
+                push(brackets[next!]!.close, attach: true); i += 1
             case "space":
                 push(" ", attach: true); glue = true // a real space: "dot space close paren" → ". )"
             case "star", "asterisk":
@@ -127,7 +124,7 @@ enum SpokenSymbols {
     }
 
     private static let symbolWords: Set = [
-        "dash", "slash", "backslash", "back", "backward", "forward", "dot", "open", "close", "left", "right", "space", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
+        "dash", "slash", "backslash", "dot", "space", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
         "percent", "percentage", "per", "escape", "underscore", "equals", "dollar", "plus", "semicolon", "ampersand",
         "and", "or", "greater", "less", "control", "ctrl",
     ]
@@ -143,7 +140,9 @@ enum SpokenSymbols {
         word.contains(".") && word.allSatisfy { $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" }
     }
 
-    /// "paren", "bracket", "curly"… → their characters. "square bracket" is [ ].
+    private static func isBracket(_ word: String?) -> Bool { word.map(brackets.keys.contains) ?? false }
+
+    /// "paren", "bracket", "curly"… → their characters. "square" is [ ] ("square bracket", shortened in `tokens`).
     private static let brackets: [String: (open: String, close: String)] = [
         "paren": ("(", ")"), "parenthesis": ("(", ")"), "parentheses": ("(", ")"), "parens": ("(", ")"), "bracket": ("(", ")"),
         "parent": ("(", ")"), "parents": ("(", ")"), // how speech recognition writes "paren"
@@ -158,6 +157,7 @@ enum SpokenSymbols {
             .replacing(#/\b(?:ctrl|control)[-+]([a-z])\b/#) { "control \($0.1)" } // Whisper writes "Ctrl+B", "control-B"
             // …and glues bracket words: "openparent", "close-paren".
             .replacing(#/\b(open|close|left|right)-?(parenthesis|parentheses|parents|parent|parens|paren|bracket|brace|curly|square)/#) { "\($0.1) \($0.2)" }
+            .replacing("square bracket", with: "square").replacing("curly brace", with: "curly")
             .replacingOccurrences(of: ",", with: " ")
             .split(separator: " ")
             .map { word in

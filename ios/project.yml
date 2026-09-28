@@ -10,6 +10,8 @@ options:
 packages:
   Whisper:
     path: Packages/Whisper # whisper.cpp for command mode
+  Llama:
+    path: Packages/Llama # llama.cpp: S1-mini cleanup on the CPU, where the Neural Engine copy doesn't fit
   CoreAIModels: # Apple's Core AI runtime, for S1-mini on the Neural Engine (NeuralCleaner, iOS 27)
     url: https://github.com/apple/coreai-models
     revision: e7b24da85ea64a77d26324d7ce9607de9b955f57
@@ -38,6 +40,9 @@ targets:
       - target: WipprKeyboard
       - package: Whisper
         product: whisper
+      - target: LlamaCleaner
+      - package: Llama # listed so llama.framework is embedded; only LlamaCleaner imports it
+        product: llama
       # Embedded, not linked: it needs iOS 27 and is loaded at runtime (App/NeuralEngine.swift).
       - target: NeuralCleaner
         link: false
@@ -97,6 +102,19 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).keyboard
+
+  LlamaCleaner: # llama.cpp behind a plain Swift API (App/CPUCleaner.swift): its ggml headers clash with whisper.cpp's
+    type: framework
+    platform: iOS
+    sources: [LlamaCleaner]
+    dependencies:
+      - package: Llama
+        product: llama
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).llamacleaner
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"
 
   NeuralCleaner:
     type: framework

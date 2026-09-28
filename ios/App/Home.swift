@@ -62,6 +62,7 @@ struct HomeView: View {
         // Experimental models load in the background when picked, and free their memory when not.
         .onChange(of: cleanupModel, initial: true) { _, model in
             if model == .s1mini { NeuralEngine.cleaner.load() } else { NeuralEngine.cleaner.unload() }
+            if model == .s1miniCPU { CPUCleaner.shared.preload() } else { CPUCleaner.shared.unload() }
         }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
@@ -201,7 +202,7 @@ struct HomeView: View {
                          : "Custom styles need Apple Intelligence, which isn't on here, so Standard is used.")
                         .textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                } else if !status.cleanupAvailable, cleanupModel != .s1mini {
+                } else if !status.cleanupAvailable, !cleanupModel.isS1mini {
                     Text("Styles apply when text is cleaned up, which needs Apple Intelligence or S1-mini (Experimental).")
                         .textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -310,7 +311,9 @@ struct HomeView: View {
                     .padding(.vertical, 12)
                 ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber],
                          unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
-                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner])
+                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner],
+                         unavailable: CPUCleaner.shared.isInstalled ? [:] : [.s1miniCPU: "Download it below"])
+                CPUCleanerDownload()
                 ForEach(timing, id: \.self) { line in
                     Text(line).textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -457,6 +460,35 @@ private struct TipIcon: View {
             .foregroundStyle(color)
             .frame(width: 32, height: 32)
             .background(fill, in: .circle)
+    }
+}
+
+/// S1-mini for the CPU: its download, with progress, until it's on the device.
+private struct CPUCleanerDownload: View {
+    private let cleaner = CPUCleaner.shared
+
+    var body: some View {
+        if !cleaner.isInstalled {
+            let size = ByteCountFormatter.string(fromByteCount: CPUCleaner.source.size, countStyle: .file)
+            Group {
+                switch cleaner.download {
+                case .running(let fraction):
+                    VStack(alignment: .leading, spacing: 4) {
+                        ProgressView(value: fraction).tint(Theme.accent)
+                        Text("Downloading S1-mini · CPU · \(Int(fraction * 100))% of \(size). Keep noboard open.")
+                            .textStyle(.caption, Theme.secondary)
+                    }
+                case .failed(let error):
+                    Button("Download failed (\(error)). Try again", systemImage: "arrow.clockwise") { cleaner.startDownload() }
+                        .textStyle(.caption, Theme.accent)
+                case nil:
+                    Button("Download S1-mini · CPU (\(size))", systemImage: "arrow.down.circle") { cleaner.startDownload() }
+                        .textStyle(.caption, Theme.accent)
+                }
+            }
+            .padding(.vertical, 8)
+            .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
+        }
     }
 }
 

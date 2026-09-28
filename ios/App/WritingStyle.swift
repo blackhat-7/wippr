@@ -36,7 +36,7 @@ enum WritingStyle: String, CaseIterable, Identifiable {
 
     /// Email layout only works well with S1-mini (Apple Intelligence adds a subject line and a sign-off nobody said).
     static var offered: [WritingStyle] {
-        allCases.filter { $0 != .email || CleanupModel.current == .s1mini }
+        allCases.filter { $0 != .email || CleanupModel.current.isS1mini }
     }
 
     static var current: WritingStyle {
