@@ -24,22 +24,30 @@ final class CommandTranscriber: @unchecked Sendable {
     private var context: OpaquePointer?
     private let log = Logger(subsystem: "cx.immortal.wippr", category: "whisper")
 
+    /// Loaded, the model and its buffers take ~650 MB. With 4 GB (iPad 10th gen) that plus an experimental model got
+    /// the app killed, and the mic with it, so there it loads for each dictation (~0.6 s) and is freed after.
+    private static let staysLoaded = ProcessInfo.processInfo.physicalMemory > 5 << 30
+
     private init() {
-        // Loaded, the model and its buffers take ~650 MB; give them back when iOS asks. The next command reloads it.
+        // Give the memory back when iOS asks. The next command reloads it.
         NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: nil) { [self] _ in
-            queue.async { [self] in
-                guard let context else { return }
-                whisper_free(context)
-                self.context = nil
-                log.notice("freed on memory warning")
-            }
+            queue.async { [self] in free("on memory warning") }
         }
     }
 
-    /// Loads the model now, off the main thread, so the first command doesn't wait for it (25 s on an iPad 10th gen).
+    /// Loads the model now, off the main thread, so the first command doesn't wait for it (25 s on an iPad 10th gen
+    /// the first time). Not where it doesn't stay loaded.
     func preload() {
-        guard Self.isDownloaded else { return }
+        guard Self.isDownloaded, Self.staysLoaded else { return }
         queue.async { _ = self.loadedContext() }
+    }
+
+    /// On `queue` only.
+    private func free(_ reason: StaticString) {
+        guard let context else { return }
+        whisper_free(context)
+        self.context = nil
+        log.notice("freed \(reason)")
     }
 
     /// Downloads the model into Application Support (not backed up). `progress` gets 0…1 on the main thread.
@@ -72,14 +80,20 @@ final class CommandTranscriber: @unchecked Sendable {
     /// Transcribes 16 kHz mono `samples` off the main thread. Nil if the model is missing or nothing was heard.
     func transcribe(_ samples: [Float]) async -> String? {
         await withCheckedContinuation { continuation in
-            queue.async { continuation.resume(returning: self.run(samples)) }
+            queue.async {
+                continuation.resume(returning: self.run(samples))
+                if !Self.staysLoaded { self.free("after use") }
+            }
         }
     }
 
     /// Ordinary dictation: no shell prompt, any length, all segments. Nil if the model is missing or nothing was heard.
     func transcribeDictation(_ samples: [Float]) async -> String? {
         await withCheckedContinuation { continuation in
-            queue.async { continuation.resume(returning: self.run(samples, dictation: true)) }
+            queue.async {
+                continuation.resume(returning: self.run(samples, dictation: true))
+                if !Self.staysLoaded { self.free("after use") }
+            }
         }
     }
 
