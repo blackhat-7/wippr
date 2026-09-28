@@ -33,7 +33,7 @@ Wispr-Flow-style dictation on iPhone **without a keyboard taking up the screen**
 - [x] Experimental: S1-mini on the Neural Engine via Core AI, iOS 27 (`ios/NeuralCleaner/`, loaded at runtime by `ios/App/NeuralEngine.swift`); model exported with `coreai.llm.export --platform iOS`, copied into the app container by hand
 - [x] Pre-pass: list rules only (`ios/App/Prepass.swift`); the full spoken-punctuation pass didn't help end-to-end (`learnings/bench-e2e.md`)
 - [x] End-to-end bench: TTS → Parakeet → cleanup → judge (`bench/e2e`, `learnings/bench-e2e.md`)
-- [ ] S1-mini on the Neural Engine: the palettized iOS export is much worse than the benched GGUF (see `learnings/bench-e2e.md`, on-device section); try an 8-bit export
+- [x] S1-mini on the Neural Engine: 8-bit export scores 4.20 on device (mixed 4/8-bit broke it: 3.21); see `learnings/bench-e2e.md`, on-device section
 - [ ] S1-mini in the background: needs `com.apple.developer.background-tasks.continued-processing.inference` on the App ID (signing refused it for team CRH6P5D9K2)
 - [ ] S1-mini: ship or download the model (today it's copied into the container by hand)
 - [ ] CI: Xcode 26.6 can't build the iOS 27 NeuralCleaner target
