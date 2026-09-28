@@ -14,7 +14,14 @@ cd ios && xcodegen
 open Wippr.xcodeproj
 ```
 
-The team is set in `project.yml`. Run on a device, then add the keyboard in Settings → General → Keyboard → Keyboards and allow Full Access.
+The team and bundle ID are set in `Config/Signing.xcconfig`. To build under your own Apple account, create `Config/Local.xcconfig` (gitignored) with your values:
+
+```
+DEVELOPMENT_TEAM = YOURTEAMID
+APP_BUNDLE_ID = com.yourname.noboard
+```
+
+The keyboard's ID and the App Group follow from `APP_BUNDLE_ID`. Run on a device, then add the keyboard in Settings → General → Keyboard → Keyboards and allow Full Access.
 
 Requirements:
 - iOS 26+.

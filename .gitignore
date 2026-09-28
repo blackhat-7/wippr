@@ -8,3 +8,4 @@ ios/Widgets/Info.plist
 bench/asr/data/
 ios/Keyboard/Info.plist
 ios/*/*.entitlements
+ios/Config/Local.xcconfig

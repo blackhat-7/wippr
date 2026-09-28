@@ -1,6 +1,8 @@
 name: Wippr
+configFiles: # team and bundle ID live here, overridable per developer
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
 options:
-  bundleIdPrefix: com.satuke.noboard
   deploymentTarget:
     iOS: "26.0"
   createIntermediateGroups: true
@@ -10,7 +12,6 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1,2" # iPhone and iPad
     CODE_SIGN_STYLE: Automatic
-    DEVELOPMENT_TEAM: CRH6P5D9K2
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
 
@@ -29,7 +30,7 @@ targets:
     entitlements:
       path: App/Wippr.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.satuke.noboard]
+        com.apple.security.application-groups: [group.$(APP_BUNDLE_ID)]
     info:
       path: App/Info.plist
       properties:
@@ -43,12 +44,13 @@ targets:
         NSSpeechRecognitionUsageDescription: noboard transcribes your voice on this iPhone.
         UIBackgroundModes: [audio]
         CFBundleURLTypes:
-          - CFBundleURLName: com.satuke.noboard
+          - CFBundleURLName: $(APP_BUNDLE_ID)
             CFBundleURLSchemes: [noboard]
         ITSAppUsesNonExemptEncryption: false
+        AppGroup: group.$(APP_BUNDLE_ID) # read by Shared/KeyboardHandoff.swift
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.satuke.noboard
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID)
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   WipprKeyboard:
@@ -58,13 +60,14 @@ targets:
     entitlements:
       path: Keyboard/WipprKeyboard.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.satuke.noboard]
+        com.apple.security.application-groups: [group.$(APP_BUNDLE_ID)]
     info:
       path: Keyboard/Info.plist
       properties:
         CFBundleDisplayName: noboard
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        AppGroup: group.$(APP_BUNDLE_ID) # read by Shared/KeyboardHandoff.swift
         NSExtension:
           NSExtensionPointIdentifier: com.apple.keyboard-service
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
@@ -75,4 +78,4 @@ targets:
             RequestsOpenAccess: true # writes start/stop to the App Group
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.satuke.noboard.keyboard
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).keyboard
