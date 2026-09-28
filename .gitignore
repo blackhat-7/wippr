@@ -10,3 +10,4 @@ ios/Keyboard/Info.plist
 ios/*/*.entitlements
 ios/Config/Local.xcconfig
 ios/build/
+.DS_Store
