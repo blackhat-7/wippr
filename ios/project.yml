@@ -46,6 +46,9 @@ targets:
       path: App/Wippr.entitlements
       properties:
         com.apple.security.application-groups: [group.$(APP_BUNDLE_ID)]
+        # Experimental S1-mini: lets the Neural Engine run while the app is in the background (iOS 27),
+        # which it always is when the keyboard asks for text. Enabled on the App ID as Background Inference.
+        com.apple.developer.background-tasks.continued-processing.inference: true
     info:
       path: App/Info.plist
       properties:
