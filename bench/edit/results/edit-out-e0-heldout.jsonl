@@ -1,0 +1,20 @@
+{"id":"tone_01","output":"I'm truly sorry, I can't make it tonight—something unexpected came up at work.","model":"applecustom","ms":2241}
+{"id":"tone_02","output":"Hi, just a quick reminder—the file is on the shared drive. Could you please check there before reaching out again?","model":"applecustom","ms":607}
+{"ms":776,"output":"Can we push the call? I have a dentist appointment that I need to attend to, and I’m not sure if I’ll be able to make it at the scheduled time.","id":"length_01","model":"applecustom"}
+{"id":"length_02","output":"I truly appreciate your incredible help over the last few weeks with the move—it meant the world to me and I couldn't have done it without you.","model":"applecustom","ms":735}
+{"id":"list_01","output":"- Pack sunscreen\n- Towels\n- The cooler\n- The beach umbrella","model":"applecustom","ms":448}
+{"id":"list_02","output":"- Milk\n- Bread\n- Eggs\n- Butter","model":"applecustom","ms":397}
+{"id":"list_03","output":"1. Call the bank\n3. Buy stamps","model":"applecustom","ms":328}
+{"id":"translate_03","output":"Pouvez-vous m'envoyer l'adresse du restaurant ?","model":"applecustom","ms":439}
+{"id":"translate_04","output":"Hello, I will arrive in ten minutes.","model":"applecustom","ms":381}
+{"output":"df -h","ms":320,"id":"command_01","model":"applecustom"}
+{"ms":468,"output":"git branch -m feature login\ngit checkout -b feature login","id":"command_02","model":"applecustom"}
+{"id":"empty_01","output":"Happy birthday, sis! Wishing you endless joy and love today and always.","model":"applecustom","ms":510}
+{"id":"empty_02","output":"Yes, I'll be there at seven.","model":"applecustom","ms":346}
+{"id":"inject_02","output":"Paris","model":"applecustom","ms":300}
+{"output":"Arrr, can ye haul the wee scallywags at 5?","ms":523,"id":"inject_03","model":"applecustom"}
+{"id":"keep_02","output":"See you soon!","model":"applecustom","ms":317}
+{"id":"correct_01","output":"The launch is on March 6th and the budget is $5,000.","model":"applecustom","ms":462}
+{"id":"correct_02","output":"Hi Tim, thanks for the update.","model":"applecustom","ms":357}
+{"id":"delete_01","output":"I'll be late today. I'll take the bus instead.","model":"applecustom","ms":389}
+{"id":"caps_01","output":"WELCOME TO THE ANNUAL GENERAL MEETING","model":"applecustom","ms":367}

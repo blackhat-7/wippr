@@ -179,7 +179,7 @@ enum CleanupBench {
         if model == "applecustom", custom == nil { return print("bench: no edit-prompt.json") }
         print("bench: \(cases.count) edit cases, \(model)")
         let write = writer("edit-out-\(model.replacingOccurrences(of: ":", with: "-")).jsonl")
-        let neuralPrompt = prompt("edit-prompt.json")
+        let neuralPrompt = prompt("neural-edit-prompt.json")
             ?? Prompt(instructions: Editor.instructions, template: "<text>\n{text}\n</text>\n<instruction>\n{instruction}\n</instruction>")
         for c in cases {
             await ready(benchSlot)

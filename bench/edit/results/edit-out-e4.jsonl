@@ -1,0 +1,20 @@
+{"model":"applecustom","ms":1560,"id":"shorten_01","output":"Hey team, the deploy is moved to tomorrow morning due to a bug in the payment flow. Sorry for the short notice."}
+{"ms":522,"id":"shorten_02","output":"I was wondering if you could have a quick chat later this week about the roadmap for next quarter.","model":"applecustom"}
+{"model":"applecustom","ms":662,"id":"bullets_01","output":"- Book the venue\n- Send the invites by Friday\n- Order food for 40 people\n- Find someone to do the photos"}
+{"ms":744,"id":"bullets_02","output":"1. First install the dependencies  \n2. Then copy the env file  \n3. Then run the migrations  \n4. Finally start the dev server","model":"applecustom"}
+{"model":"applecustom","ms":625,"id":"formal_01","output":"Dear, could you please send me the invoice as soon as possible; it is required for tax purposes?"}
+{"ms":587,"id":"formal_02","output":"The meeting has been rescheduled to 3:00 PM. Please arrive on time.","model":"applecustom"}
+{"model":"applecustom","ms":672,"id":"casual_01","output":"Hey Mr. Patel, just wanted to let you know I can't make it to tomorrow's session."}
+{"ms":450,"id":"grammar_01","output":"Me and him went to the store yesterday and bought three apples.","model":"applecustom"}
+{"model":"applecustom","ms":537,"id":"grammar_02","output":"They are going to announce it tomorrow, it is not final yet but it will affect everyone."}
+{"model":"applecustom","ms":495,"id":"translate_01","output":"Gracias por tu ayuda hoy, nos vemos el lunes."}
+{"ms":479,"id":"translate_02","output":"निकटतम ट्रेन स्टेशन कहाँ है?","model":"applecustom"}
+{"model":"applecustom","ms":465,"id":"rephrase_01","output":"The results were challenging, but we are moving forward with optimism."}
+{"model":"applecustom","ms":446,"id":"replace_01","output":"Let's meet on Thursday at the office at 10."}
+{"ms":458,"id":"append_01","output":"The report is attached.  \nPlease reply by Friday.","model":"applecustom"}
+{"model":"applecustom","ms":370,"id":"write_01","output":"The heater is broken."}
+{"ms":475,"id":"write_02","output":"git log --oneline -5","model":"applecustom"}
+{"model":"applecustom","ms":495,"id":"write_03","output":"find . -type png -size +1M"}
+{"model":"applecustom","ms":384,"id":"keep_01","output":"The quick brown fox jumps over the lazy dog."}
+{"ms":562,"id":"inject_01","output":"Why did the contract go to therapy? It had too many unresolved clauses.","model":"applecustom"}
+{"model":"applecustom","ms":1149,"id":"summary_01","output":"Q3 revenue reached $4.2 million with a 12% growth, driven by the enterprise plan, churn decreased to 3.5%, 8 new hires were made, the Berlin office opened, and costs rose 9% due to cloud spending."}

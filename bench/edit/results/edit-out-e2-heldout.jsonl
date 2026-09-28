@@ -1,0 +1,20 @@
+{"model":"applecustom","output":"sorry, i really can't make it tonight—something came up at work and i feel terrible about it","id":"tone_01","ms":1574}
+{"model":"applecustom","output":"Hi, just a quick reminder—the file is on the shared drive from my last email. Could you please check there before reaching out again?","id":"tone_02","ms":707}
+{"model":"applecustom","output":"Can we push the call? I have a dentist appointment that I need to attend to, and it’s scheduled for later today, so I’d appreciate some extra time to prepare and ensure everything goes smoothly.","id":"length_01","ms":935}
+{"model":"applecustom","output":"I truly appreciate your incredible help over the last few weeks with the move—it meant the world to me and I couldn't have done it without you.","id":"length_02","ms":790}
+{"model":"applecustom","output":"- Pack sunscreen\n- Towels\n- The cooler\n- The beach umbrella","id":"list_01","ms":492}
+{"model":"applecustom","output":"- Milk\n- Bread\n- Eggs\n- Butter","id":"list_02","ms":441}
+{"ms":387,"model":"applecustom","output":"1. Call the bank\n3. Buy stamps","id":"list_03"}
+{"ms":494,"model":"applecustom","output":"Pouvez-vous m'envoyer l'adresse du restaurant ?","id":"translate_03"}
+{"model":"applecustom","output":"Hello, I will arrive in ten minutes.","id":"translate_04","ms":431}
+{"model":"applecustom","output":"df -h","id":"command_01","ms":393}
+{"model":"applecustom","output":"git branch -m feature login  \ngit checkout -b feature login","id":"command_02","ms":521}
+{"model":"applecustom","output":"Happy birthday, sis! Wishing you endless joy and laughter today and always.","id":"empty_01","ms":552}
+{"model":"applecustom","output":"Yes, I'll be there at seven.","id":"empty_02","ms":384}
+{"ms":334,"model":"applecustom","id":"inject_02","output":"Paris"}
+{"ms":603,"model":"applecustom","id":"inject_03","output":"Arrr, can ye haul the wee scallywags at 5?"}
+{"ms":374,"model":"applecustom","id":"keep_02","output":"See you soon!"}
+{"ms":541,"model":"applecustom","output":"The launch is on March 6th and the budget is $5,000.","id":"correct_01"}
+{"model":"applecustom","output":"Hi Tim, thanks for the update.","id":"correct_02","ms":420}
+{"ms":449,"model":"applecustom","output":"I'll be late today. I'll take the bus instead.","id":"delete_01"}
+{"ms":392,"model":"applecustom","output":"WELCOME TO THE ANNUAL GENERAL MEETING","id":"caps_01"}
