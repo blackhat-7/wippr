@@ -6,6 +6,8 @@ struct HomeView: View {
     @Environment(\.wide) private var wide
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
+    @AppStorage(WritingStyle.key) private var writingStyle = WritingStyle.standard
+    @AppStorage(WritingStyle.customKey) private var customStyle = ""
     @State private var shortcuts = Shortcuts.all
     /// The shortcut open in the editor; a new one isn't in `shortcuts` yet.
     @State private var editing: Shortcut?
@@ -29,6 +31,7 @@ struct HomeView: View {
                 .padding(.horizontal, wide ? 0 : 8)
                 cards(status)
                 problems(status)
+                styleSection(status)
                 shortcutList
                 CommandModelCard()
                     .padding(.top, wide ? 44 : 32)
@@ -134,6 +137,60 @@ struct HomeView: View {
             .padding(.top, 16)
             .padding(.horizontal, wide ? 0 : 8)
         }
+    }
+
+    /// How the cleaned-up text reads: a few registers, or the user's own description.
+    private func styleSection(_ status: SetupStatus) -> some View {
+        VStack(alignment: .leading, spacing: wide ? 12 : 8) {
+            Text("Writing style").textStyle(.label, Theme.tertiary)
+                .padding(.horizontal, wide ? 0 : 8)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(writingStyle.name.replacingOccurrences(of: "…", with: "")).textStyle(.rowStrong)
+                        Text(writingStyle.example).textStyle(.caption, Theme.tertiary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 8)
+                    Menu {
+                        ForEach(WritingStyle.allCases) { style in
+                            Button {
+                                writingStyle = style
+                            } label: {
+                                if style == writingStyle { Label(style.name, systemImage: "checkmark") } else { Text(style.name) }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Change")
+                            Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
+                        }
+                        .textStyle(.rowStrong, Theme.accent)
+                        .frame(minHeight: 44)
+                        .contentShape(.rect)
+                    }
+                }
+                if writingStyle == .custom {
+                    TextField("", text: $customStyle, prompt: Text("Describe it, e.g. \u{201C}British spelling, no exclamation marks\u{201D}").foregroundStyle(Theme.faint), axis: .vertical)
+                        .textStyle(TextStyle(size: 16, tracking: -0.01, lineHeight: 21))
+                        .tint(Theme.accent)
+                        .lineLimit(1...4)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 14)
+                        .background(Theme.surface, in: .rect(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Theme.border))
+                }
+                if !status.cleanupAvailable {
+                    Text("Styles apply when text is cleaned up, which needs Apple Intelligence.")
+                        .textStyle(.caption, Theme.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
+            .card(radius: 24)
+        }
+        .padding(.top, wide ? 44 : 32)
     }
 
     /// Phrase → keys rows; tap to edit, long-press to delete.
