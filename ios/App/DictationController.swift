@@ -4,6 +4,7 @@ import UIKit
 
 /// Keeps the mic on in the background and runs one dictation at a time when the wippr keyboard asks:
 /// mic → transcript → cleanup → keyboard (types it) + clipboard. A transcript that is a shortcut's phrase types its keys instead.
+/// In a terminal, the transcript becomes a shell command (`CommandWriter`), heard by Whisper if its model is downloaded.
 @MainActor
 final class DictationController {
     typealias Phase = KeyboardHandoff.Phase
@@ -14,6 +15,8 @@ final class DictationController {
     private let mic = Mic()
     private var phase: Phase = .off
     private var transcriber: Transcriber?
+    /// The dictation's audio for Whisper, in case it ends in a terminal (the mode arrives with the stop).
+    private var audio: CommandAudio?
     private var cleaner: Cleaner?
     private var pendingCopy: String?
     private var lastCommand: UUID?
@@ -92,6 +95,7 @@ final class DictationController {
         poll = nil
         _ = try? await transcriber?.stop()
         transcriber = nil
+        audio = nil
         cleaner = nil
         mic.stop()
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
@@ -132,6 +136,7 @@ final class DictationController {
         guard let transcriber, phase == .recording else { return nil }
         mic.detach()
         self.transcriber = nil
+        audio = nil
         set(.processing)
         defer {
             cleaner = nil
@@ -169,8 +174,11 @@ final class DictationController {
         set(.recording)
         do {
             let transcriber = try await Transcriber()
-            mic.attach(try await transcriber.start(micFormat: mic.format), since: since)
+            let sink = try await transcriber.start(micFormat: mic.format)
+            let audio = CommandAudio(micFormat: mic.format)
+            mic.attach({ sink($0); audio.append($0) }, since: since)
             self.transcriber = transcriber
+            self.audio = audio
             cleaner = Cleaner() // prewarms the model while the user speaks
         } catch {
             log.error("start: \(error, privacy: .public)")
@@ -182,6 +190,8 @@ final class DictationController {
         guard let transcriber else { return }
         mic.detach()
         self.transcriber = nil
+        let samples = audio?.samples ?? []
+        audio = nil
         set(.processing)
         do {
             let raw = try await transcriber.stop()
@@ -191,14 +201,28 @@ final class DictationController {
                     KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
                     break
                 }
-                let text = await (cleaner ?? Cleaner()).clean(raw)
-                if !text.isEmpty {
-                    KeyboardHandoff.send(text)
-                    copy(text)
-                }
+                await typeCleaned(raw)
             case .edit:
                 // Empty text tells the keyboard the edit failed, so it leaves the field alone.
                 KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
+            case .command:
+                // Apple's transcript stays as another hearing. Apple hearing nothing means silence,
+                // where Whisper tends to make up words.
+                var heard = [raw]
+                if !raw.isEmpty, let whispered = await CommandTranscriber.shared.transcribe(samples) {
+                    heard.insert(whispered, at: 0)
+                }
+                if let shortcut = Shortcuts.match(heard[0]) {
+                    KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
+                    break
+                }
+                // Nil means prose (e.g. a prompt for an agent in the terminal): typed like dictation, from Apple's
+                // transcript, which hears prose better than the shell-primed Whisper.
+                guard let written = await CommandWriter.write(heard: heard, screen: command.text ?? "") else {
+                    await typeCleaned(raw)
+                    break
+                }
+                if !written.isEmpty { KeyboardHandoff.send(written, command: true) }
             case .cancel:
                 break
             }
@@ -208,6 +232,15 @@ final class DictationController {
         }
         cleaner = nil
         set(.ready)
+    }
+
+    /// Dictation: cleans the transcript, types it and copies it.
+    private func typeCleaned(_ raw: String) async {
+        let text = await (cleaner ?? Cleaner()).clean(raw)
+        if !text.isEmpty {
+            KeyboardHandoff.send(text)
+            copy(text)
+        }
     }
 
     /// Clipboard fallback. iOS can refuse the write while the app is in the background; opening the app retries it.

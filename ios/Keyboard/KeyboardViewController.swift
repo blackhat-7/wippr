@@ -4,6 +4,7 @@ import UIKit
 /// A one-row keyboard: hold the button, speak, let go, and the text is typed into the focused field.
 /// Slide up while holding for edit mode: the speech becomes an instruction that rewrites the selection
 /// (or the text before the cursor), or writes something new in an empty field. A quick tap right after undoes an edit.
+/// In a terminal the speech becomes a shell command instead (`isCommandField`).
 /// Keyboards can't use the mic, so the wippr app records and hands the text over (`KeyboardHandoff`).
 final class KeyboardViewController: UIInputViewController {
     private let status = UILabel()
@@ -25,10 +26,12 @@ final class KeyboardViewController: UIInputViewController {
     private var editMode = false
     /// The text sent for editMode: the selection, or else everything before the cursor.
     private var target: (selected: String?, before: String)?
-    /// The last edit, undoable with a quick tap for a few seconds.
+    /// The last edit or command, undoable with a quick tap for a few seconds.
     private var undo: (inserted: String, original: String, until: Date)?
     /// What's drawn; nil until the first update so it always draws once.
     private var phase: KeyboardHandoff.Phase?
+    /// Whether the drawn status is for a terminal field.
+    private var drawnCommandField = false
     /// A start or stop the app hasn't confirmed yet, shown optimistically until it does or it expires.
     private var pending: (record: Bool, until: Date)?
     private var lastID = UserDefaults.standard.string(forKey: "lastID")
@@ -133,6 +136,8 @@ final class KeyboardViewController: UIInputViewController {
         placeButton()
         if hasFullAccess { KeyboardHandoff.markKeyboardSeen() }
         log.notice("appear: full access \(self.hasFullAccess), status \(KeyboardHandoff.status().rawValue, privacy: .public)")
+        let proxy = textDocumentProxy
+        log.notice("traits: autocorrection \(proxy.autocorrectionType?.rawValue ?? -1), autocapitalization \(proxy.autocapitalizationType?.rawValue ?? -1), keyboard \(proxy.keyboardType?.rawValue ?? -1), content \(proxy.textContentType?.rawValue ?? "nil", privacy: .public), command \(self.isCommandField, privacy: .public)")
         update()
         orb.resume()
         if hasFullAccess { [press, letGo].forEach { $0.prepare() }; notify.prepare(); tick.prepare() }
@@ -162,15 +167,32 @@ final class KeyboardViewController: UIInputViewController {
         insertLatest()
     }
 
+    /// The focused field changed (e.g. from a chat box to a terminal): show which mode a press will use.
+    override func textDidChange(_ textInput: UITextInput?) {
+        super.textDidChange(textInput)
+        if let phase, isCommandField != drawnCommandField { draw(phase) }
+    }
+
     private func draw(_ phase: KeyboardHandoff.Phase) {
         self.phase = phase
+        drawnCommandField = isCommandField
         orb.phase = phase
         status.text = switch phase {
         case .off: offHint
-        case .ready: "Hold to talk"
-        case .recording: editMode ? "Edit: say what to change" : "Listening…  ↑ slide up to edit"
-        case .processing: target != nil ? "Editing…" : "Writing…"
+        case .ready: isCommandField ? "Hold to say a command" : "Hold to talk"
+        case .recording: editMode ? "Edit: say what to change" : isCommandField ? "Listening… (command)" : "Listening…  ↑ slide up to edit"
+        case .processing: target != nil ? "Editing…" : isCommandField ? "Writing command…" : "Writing…"
         }
+    }
+
+    /// A terminal (Termius, Blink, …): no autocorrection or autocapitalization, and not a field that is clearly something else.
+    private var isCommandField: Bool {
+        let proxy = textDocumentProxy
+        let other: [UIKeyboardType] = [.emailAddress, .URL, .webSearch, .numberPad, .phonePad, .decimalPad, .asciiCapableNumberPad]
+        let otherContent: [UITextContentType] = [.username, .emailAddress, .URL, .password, .newPassword, .oneTimeCode]
+        return proxy.autocorrectionType == .no && proxy.autocapitalizationType == UITextAutocapitalizationType.none
+            && !other.contains(proxy.keyboardType ?? .default)
+            && !(proxy.textContentType?.map(otherContent.contains) ?? false)
     }
 
     private var offHint: String { hasFullAccess ? "Mic is off · tap to turn it on" : "Tap to finish setting up noboard" }
@@ -180,6 +202,7 @@ final class KeyboardViewController: UIInputViewController {
         lastID = latest.id.uuidString
         UserDefaults.standard.set(lastID, forKey: "lastID")
         if latest.edit == true { return applyEdit(latest.text) }
+        if latest.command == true { return insertCommand(latest.text) }
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let space = latest.keys != true && before.last.map { !$0.isWhitespace } ?? false
         textDocumentProxy.insertText(space ? " " + latest.text : latest.text)
@@ -211,6 +234,17 @@ final class KeyboardViewController: UIInputViewController {
         orb.flash()
         status.text = "Edited · tap to undo"
         log.notice("edited \(original.count) → \(result.count) chars")
+    }
+
+    /// Types a written command as is, never with a newline (that would run it), undoable like an edit.
+    private func insertCommand(_ command: String) {
+        let text = command.filter { !$0.isNewline }
+        textDocumentProxy.insertText(text)
+        undo = (text, "", .now + 5)
+        buzz { notify.notificationOccurred(.success) }
+        orb.flash()
+        status.text = "Command · tap to undo"
+        log.notice("command \(text.count) chars")
     }
 
     private func undoEdit() {
@@ -264,6 +298,9 @@ final class KeyboardViewController: UIInputViewController {
             let before = textDocumentProxy.documentContextBeforeInput ?? ""
             target = (selected, before)
             send(record: false, mode: .edit, text: selected ?? before)
+        } else if isCommandField {
+            target = nil
+            send(record: false, mode: .command, text: String((textDocumentProxy.documentContextBeforeInput ?? "").suffix(300)))
         } else {
             target = nil
             send(record: false)

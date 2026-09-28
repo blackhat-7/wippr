@@ -1,0 +1,55 @@
+{"id": 1, "say": "cd nix", "expect": ["cd nix"]}
+{"id": 2, "say": "just update", "expect": ["just update"]}
+{"id": 3, "say": "cd tilde slash nix and and just update", "expect": ["cd ~/nix && just update"]}
+{"id": 4, "say": "git status", "expect": ["git status"]}
+{"id": 5, "say": "git commit dash m quote fix typo in readme quote", "expect": ["git commit -m \"fix typo in readme\"", "git commit -m \"fix typo in README\""]}
+{"id": 6, "say": "git push dash dash force", "expect": ["git push --force"]}
+{"id": 7, "say": "git checkout dash b feature slash login", "expect": ["git checkout -b feature/login"]}
+{"id": 8, "say": "git log dash dash one line", "expect": ["git log --oneline"]}
+{"id": 9, "say": "git diff head tilde one", "expect": ["git diff HEAD~1"]}
+{"id": 10, "say": "git rebase dash i head tilde three", "expect": ["git rebase -i HEAD~3"]}
+{"id": 11, "say": "git stash pop", "expect": ["git stash pop"]}
+{"id": 12, "say": "tee mux attach", "expect": ["tmux attach"]}
+{"id": 13, "say": "tee mux new dash s work", "expect": ["tmux new -s work"]}
+{"id": 14, "say": "tee mux kill session dash t work", "expect": ["tmux kill-session -t work"]}
+{"id": 15, "say": "L S dash L A", "expect": ["ls -la"]}
+{"id": 16, "say": "cd dot dot", "expect": ["cd .."]}
+{"id": 17, "say": "cd dot dot slash dot dot", "expect": ["cd ../.."]}
+{"id": 18, "say": "make dir dash p source slash components", "expect": ["mkdir -p src/components", "mkdir -p source/components"]}
+{"id": 19, "say": "sue doo apt update", "expect": ["sudo apt update"]}
+{"id": 20, "say": "sue doo system control restart engine x", "expect": ["sudo systemctl restart nginx"]}
+{"id": 21, "say": "kube control get pods", "expect": ["kubectl get pods"]}
+{"id": 22, "say": "kube control get pods pipe grep api", "expect": ["kubectl get pods | grep api"]}
+{"id": 23, "say": "docker P S", "expect": ["docker ps"]}
+{"id": 24, "say": "docker compose up dash d", "expect": ["docker compose up -d"]}
+{"id": 25, "say": "nix flake update", "expect": ["nix flake update"]}
+{"id": 26, "say": "nix develop", "expect": ["nix develop"]}
+{"id": 27, "say": "vim tilde slash dot config slash N vim slash init dot lua", "expect": ["vim ~/.config/nvim/init.lua"]}
+{"id": 28, "say": "N P M run dev", "expect": ["npm run dev"]}
+{"id": 29, "say": "cargo build dash dash release", "expect": ["cargo build --release"]}
+{"id": 30, "say": "brew install rip grep", "expect": ["brew install ripgrep"]}
+{"id": 31, "say": "grep dash R quote hello quote dot", "expect": ["grep -r \"hello\" .", "grep -R \"hello\" ."]}
+{"id": 32, "say": "echo dollar path", "expect": ["echo $PATH"]}
+{"id": 33, "say": "python three dash m venv dot venv", "expect": ["python3 -m venv .venv"]}
+{"id": 34, "say": "source dot venv slash bin slash activate", "expect": ["source .venv/bin/activate"]}
+{"id": 35, "say": "S S H root at one nine two dot one six eight dot one dot ten", "expect": ["ssh root@192.168.1.10"]}
+{"id": 36, "say": "chmod plus x run dot S H", "expect": ["chmod +x run.sh"]}
+{"id": 37, "say": "dot slash run dot S H", "expect": ["./run.sh"]}
+{"id": 38, "say": "R M dash R F node modules", "expect": ["rm -rf node_modules"]}
+{"id": 39, "say": "tail dash F slash var slash log slash syslog", "expect": ["tail -f /var/log/syslog"]}
+{"id": 40, "say": "P S aux pipe grep node", "expect": ["ps aux | grep node"]}
+{"id": 41, "say": "echo hello greater than out dot T X T", "expect": ["echo hello > out.txt"]}
+{"id": 42, "say": "make and and make install", "expect": ["make && make install"]}
+{"id": 43, "say": "D F dash H", "expect": ["df -h"]}
+{"id": 44, "say": "D U dash S H star", "expect": ["du -sh *"]}
+{"id": 45, "say": "clear", "expect": ["clear"]}
+{"id": 46, "say": "H top", "expect": ["htop"]}
+{"id": 47, "say": "cat readme dot M D", "expect": ["cat README.md", "cat readme.md"]}
+{"id": 48, "say": "fix the failing test in the auth module", "expect": ["<prose>"]}
+{"id": 49, "say": "why is this function returning null", "expect": ["<prose>"]}
+{"id": 50, "say": "make sure the tests pass before you commit", "expect": ["<prose>"]}
+{"id": 51, "say": "add a dark mode toggle to the settings page", "expect": ["<prose>"]}
+{"id": 52, "say": "explain what this script does", "expect": ["<prose>"]}
+{"id": 53, "say": "find where we handle the login redirect", "expect": ["<prose>"]}
+{"id": 54, "say": "rename this variable to something clearer", "expect": ["<prose>"]}
+{"id": 55, "say": "can you check the logs and tell me what broke", "expect": ["<prose>"]}
