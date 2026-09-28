@@ -25,6 +25,8 @@ enum KeyboardHandoff {
         var date: Date
         /// True when `text` replaces the text sent for editing. Empty `text` with `edit` means the edit failed.
         var edit: Bool?
+        /// True when `text` is a shortcut's keys: typed as is, with no space before it.
+        var keys: Bool?
     }
 
     private struct Status: Codable {
@@ -47,7 +49,9 @@ enum KeyboardHandoff {
 
     // App → keyboard
 
-    static func send(_ text: String, edit: Bool = false) { write(Text(id: UUID(), text: text, date: .now, edit: edit), to: "text") }
+    static func send(_ text: String, edit: Bool = false, keys: Bool = false) {
+        write(Text(id: UUID(), text: text, date: .now, edit: edit, keys: keys), to: "text")
+    }
 
     static func latestText() -> Text? {
         guard let text = read(Text.self, from: "text"), Date.now.timeIntervalSince(text.date) < maxAge else { return nil }
