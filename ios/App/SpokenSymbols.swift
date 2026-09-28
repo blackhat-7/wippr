@@ -63,6 +63,13 @@ enum SpokenSymbols {
                 push("%", attach: glue)
             case "colon":
                 push(":", attach: glue); glue = true
+            case "open" where next.map(Self.brackets.keys.contains) ?? false,
+                 "left" where next.map(Self.brackets.keys.contains) ?? false:
+                // "open paren", "open square bracket", "open curly": the bracket, glued to what follows.
+                push(Self.brackets[next!]!.open); glue = true; i += next == "square" ? 2 : 1 // "square bracket"
+            case "close" where next.map(Self.brackets.keys.contains) ?? false,
+                 "right" where next.map(Self.brackets.keys.contains) ?? false:
+                push(Self.brackets[next!]!.close, attach: true); i += next == "square" ? 2 : 1
             case "star", "asterisk":
                 push("*")
             case "at" where next.map(isHost) ?? false:
@@ -118,7 +125,7 @@ enum SpokenSymbols {
     }
 
     private static let symbolWords: Set = [
-        "dash", "slash", "backslash", "back", "backward", "forward", "dot", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
+        "dash", "slash", "backslash", "back", "backward", "forward", "dot", "open", "close", "left", "right", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
         "percent", "percentage", "per", "escape", "underscore", "equals", "dollar", "plus", "semicolon", "ampersand",
         "and", "or", "greater", "less", "control", "ctrl",
     ]
@@ -133,6 +140,12 @@ enum SpokenSymbols {
     private static func isHost(_ word: String) -> Bool {
         word.contains(".") && word.allSatisfy { $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" }
     }
+
+    /// "paren", "bracket", "curly"… → their characters. "square bracket" is [ ].
+    private static let brackets: [String: (open: String, close: String)] = [
+        "paren": ("(", ")"), "parenthesis": ("(", ")"), "parens": ("(", ")"), "bracket": ("(", ")"),
+        "square": ("[", "]"), "brace": ("{", "}"), "curly": ("{", "}"),
+    ]
 
     private static let operators: Set = ["|", "&&", "||", ">", "<", ";"]
 
