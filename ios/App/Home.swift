@@ -8,6 +8,8 @@ struct HomeView: View {
     @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
     /// Experimental, for testing: which model cleans dictation (Apple Intelligence by default).
     @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
+    @AppStorage(TranscriberModel.key) private var transcriberModel = TranscriberModel.apple
+    @AppStorage(EditModel.key) private var editModel = EditModel.apple
     /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
     @State private var typed: KeyboardHandoff.Typed?
     @State private var shortcuts = Shortcuts.all
@@ -55,8 +57,15 @@ struct HomeView: View {
         }
         .onChange(of: shortcuts) { _, shortcuts in Shortcuts.all = shortcuts }
         .sheet(item: $editing) { ShortcutEditor($0, in: $shortcuts) }
+        // Experimental models load in the background when picked, and free their memory when not.
         .onChange(of: cleanupModel, initial: true) { _, model in
-            if model == .s1mini { NeuralEngine.shared.load() } else { NeuralEngine.shared.unload() }
+            if model == .s1mini { NeuralEngine.cleaner.load() } else { NeuralEngine.cleaner.unload() }
+        }
+        .onChange(of: transcriberModel, initial: true) { _, model in
+            if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
+        }
+        .onChange(of: editModel, initial: true) { _, model in
+            if model == .qwen { NeuralEngine.editor.load() } else { NeuralEngine.editor.unload() }
         }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
@@ -221,66 +230,37 @@ struct HomeView: View {
         .padding(.top, 4)
     }
 
-    /// For testing only: pick the cleanup model and see how long the last cleanup took.
+    /// For testing only: pick the transcriber, cleanup and edit models, and see where a dictation's time went.
     private var experimental: some View {
-        let neural = NeuralEngine.shared
-        let unavailable = NeuralEngine.unavailableReason
-        var notes: [String] = []
-        if cleanupModel == .s1mini {
-            switch neural.state {
-            case .loading: notes.append("Loading… Apple Intelligence cleans until S1-mini is ready. The first load can take minutes.")
-            case .failed(let error): notes.append("S1-mini didn't load (\(error)), so Apple Intelligence cleans.")
-            case .idle, .ready: break
-            }
-        } else if let unavailable {
-            notes.append("S1-mini: \(unavailable).")
-        }
+        var timing: [String] = []
         if let last = CleanupStats.shared.last {
-            notes.append("Last cleanup: \(last.ms) ms · \(last.model == .off ? "none (raw text)" : last.model.name)")
+            timing.append("Last cleanup: \(last.ms) ms · \(last.model == .off ? "none (raw text)" : last.model.name)")
         }
         if let t = DictationTimings.shared.last {
             let s = { (x: TimeInterval) in String(format: "%.2f s", x) }
-            var line = "Last dictation: pickup \(s(t.pickup)) · ASR \(s(t.asr)) · cleanup \(s(t.cleanup))"
+            var line = "Last dictation: pickup \(s(t.pickup)) · ASR \(s(t.asr)) (\(t.asrModel == .parakeet ? "Parakeet" : "Apple")) · cleanup \(s(t.cleanup))"
             if let done = t.typed(typed) { line += " · insert \(s(done.insert)) · total \(s(done.total))" }
-            notes.append(line)
+            timing.append(line)
         }
         return VStack(alignment: .leading, spacing: wide ? 12 : 8) {
             Text("Experimental").textStyle(.label, Theme.tertiary)
                 .padding(.horizontal, wide ? 0 : 8)
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 10) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Cleanup model").textStyle(.rowStrong)
-                        Text("For testing. Edit mode always uses Apple Intelligence.").textStyle(.caption, Theme.tertiary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    Spacer(minLength: 8)
-                    Menu {
-                        ForEach(CleanupModel.allCases) { model in
-                            Button {
-                                cleanupModel = model
-                            } label: {
-                                if model == cleanupModel { Label(model.name, systemImage: "checkmark") } else { Text(model.name) }
-                            }
-                            .disabled(model == .s1mini && unavailable != nil)
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(cleanupModel.name).lineLimit(1)
-                            Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
-                        }
-                        .textStyle(.rowStrong, Theme.accent)
-                        .frame(minHeight: 44)
-                        .contentShape(.rect)
-                    }
-                }
-                ForEach(notes, id: \.self) { note in
-                    Text(note).textStyle(.caption, Theme.secondary)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("For testing. Apple's models are the defaults; a picked model loads in the background and Apple's is used until it's ready.")
+                    .textStyle(.caption, Theme.tertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.vertical, 12)
+                ModelRow(title: "Transcriber", selection: $transcriberModel, experimental: .parakeet, slot: NeuralEngine.transcriber)
+                ModelRow(title: "Cleanup model", selection: $cleanupModel, experimental: .s1mini, slot: NeuralEngine.cleaner)
+                ModelRow(title: "Edit model", selection: $editModel, experimental: .qwen, slot: NeuralEngine.editor)
+                ForEach(timing, id: \.self) { line in
+                    Text(line).textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 10)
                 }
             }
             .padding(.horizontal, 18)
-            .padding(.vertical, 12)
+            .padding(.bottom, 14)
             .card(radius: 24)
         }
         .padding(.top, wide ? 44 : 32)
@@ -419,6 +399,63 @@ private struct TipIcon: View {
             .foregroundStyle(color)
             .frame(width: 32, height: 32)
             .background(fill, in: .circle)
+    }
+}
+
+/// Experimental: a model menu (Apple's default plus one Neural Engine model) with that model's load state under it.
+private struct ModelRow<Choice: CaseIterable & Identifiable & RawRepresentable & Hashable>: View
+where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
+    let title: String
+    @Binding var selection: Choice
+    /// The Neural Engine option: disabled, with the reason, when it can't run here.
+    let experimental: Choice
+    let slot: NeuralSlot
+
+    var body: some View {
+        let unavailable = slot.unavailableReason
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 10) {
+                Text(title).textStyle(.rowStrong)
+                Spacer(minLength: 8)
+                Menu {
+                    ForEach(Choice.allCases) { choice in
+                        Button {
+                            selection = choice
+                        } label: {
+                            if choice == selection { Label(name(choice), systemImage: "checkmark") } else { Text(name(choice)) }
+                        }
+                        .disabled(choice == experimental && unavailable != nil)
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(name(selection)).lineLimit(1)
+                        Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
+                    }
+                    .textStyle(.rowStrong, Theme.accent)
+                    .frame(minHeight: 44)
+                    .contentShape(.rect)
+                }
+            }
+            if let note = note(unavailable) {
+                Text(note).textStyle(.caption, Theme.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.bottom, 6)
+            }
+        }
+        .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
+    }
+
+    private func name(_ choice: Choice) -> String {
+        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? EditModel)?.name ?? choice.rawValue
+    }
+
+    private func note(_ unavailable: String?) -> String? {
+        guard selection == experimental else { return unavailable.map { "\(name(experimental)): \($0)." } }
+        switch slot.state {
+        case .loading: return "Loading… Apple's model is used until it's ready. The first load can take many minutes."
+        case .failed(let error): return "Didn't load (\(error)), so Apple's model is used."
+        case .idle, .ready: return nil
+        }
     }
 }
 

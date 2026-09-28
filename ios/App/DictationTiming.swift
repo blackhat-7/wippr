@@ -12,15 +12,18 @@ struct DictationTiming {
     var asr: TimeInterval
     var cleanup: TimeInterval
     var sent: Date
+    /// Which transcriber did it.
+    var asrModel: TranscriberModel
 
     private static let log = Logger(subsystem: "cx.immortal.wippr", category: "timing")
 
-    @MainActor static func record(released: Date, picked: Date, transcribed: Date, cleaned: Date, id: UUID?) {
+    @MainActor static func record(released: Date, picked: Date, transcribed: Date, cleaned: Date, id: UUID?,
+                                  asr: TranscriberModel) {
         let timing = DictationTiming(id: id, released: released, pickup: picked.timeIntervalSince(released),
                                      asr: transcribed.timeIntervalSince(picked), cleanup: cleaned.timeIntervalSince(transcribed),
-                                     sent: cleaned)
+                                     sent: cleaned, asrModel: asr)
         DictationTimings.shared.last = timing
-        log.notice("pickup \(ms(timing.pickup)) ms, asr \(ms(timing.asr)) ms, cleanup \(ms(timing.cleanup)) ms")
+        log.notice("pickup \(ms(timing.pickup)) ms, asr (\(asr.rawValue, privacy: .public)) \(ms(timing.asr)) ms, cleanup \(ms(timing.cleanup)) ms")
     }
 
     /// Insert and total, once the keyboard has typed this text (nil for in-app dictation, or before it's typed).

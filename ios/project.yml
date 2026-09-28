@@ -33,7 +33,7 @@ targets:
       - Shared
       - Keyboard/OrbView.swift
       - Keyboard/Orb.metal
-      - NeuralCleaner/NeuralCleaning.swift
+      - NeuralCleaner/NeuralProtocols.swift
     dependencies:
       - target: WipprKeyboard
       - package: Whisper
@@ -106,6 +106,8 @@ targets:
     dependencies:
       - package: CoreAIModels
         product: CoreAILM
+      - package: CoreAIModels
+        product: CoreAISpeech
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).neuralcleaner

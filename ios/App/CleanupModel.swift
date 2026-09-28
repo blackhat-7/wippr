@@ -34,3 +34,43 @@ final class CleanupStats {
     static let shared = CleanupStats()
     var last: (model: CleanupModel, ms: Int)?
 }
+
+/// Experimental, for testing: which model transcribes dictation. Apple's SpeechTranscriber is the default.
+enum TranscriberModel: String, CaseIterable, Identifiable {
+    case apple, parakeet
+
+    static let key = "transcriberModel"
+
+    var id: String { rawValue }
+
+    var name: String {
+        switch self {
+        case .apple: "Apple SpeechTranscriber"
+        case .parakeet: "Parakeet · Neural Engine"
+        }
+    }
+
+    static var current: TranscriberModel {
+        UserDefaults.standard.string(forKey: key).flatMap(TranscriberModel.init) ?? .apple
+    }
+}
+
+/// Experimental, for testing: which model runs edit mode. Apple Intelligence is the default.
+enum EditModel: String, CaseIterable, Identifiable {
+    case apple, qwen
+
+    static let key = "editModel"
+
+    var id: String { rawValue }
+
+    var name: String {
+        switch self {
+        case .apple: "Apple Intelligence"
+        case .qwen: "Qwen3-1.7B · Neural Engine"
+        }
+    }
+
+    static var current: EditModel {
+        UserDefaults.standard.string(forKey: key).flatMap(EditModel.init) ?? .apple
+    }
+}

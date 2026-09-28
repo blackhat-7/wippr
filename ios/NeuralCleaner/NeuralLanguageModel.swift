@@ -6,16 +6,10 @@ import os
 import Tokenizers
 #endif
 
-/// Dictation cleanup with Superwhisper S1-mini (Qwen3-0.6B cleanup fine-tune) on the Neural Engine, via Core AI.
-/// The model is Apple's iOS export (`coreai.llm.export --platform iOS`, mixed 4/8-bit palettized), which Core AI
-/// runs on the Neural Engine; iOS blocks the GPU for background apps, and the app is in the background whenever
-/// the keyboard asks for text. Loaded by the app at runtime on iOS 27 only (see NeuralCleaning.swift).
-@objc(WipprNeuralCleaner)
-public final class NeuralCleaner: NSObject, NeuralCleaning, @unchecked Sendable {
-    /// S1-mini's trained system prompt and control line; its model card says not to change them.
-    private static let system = "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text."
-    private static let control = "[Styling: semi-formal] [Structure: lists] [Context: general]\n"
-
+/// A Core AI chat model on the Neural Engine: S1-mini (cleanup) or Qwen3-1.7B (edit mode), each exported with
+/// `coreai.llm.export --platform iOS`. The app owns the prompts. Loaded by the app at runtime on iOS 27 only.
+@objc(WipprNeuralLanguageModel)
+public final class NeuralLanguageModelImpl: NSObject, NeuralLanguageModel, @unchecked Sendable {
     private let state = State()
     private let log = Logger(subsystem: "cx.immortal.wippr", category: "neural")
 
@@ -33,27 +27,25 @@ public final class NeuralCleaner: NSObject, NeuralCleaning, @unchecked Sendable 
         }
     }
 
-    public func clean(_ text: String, bundle: URL, completion: @escaping (String?) -> Void) {
+    public func respond(to prompt: String, instructions: String, maxTokens: Int, bundle: URL,
+                        completion: @escaping (String?) -> Void) {
         Task {
             let start = Date.now
             do {
                 let model = try await state.model(at: bundle)
                 #if DEBUG
-                await Self.dumpPrompt(Self.control + text, bundle: bundle)
+                await Self.dumpPrompt(prompt, instructions: instructions, bundle: bundle)
                 #endif
-                let session = LanguageModelSession(model: model, instructions: Self.system)
+                let session = LanguageModelSession(model: model, instructions: instructions)
                 let response = try await session.respond(
-                    to: Self.control + text,
-                    // About twice the input's tokens (~4 bytes each) + 64, so a repetition loop stops early
-                    options: GenerationOptions(samplingMode: .greedy, maximumResponseTokens: min(1024, text.utf8.count / 2 + 64))
-                )
+                    to: prompt, options: GenerationOptions(samplingMode: .greedy, maximumResponseTokens: maxTokens))
                 let out = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
-                log.notice("cleaned \(text.count) chars in \(Int(Date.now.timeIntervalSince(start) * 1000)) ms")
+                log.notice("\(bundle.lastPathComponent, privacy: .public): \(prompt.count) chars in \(Int(Date.now.timeIntervalSince(start) * 1000)) ms")
                 completion(out.isEmpty ? nil : out)
             } catch {
-                log.error("clean: \(error, privacy: .public)")
+                log.error("respond: \(error, privacy: .public)")
                 #if DEBUG
-                print("neural: clean: \(error)")
+                print("neural: respond: \(error)")
                 #endif
                 completion(nil)
             }
@@ -61,14 +53,14 @@ public final class NeuralCleaner: NSObject, NeuralCleaning, @unchecked Sendable 
     }
 
     #if DEBUG
-    /// Prints the prompt the chat template builds (what Core AI feeds the model), once per launch.
-    private static let dumped = OSAllocatedUnfairLock(initialState: false)
-    private static func dumpPrompt(_ user: String, bundle: URL) async {
-        guard !dumped.withLock({ defer { $0 = true }; return $0 }) else { return }
+    /// Prints the prompt the chat template builds (what Core AI feeds the model), once per model per launch.
+    private static let dumped = OSAllocatedUnfairLock(initialState: Set<URL>())
+    private static func dumpPrompt(_ prompt: String, instructions: String, bundle: URL) async {
+        guard dumped.withLock({ $0.insert(bundle).inserted }) else { return }
         do {
             let tokenizer = try await LanguageBundle(at: bundle).loadTokenizer()
             let tokens = try tokenizer.applyChatTemplate(messages: [
-                ["role": "system", "content": system], ["role": "user", "content": user],
+                ["role": "system", "content": instructions], ["role": "user", "content": prompt],
             ])
             print("neural: prompt \(tokens.count) tokens, ends \(tokens.suffix(8)):\n\(tokenizer.decode(tokens: tokens))<END>")
         } catch {
@@ -82,7 +74,7 @@ public final class NeuralCleaner: NSObject, NeuralCleaning, @unchecked Sendable 
     }
 
     private actor State {
-        /// The load in progress or done. Shared, so prewarm and clean calls that arrive during the
+        /// The load in progress or done. Shared, so prewarm and respond calls that arrive during the
         /// (slow) load wait for it instead of each loading another copy of the model.
         private var loading: (url: URL, task: Task<CoreAILanguageModel, Error>)?
 
@@ -92,7 +84,7 @@ public final class NeuralCleaner: NSObject, NeuralCleaning, @unchecked Sendable 
                 let start = Date.now
                 let model = try await CoreAILanguageModel(resourcesAt: url, mode: .eager)
                 #if DEBUG
-                print("neural: loaded model in \(Int(Date.now.timeIntervalSince(start) * 1000)) ms")
+                print("neural: loaded \(url.lastPathComponent) in \(Int(Date.now.timeIntervalSince(start) * 1000)) ms")
                 #endif
                 return model
             }

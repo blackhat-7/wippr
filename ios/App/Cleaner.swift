@@ -16,7 +16,7 @@ final class Cleaner {
     init() {
         session = Self.isAvailable ? LanguageModelSession(instructions: Self.instructions) : nil
         session?.prewarm()
-        if CleanupModel.current == .s1mini { NeuralEngine.shared.load() } // in the background; Apple cleans until it's ready
+        if CleanupModel.current == .s1mini { NeuralEngine.cleaner.load() } // in the background; Apple cleans until it's ready
     }
 
     func clean(_ raw: String) async -> String {
@@ -26,7 +26,7 @@ final class Cleaner {
         switch model {
         case .apple: break
         case .off: text = raw
-        case .s1mini: text = await NeuralEngine.shared.clean(raw) // nil until loaded, or on failure
+        case .s1mini: text = await NeuralEngine.clean(raw) // nil until loaded, or on failure
         }
         if text == nil {
             model = session == nil ? .off : .apple

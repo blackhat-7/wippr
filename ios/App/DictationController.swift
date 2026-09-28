@@ -14,7 +14,7 @@ final class DictationController {
 
     private let mic = Mic()
     private var phase: Phase = .off
-    private var transcriber: Transcriber?
+    private var transcriber: (any SpeechInput)?
     /// The dictation's audio for Whisper, in case it ends in a terminal (the mode arrives with the stop).
     private var audio: CommandAudio?
     private var cleaner: Cleaner?
@@ -36,9 +36,18 @@ final class DictationController {
                 Task { @MainActor in await DictationController.shared.restartMic() }
             }
         }
-        // Experimental S1-mini: Neural Engine memory counts against the app; free the model rather than get killed.
+        // Experimental models: Neural Engine memory counts against the app. On a warning, free the ones that
+        // aren't picked (a picked one would only reload on its next use, and Apple's model would stand in).
         NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main) { _ in
-            Task { @MainActor in NeuralEngine.shared.unload() }
+            Task { @MainActor in
+                DictationController.shared.log.notice("memory warning")
+                #if DEBUG
+                print("memory warning")
+                #endif
+                if CleanupModel.current != .s1mini { NeuralEngine.cleaner.unload() }
+                if EditModel.current != .qwen { NeuralEngine.editor.unload() }
+                if TranscriberModel.current != .parakeet { NeuralEngine.transcriber.unload() }
+            }
         }
     }
 
@@ -151,7 +160,8 @@ final class DictationController {
         guard let raw = try? await transcriber.stop(), !raw.isEmpty else { return nil }
         let transcribed = Date.now
         let text = await (cleaner ?? Cleaner()).clean(raw)
-        DictationTiming.record(released: start, picked: start, transcribed: transcribed, cleaned: .now, id: nil)
+        DictationTiming.record(released: start, picked: start, transcribed: transcribed, cleaned: .now, id: nil,
+                               asr: transcriber is ParakeetTranscriber ? .parakeet : .apple)
         return text
     }
 
@@ -182,7 +192,13 @@ final class DictationController {
     private func startDictation(since: Date) async {
         set(.recording)
         do {
-            let transcriber = try await Transcriber()
+            // Experimental, for testing: Parakeet once it has loaded; Apple's Transcriber otherwise (the default).
+            let transcriber: any SpeechInput
+            if TranscriberModel.current == .parakeet, let parakeet = ParakeetTranscriber() {
+                transcriber = parakeet
+            } else {
+                transcriber = try await Transcriber()
+            }
             let sink = try await transcriber.start(micFormat: mic.format)
             let audio = CommandAudio(micFormat: mic.format)
             mic.attach({ sink($0); audio.append($0) }, since: since)
@@ -213,7 +229,8 @@ final class DictationController {
                     KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
                     break
                 }
-                await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed)
+                await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
+                                  asr: transcriber is ParakeetTranscriber ? .parakeet : .apple)
             case .edit:
                 // Empty text tells the keyboard the edit failed, so it leaves the field alone.
                 KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
@@ -235,7 +252,8 @@ final class DictationController {
                 // Nil means prose (e.g. a prompt for an agent in the terminal): typed like dictation, from Apple's
                 // transcript, which hears prose better than the shell-primed Whisper.
                 guard let written = await CommandWriter.write(heard: heard, screen: command.text ?? "") else {
-                    await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed)
+                    await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
+                                      asr: transcriber is ParakeetTranscriber ? .parakeet : .apple)
                     break
                 }
                 if !written.isEmpty { KeyboardHandoff.send(written, command: true) }
@@ -251,13 +269,15 @@ final class DictationController {
     }
 
     /// Dictation: cleans the transcript, types it and copies it. The dates time the stages (`DictationTiming`).
-    private func typeCleaned(_ raw: String, released: Date, picked: Date, transcribed: Date) async {
+    private func typeCleaned(_ raw: String, released: Date, picked: Date, transcribed: Date,
+                             asr: TranscriberModel) async {
         let text = await (cleaner ?? Cleaner()).clean(raw)
         let cleaned = Date.now
         if !text.isEmpty {
             let id = KeyboardHandoff.send(text, released: released)
             copy(text)
-            DictationTiming.record(released: released, picked: picked, transcribed: transcribed, cleaned: cleaned, id: id)
+            DictationTiming.record(released: released, picked: picked, transcribed: transcribed, cleaned: cleaned, id: id,
+                                   asr: asr)
         }
     }
 
