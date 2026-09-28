@@ -64,11 +64,24 @@ enum TranscriberModel: String, CaseIterable, Identifiable {
     }
 }
 
-/// Command mode's recognizer, shown on Home so its download is easy to find. Only Whisper: Apple's is used
-/// automatically until it's downloaded, and for speech too long for a command.
+/// Command mode's recognizer. Off (Apple's transcript, nothing to download) unless Whisper is downloaded, which
+/// hears commands far better; a choice made on Home wins. Apple's also stands in for speech too long for a command.
 enum TerminalTranscriber: String, CaseIterable, Identifiable {
-    case whisper
+    case off, whisper
+
+    static let key = "terminalTranscriber"
 
     var id: String { rawValue }
-    var name: String { "Whisper small.en · CPU" }
+
+    var name: String {
+        switch self {
+        case .off: "Off"
+        case .whisper: CommandTranscriber.isDownloaded ? "Whisper small.en · CPU" : "Download Whisper (264 MB)"
+        }
+    }
+
+    static var current: TerminalTranscriber {
+        UserDefaults.standard.string(forKey: key).flatMap(TerminalTranscriber.init)
+            ?? (CommandTranscriber.isDownloaded ? .whisper : .off)
+    }
 }

@@ -38,8 +38,6 @@ struct HomeView: View {
                 problems(status)
                 styleSection(status)
                 shortcutList
-                CommandModelCard()
-                    .padding(.top, wide ? 44 : 32)
                 tips
                 experimental
             }
@@ -309,8 +307,7 @@ struct HomeView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
                 ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
-                ModelRow(title: "Terminal transcriber", selection: .constant(.whisper), slots: [:],
-                         unavailable: CommandTranscriber.isDownloaded ? [:] : [TerminalTranscriber.whisper: "Download it under Terminal commands"])
+                TerminalTranscriberRow()
                 ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner],
                          unavailable: CPUCleaner.shared.isInstalled ? [:] : [.s1miniCPU: "Download it below"])
                 CPUCleanerDownload()
@@ -374,66 +371,6 @@ struct HomeView: View {
     }
 }
 
-/// Downloads Whisper for command mode (`CommandTranscriber`). Never automatic: it's 264 MB.
-private struct CommandModelCard: View {
-    @Environment(\.wide) private var wide
-    @State private var ready = CommandTranscriber.isDownloaded
-    /// 0…1 while downloading.
-    @State private var progress: Double?
-    @State private var failed = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: wide ? 12 : 8) {
-            Text("Terminal commands").textStyle(.label, Theme.tertiary)
-                .padding(.horizontal, wide ? 0 : 8)
-            HStack(spacing: 14) {
-                Text(failed ? "Download failed. Check your connection and try again."
-                     : "A 264 MB on-device model makes dictated commands much more accurate.")
-                    .textStyle(.caption, Theme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-                if ready {
-                    HStack(spacing: 6) {
-                        StatusBadge(ok: true, size: 18)
-                        Text("Ready").textStyle(.rowStrong)
-                    }
-                } else if let progress {
-                    Text(progress, format: .percent.precision(.fractionLength(0)))
-                        .textStyle(.rowStrong, Theme.secondary)
-                        .monospacedDigit()
-                } else {
-                    Button("Download", action: download)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .tint(Theme.key)
-                }
-            }
-            .padding(18)
-            .overlay(alignment: .bottom) {
-                if let progress, !ready {
-                    ProgressView(value: progress).tint(Theme.accent).padding(.horizontal, 18).padding(.bottom, 8)
-                }
-            }
-            .card(radius: 24)
-        }
-    }
-
-    private func download() {
-        failed = false
-        progress = 0
-        Task {
-            do {
-                try await CommandTranscriber.download { progress = $0 }
-                ready = true
-                CommandTranscriber.shared.preload()
-            } catch {
-                failed = true
-            }
-            progress = nil
-        }
-    }
-}
-
 private struct Tip: Identifiable {
     var icon: AnyView
     var title: String
@@ -493,6 +430,52 @@ private struct CPUCleanerDownload: View {
 }
 
 /// Experimental: a model menu (Apple's default plus one Neural Engine model) with that model's load state under it.
+/// Command mode's recognizer: Off (Apple's transcript) or Whisper. Picking Whisper downloads it (264 MB) with
+/// progress here; Apple's is used until it's ready.
+private struct TerminalTranscriberRow: View {
+    @AppStorage(TerminalTranscriber.key) private var choice = TerminalTranscriber.current
+    /// 0…1 while downloading.
+    @State private var progress: Double?
+    @State private var failed = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ModelRow(title: "Terminal transcriber", selection: Binding(get: { choice }, set: pick), slots: [:])
+            if let progress {
+                VStack(alignment: .leading, spacing: 4) {
+                    ProgressView(value: progress).tint(Theme.accent)
+                    Text("Downloading Whisper · \(Int(progress * 100))% of 264 MB. Keep noboard open.")
+                        .textStyle(.caption, Theme.secondary)
+                }
+                .padding(.vertical, 8)
+            } else if failed {
+                Button("Whisper didn't download. Try again", systemImage: "arrow.clockwise", action: download)
+                    .textStyle(.caption, Theme.accent)
+                    .padding(.vertical, 8)
+            }
+        }
+    }
+
+    private func pick(_ new: TerminalTranscriber) {
+        choice = new
+        if new == .whisper, !CommandTranscriber.isDownloaded, progress == nil { download() }
+    }
+
+    private func download() {
+        failed = false
+        progress = 0
+        Task {
+            do {
+                try await CommandTranscriber.download { progress = $0 }
+                CommandTranscriber.shared.preload()
+            } catch {
+                failed = true
+            }
+            progress = nil
+        }
+    }
+}
+
 private struct ModelRow<Choice: CaseIterable & Identifiable & RawRepresentable & Hashable>: View
 where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     let title: String

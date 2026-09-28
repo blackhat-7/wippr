@@ -37,7 +37,7 @@ final class CommandTranscriber: @unchecked Sendable {
     /// Loads the model now, off the main thread, so the first command doesn't wait for it (25 s on an iPad 10th gen
     /// the first time). Not where it doesn't stay loaded.
     func preload() {
-        guard Self.isDownloaded, Self.staysLoaded else { return }
+        guard Self.isDownloaded, Self.staysLoaded, TerminalTranscriber.current == .whisper else { return }
         queue.async { _ = self.loadedContext() }
     }
 
