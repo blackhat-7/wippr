@@ -43,6 +43,15 @@ enum SpokenSymbols {
                 push(word == "underscore" ? "_" : "=", attach: true); glue = true
             case "dollar", "plus":
                 push(word == "dollar" ? "$" : "+"); glue = true
+            case "control", "ctrl" where next.map { $0.count == 1 && $0.first!.isLetter } ?? false:
+                // "control b" → Ctrl+B, the byte a terminal gets (0x02), e.g. tmux's prefix.
+                push(String(UnicodeScalar(next!.first!.asciiValue! - 96))); glue = true; i += 1
+            case "escape":
+                push("\u{1B}"); glue = true
+            case "percent":
+                push("%", attach: glue)
+            case "colon":
+                push(":", attach: glue); glue = true
             case "star", "asterisk":
                 push("*")
             case "at" where next.map(isHost) ?? false:
@@ -64,7 +73,7 @@ enum SpokenSymbols {
                 inQuote.toggle()
             default:
                 // Spelled letters are one word: "l s" → "ls".
-                if word.count == 1, word.first!.isLetter, let last = out.last, last.count == 1, last.first!.isLetter, !glue {
+                if word.count == 1, word.first!.isLetter, let last = out.last, endsInSpelledLetter(last), !glue {
                     push(word, attach: true)
                 } else {
                     push(word)
@@ -73,6 +82,12 @@ enum SpokenSymbols {
             i += 1
         }
         return out.joined(separator: " ")
+    }
+
+    /// "l", ":w": a lone letter at the end, so the next spelled letter joins it ("l s" → "ls", ": w q" → ":wq").
+    private static func endsInSpelledLetter(_ word: String) -> Bool {
+        guard let last = word.last, last.isLetter else { return false }
+        return word.dropLast().last.map { !$0.isLetter && !$0.isNumber } ?? true
     }
 
     /// An IP address or domain: "192.168.1.10", "github.com".
@@ -85,6 +100,7 @@ enum SpokenSymbols {
     /// Lowercased words, with the recognizer's punctuation dropped (it adds commas and a final full stop).
     private static func tokens(_ transcript: String) -> [String] {
         transcript.lowercased()
+            .replacing(#/\b(?:ctrl|control)[-+]([a-z])\b/#) { "control \($0.1)" } // Whisper writes "Ctrl+B", "control-B"
             .replacingOccurrences(of: ",", with: " ")
             .split(separator: " ")
             .map { word in

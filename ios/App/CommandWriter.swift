@@ -12,6 +12,8 @@ enum CommandWriter {
     static func write(heard: [String], screen: String = "") async -> String? {
         let typed = SpokenSymbols.apply(heard.first ?? "")
         guard !typed.isEmpty, !isProse(typed) else { return nil }
+        // Keystrokes ("control b percent" → Ctrl+B %) have no names to fix.
+        if typed.unicodeScalars.contains(where: { $0.value < 32 }) { return typed }
         guard Cleaner.isAvailable, let fixed = await fixNames(typed, alternatives: heard.dropFirst().map(SpokenSymbols.apply), screen: screen),
               symbols(fixed) == symbols(typed), similarity(fixed.lowercased(), typed) >= 0.5
         else { return typed }

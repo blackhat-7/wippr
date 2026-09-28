@@ -34,7 +34,6 @@ final class KeyboardViewController: UIInputViewController {
     private var drawnCommandField = false
     /// A start or stop the app hasn't confirmed yet, shown optimistically until it does or it expires.
     private var pending: (record: Bool, until: Date)?
-    private var lastID = UserDefaults.standard.string(forKey: "lastID")
     private var poll: Timer?
     /// Repeats delete while the key is held.
     private var deleteRepeat: Timer?
@@ -198,9 +197,10 @@ final class KeyboardViewController: UIInputViewController {
     private var offHint: String { hasFullAccess ? "Mic is off · tap to turn it on" : "Tap to finish setting up noboard" }
 
     private func insertLatest() {
-        guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != lastID else { return }
-        lastID = latest.id.uuidString
-        UserDefaults.standard.set(lastID, forKey: "lastID")
+        // Read the shared value each time: a host (e.g. Termius) can keep several keyboard instances polling at once,
+        // and each would otherwise type the same text.
+        guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != UserDefaults.standard.string(forKey: "lastID") else { return }
+        UserDefaults.standard.set(latest.id.uuidString, forKey: "lastID")
         if latest.edit == true { return applyEdit(latest.text) }
         if latest.command == true { return insertCommand(latest.text) }
         let before = textDocumentProxy.documentContextBeforeInput ?? ""

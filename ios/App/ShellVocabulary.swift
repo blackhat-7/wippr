@@ -15,6 +15,6 @@ enum ShellVocabulary {
     /// Whisper copies its prompt's style: symbols written as words (`SpokenSymbols` turns them into characters),
     /// commands as separate words, and these names spelled as commands. None of this is from the benchmark's cases.
     static let whisperPrompt = "git pull dash dash rebase and and git log. cd tilde slash projects slash app. "
-        + "ls dash l h pipe grep notes. cat config dot yaml. sudo reboot. Commands: "
+        + "ls dash l h pipe grep notes. cat config dot yaml. sudo reboot. control b c. Commands: "
         + commands.prefix(60).joined(separator: ", ") + "."
 }
