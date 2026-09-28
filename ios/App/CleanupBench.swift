@@ -22,6 +22,33 @@ import UIKit
 enum CleanupBench {
     static func runIfRequested() {
         let args = ProcessInfo.processInfo.arguments
+        // `-downloadModel s1mini|parakeet`: delete the model, download it from Hugging Face as a fresh install would, load it.
+        if let i = args.firstIndex(of: "-downloadModel") {
+            setvbuf(stdout, nil, _IONBF, 0)
+            let slot = args.dropFirst(i + 1).first == "parakeet" ? NeuralEngine.transcriber : NeuralEngine.cleaner
+            Task {
+                slot.deleteModel()
+                let start = Date.now
+                slot.startDownload()
+                var shown = -1
+                while true {
+                    switch slot.download {
+                    case .running(let f) where Int(f * 10) > shown:
+                        shown = Int(f * 10)
+                        print("bench: download \(shown * 10)% after \(Int(Date.now.timeIntervalSince(start))) s")
+                    case .failed(let error): return print("bench: download failed: \(error)")
+                    case .none where slot.isInstalled:
+                        print("bench: downloaded in \(Int(Date.now.timeIntervalSince(start))) s")
+                        let load = Date.now
+                        await ready(slot)
+                        return print("bench: \(slot.state) after \(Int(Date.now.timeIntervalSince(load) * 1000)) ms; bench: done")
+                    default: break
+                    }
+                    try? await Task.sleep(for: .milliseconds(200))
+                }
+            }
+            return
+        }
         for (flag, key) in [("-cleanupBench", CleanupModel.key), ("-asrBench", TranscriberModel.key), ("-editBench", "editBench")] {
             guard let i = args.firstIndex(of: flag) else { continue }
             let rest = args.dropFirst(i + 1)

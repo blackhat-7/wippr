@@ -429,6 +429,9 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     .contentShape(.rect)
                 }
             }
+            ForEach(slots.keys.sorted { $0.rawValue < $1.rawValue }, id: \.self) { choice in
+                if let slot = slots[choice], slot.source != nil { downloadRow(choice, slot) }
+            }
             if let note {
                 Text(note).textStyle(.caption, Theme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -438,13 +441,42 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
         .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
     }
 
+    /// A Neural Engine model that isn't on the phone yet: download it from Hugging Face, with progress, or retry.
+    @ViewBuilder private func downloadRow(_ choice: Choice, _ slot: NeuralSlot) -> some View {
+        let size = ByteCountFormatter.string(fromByteCount: slot.source?.size ?? 0, countStyle: .file)
+        switch slot.download {
+        case .running(let fraction):
+            VStack(alignment: .leading, spacing: 4) {
+                ProgressView(value: fraction).tint(Theme.accent)
+                Text("Downloading \(name(choice)) · \(Int(fraction * 100))% of \(size). Keep noboard open.")
+                    .textStyle(.caption, Theme.secondary)
+            }
+            .padding(.bottom, 6)
+        case .failed(let error):
+            Button("Download failed (\(error)). Try again", systemImage: "arrow.clockwise") { slot.startDownload() }
+                .textStyle(.caption, Theme.accent)
+                .padding(.bottom, 6)
+        case .none:
+            if !slot.isInstalled, slot.unavailableReason == "Model not installed" {
+                Button("Download \(name(choice)) (\(size), Wi-Fi recommended)", systemImage: "arrow.down.circle") {
+                    slot.startDownload()
+                }
+                .textStyle(.caption, Theme.accent)
+                .padding(.bottom, 6)
+            }
+        }
+    }
+
     private func name(_ choice: Choice) -> String {
         (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? choice.rawValue
     }
 
     private var note: String? {
         guard let slot = slots[selection] else {
-            let reasons = slots.compactMap { choice, slot in slot.unavailableReason.map { "\(name(choice)): \($0)." } }
+            // A missing model gets a Download button instead of a note.
+            let reasons = slots.compactMap { choice, slot in
+                slot.unavailableReason.flatMap { $0 == "Model not installed" && slot.source != nil ? nil : "\(name(choice)): \($0)." }
+            }
             return reasons.isEmpty ? nil : reasons.sorted().joined(separator: " ")
         }
         switch slot.state {

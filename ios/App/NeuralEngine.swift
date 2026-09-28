@@ -1,14 +1,15 @@
 import Foundation
 import Observation
+import os
 
 /// Experimental, for testing: models on the Neural Engine (iOS 27+), through the separately built
 /// `NeuralCleaner.framework`. Each is only loaded when its Home → Experimental setting picks it; with the
 /// defaults (Apple's models) the framework is never loaded.
 enum NeuralEngine {
     /// S1-mini, 8-bit (cleanup).
-    @MainActor static let cleaner = NeuralSlot(folder: "s1-mini-ios", className: "WipprNeuralLanguageModel")
+    @MainActor static let cleaner = NeuralSlot(folder: "s1-mini-ios", className: "WipprNeuralLanguageModel", source: .s1mini)
     /// Parakeet TDT v2, streaming float16 (speech recognition).
-    @MainActor static let transcriber = NeuralSlot(folder: "parakeet-ios", className: "WipprNeuralTranscriber")
+    @MainActor static let transcriber = NeuralSlot(folder: "parakeet-ios", className: "WipprNeuralTranscriber", source: .parakeet)
 
     /// S1-mini's trained system prompt and control line; its model card says not to change them.
     static let s1System = "You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text."
@@ -48,21 +49,64 @@ final class NeuralSlot {
         case failed(String)
     }
 
+    enum Download: Equatable {
+        case none
+        case running(Double)
+        case failed(String)
+    }
+
     /// Only `ready` models are used; until then Apple's model does the work.
     private(set) var state = State.idle
+    /// Fetching the model from Hugging Face (Home → Experimental).
+    private(set) var download = Download.none
     let bundleURL: URL
+    /// Where to download it from; nil for a model that's only ever copied in by hand (bench candidates).
+    let source: ModelSource?
     @ObservationIgnored private let className: String
     @ObservationIgnored private var object: NeuralModel?
 
-    init(folder: String, className: String) {
+    init(folder: String, className: String, source: ModelSource? = nil) {
         bundleURL = URL.applicationSupportDirectory.appending(path: folder)
         self.className = className
+        self.source = source
+    }
+
+    var isInstalled: Bool { FileManager.default.fileExists(atPath: bundleURL.path) }
+
+    /// Downloads the model (iOS 27 only; the app has to stay open until it's done).
+    func startDownload() {
+        guard let source, !isInstalled, #available(iOS 27, *) else { return }
+        if case .running = download { return }
+        download = .running(0)
+        let folder = bundleURL
+        Task {
+            do {
+                let last = OSAllocatedUnfairLock(initialState: 0.0)
+                try await source.download(to: folder) { fraction in
+                    // Redraw every 0.5%.
+                    guard last.withLock({ l in fraction - l >= 0.005 || fraction >= 1 ? { l = fraction; return true }() : false }) else { return }
+                    Task { @MainActor in if case .running = self.download { self.download = .running(fraction) } }
+                }
+                download = .none
+                if state != .idle { state = .idle } // a failed "not installed" load can be retried now
+            } catch {
+                download = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// Frees the disk space; the model can be downloaded again.
+    func deleteModel() {
+        unload()
+        try? FileManager.default.removeItem(at: bundleURL)
+        state = .idle
+        download = .none
     }
 
     /// Why this model can't be used on this device, or nil if it can.
     var unavailableReason: String? {
         guard #available(iOS 27, *) else { return "Needs iOS 27" }
-        guard FileManager.default.fileExists(atPath: bundleURL.path) else { return "Model not installed" }
+        guard isInstalled else { return "Model not installed" }
         return nil
     }
 
