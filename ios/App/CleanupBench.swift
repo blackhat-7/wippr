@@ -9,6 +9,8 @@ import UIKit
 /// - `-cleanupBench apple|s1mini [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
 /// - `-asrBench apple|parakeet [realtime]`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
 /// - `-editBench apple`: `edit-in.json` ([{"id", "text", "instruction"}]) through `Editor`.
+/// - `-editBench neural:<folder>`: the same cases through a Core AI model in `Application Support/<folder>`, with
+///   Apple's edit instructions and message format (or `edit-prompt.json` if present), for picking an editor.
 /// - `-cleanupBench applecustom` / `-editBench applecustom`: Apple's model with the prompt in `cleanup-prompt.json` /
 ///   `edit-prompt.json` ({"instructions", "template"}; the template's `{text}` and `{instruction}` are filled in),
 ///   for trying prompts without changing the app's.
@@ -69,8 +71,15 @@ enum CleanupBench {
         }
     }
 
+    /// A model folder under test as the editor (`-editBench neural:<folder>`).
+    private static var editorSlot: NeuralSlot?
+
     private static func slot(_ flag: String, _ model: String) -> NeuralSlot? {
-        switch (flag, model) {
+        if flag == "-editBench", model.hasPrefix("neural:") {
+            editorSlot = NeuralSlot(folder: String(model.dropFirst("neural:".count)), className: "WipprNeuralLanguageModel")
+            return editorSlot
+        }
+        return switch (flag, model) {
         case ("-cleanupBench", "s1mini"): NeuralEngine.cleaner
         case ("-asrBench", "parakeet"): NeuralEngine.transcriber
         default: nil
@@ -169,10 +178,17 @@ enum CleanupBench {
         let custom = model == "applecustom" ? prompt("edit-prompt.json") : nil
         if model == "applecustom", custom == nil { return print("bench: no edit-prompt.json") }
         print("bench: \(cases.count) edit cases, \(model)")
-        let write = writer("edit-out-\(model).jsonl")
+        let write = writer("edit-out-\(model.replacingOccurrences(of: ":", with: "-")).jsonl")
+        let neuralPrompt = prompt("edit-prompt.json")
+            ?? Prompt(instructions: Editor.instructions, template: "<text>\n{text}\n</text>\n<instruction>\n{instruction}\n</instruction>")
         for c in cases {
+            await ready(benchSlot)
             let start = Date.now
-            let output = if let custom {
+            let text = String(c.text.suffix(Editor.maxText))
+            let output = if let slot = editorSlot {
+                await neural(slot, neuralPrompt, ["text": text, "instruction": c.instruction],
+                             maxTokens: min(2048, text.utf8.count / 2 + 512))
+            } else if let custom {
                 await respond(custom, ["text": String(c.text.suffix(Editor.maxText)), "instruction": c.instruction])
             } else {
                 await Editor.edit(c.text, instruction: c.instruction)
@@ -191,6 +207,18 @@ enum CleanupBench {
 
     private static func prompt(_ file: String) -> Prompt? {
         (try? Data(contentsOf: docs.appending(path: file))).flatMap { try? JSONDecoder().decode(Prompt.self, from: $0) }
+    }
+
+    /// A Core AI model under test, greedy, in a new session; nil on failure.
+    private static func neural(_ slot: NeuralSlot, _ prompt: Prompt, _ values: [String: String], maxTokens: Int) async -> String? {
+        guard let model = slot.ready as? NeuralLanguageModel else { return nil }
+        var message = prompt.template
+        for (name, value) in values { message = message.replacingOccurrences(of: "{\(name)}", with: value) }
+        return await withCheckedContinuation { done in
+            model.respond(to: message, instructions: prompt.instructions, maxTokens: maxTokens, bundle: slot.bundleURL) {
+                done.resume(returning: $0)
+            }
+        }
     }
 
     /// Apple's model, greedy, in a new session, like `Cleaner` and `Editor`; nil on failure or an empty reply.
