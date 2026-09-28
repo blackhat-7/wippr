@@ -35,6 +35,12 @@ enum SpokenSymbols {
                     letters += words[i + 1]; i += 1
                 }
                 if !letters.isEmpty { push(letters) }
+            case "backslash", "back" where next == "slash", "backward" where next == "slash":
+                if word != "backslash" { i += 1 }
+                push("\\", attach: !startsFresh()); glue = true
+            case "forward" where next == "slash":
+                i += 1
+                fallthrough
             case "slash", "/":
                 push("/", attach: !startsFresh()); glue = true
             case "dot", ".":
@@ -112,7 +118,7 @@ enum SpokenSymbols {
     }
 
     private static let symbolWords: Set = [
-        "dash", "slash", "dot", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
+        "dash", "slash", "backslash", "back", "backward", "forward", "dot", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
         "percent", "percentage", "per", "escape", "underscore", "equals", "dollar", "plus", "semicolon", "ampersand",
         "and", "or", "greater", "less", "control", "ctrl",
     ]
