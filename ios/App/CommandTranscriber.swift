@@ -82,7 +82,8 @@ final class CommandTranscriber: @unchecked Sendable {
         var params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY)
         params.n_threads = 4
         // The encoder's window, 50 per second of audio (1500 = 30 s). Encoding only the clip plus a margin is ~3× faster.
-        params.audio_ctx = Int32(min(max(Int(seconds * 50) + 64, 256), 1500))
+        // Below ~10 s (512) Whisper returns lone letters ("p", "s"); 512 is also what bench/command measured.
+        params.audio_ctx = Int32(min(max(Int(seconds * 50) + 64, 512), 1500))
         params.no_timestamps = true
         params.single_segment = true
         params.suppress_blank = true
@@ -109,7 +110,8 @@ final class CommandTranscriber: @unchecked Sendable {
             .joined()
             .trimmingCharacters(in: .whitespacesAndNewlines))
         log.notice("\(seconds, format: .fixed(precision: 1)) s audio, ctx \(params.audio_ctx): \((ContinuousClock.now - start) / .milliseconds(1), format: .fixed(precision: 0)) ms")
-        return text.isEmpty ? nil : text
+        // A lone letter is Whisper failing, not a command (it heard "exit" as "s").
+        return text.filter(\.isLetter).count <= 1 ? nil : text
     }
 
     /// True if some 20 ms of `samples` is louder than -40 dBFS (quiet speech; a quiet room is around -60).

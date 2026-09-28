@@ -61,7 +61,9 @@ enum CommandWriter {
     /// Short instructions too: a command starts with a known command ("now check the logs" doesn't).
     static func isProse(_ typed: String) -> Bool {
         let words = typed.split(separator: " ").map(String.init)
-        guard symbols(typed).isEmpty, let first = words.first else { return false }
+        // Shell symbols or a flag make it a command; apostrophes and hyphens in words ("didn't", "t-mux") don't.
+        let shell = typed.contains { "/~|&><$*=\";`\\".contains($0) } || words.contains { $0.hasPrefix("-") }
+        guard !shell, let first = words.first else { return false }
         let small = words.filter(functionWords.contains).count
         return (words.count >= 4 && small >= 2) || (words.count >= 3 && !ShellVocabulary.commands.contains(first))
     }
