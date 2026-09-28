@@ -145,7 +145,7 @@ enum SpokenSymbols {
 
     /// "paren", "bracket", "curly"… → their characters. "square bracket" is [ ].
     private static let brackets: [String: (open: String, close: String)] = [
-        "paren": ("(", ")"), "parenthesis": ("(", ")"), "parens": ("(", ")"), "bracket": ("(", ")"),
+        "paren": ("(", ")"), "parenthesis": ("(", ")"), "parentheses": ("(", ")"), "parens": ("(", ")"), "bracket": ("(", ")"),
         "parent": ("(", ")"), "parents": ("(", ")"), // how speech recognition writes "paren"
         "square": ("[", "]"), "brace": ("{", "}"), "curly": ("{", "}"),
     ]
@@ -156,6 +156,8 @@ enum SpokenSymbols {
     private static func tokens(_ transcript: String) -> [String] {
         transcript.lowercased()
             .replacing(#/\b(?:ctrl|control)[-+]([a-z])\b/#) { "control \($0.1)" } // Whisper writes "Ctrl+B", "control-B"
+            // …and glues bracket words: "openparent", "close-paren".
+            .replacing(#/\b(open|close|left|right)-?(parenthesis|parentheses|parents|parent|parens|paren|bracket|brace|curly|square)/#) { "\($0.1) \($0.2)" }
             .replacingOccurrences(of: ",", with: " ")
             .split(separator: " ")
             .map { word in
