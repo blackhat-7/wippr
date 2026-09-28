@@ -6,6 +6,11 @@ struct HomeView: View {
     @Environment(\.wide) private var wide
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("buttonPosition") private var buttonPosition = KeyboardHandoff.ButtonPosition.center.rawValue
+    @State private var shortcuts = Shortcuts.all
+    /// The shortcut open in the editor; a new one isn't in `shortcuts` yet.
+    @State private var editing: Shortcut?
+    /// The result of the last Copy all / Paste.
+    @State private var copyNote: String?
     /// Re-check found the keyboard missing: go back through the keyboard steps.
     let reopenSetup: () -> Void
 
@@ -24,6 +29,7 @@ struct HomeView: View {
                 .padding(.horizontal, wide ? 0 : 8)
                 cards(status)
                 problems(status)
+                shortcutList
                 tips
             }
             .padding(.horizontal, wide ? 0 : 16)
@@ -37,6 +43,8 @@ struct HomeView: View {
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active { status.refresh() }
         }
+        .onChange(of: shortcuts) { _, shortcuts in Shortcuts.all = shortcuts }
+        .sheet(item: $editing) { ShortcutEditor($0, in: $shortcuts) }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
         }
@@ -126,6 +134,80 @@ struct HomeView: View {
         }
     }
 
+    /// Phrase → keys rows; tap to edit, long-press to delete.
+    private var shortcutList: some View {
+        VStack(alignment: .leading, spacing: wide ? 12 : 8) {
+            Text("Shortcuts").textStyle(.label, Theme.tertiary)
+                .padding(.horizontal, wide ? 0 : 8)
+            VStack(spacing: 0) {
+                if shortcuts.isEmpty {
+                    Text("Say \u{201C}next window\u{201D} and noboard types Ctrl+B, N. For tmux, vim, anything.")
+                        .textStyle(.caption, Theme.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 14)
+                }
+                ForEach(shortcuts) { shortcut in
+                    Button { editing = shortcut } label: {
+                        HStack(spacing: 10) {
+                            Text("\u{201C}\(shortcut.phrase)\u{201D}").textStyle(.rowStrong).lineLimit(1)
+                            Spacer(minLength: 8)
+                            KeysView(keys: shortcut.keys)
+                            Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.faint)
+                        }
+                        .frame(minHeight: 52)
+                        .contentShape(.rect)
+                    }
+                    .buttonStyle(PressStyle())
+                    .accessibilityHint("Edit")
+                    .contextMenu {
+                        Button("Delete", systemImage: "trash", role: .destructive) { shortcuts.removeAll { $0.id == shortcut.id } }
+                    }
+                    .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
+                }
+                Button { editing = Shortcut(phrase: "", keys: "") } label: {
+                    Label("Add shortcut", systemImage: "plus")
+                        .textStyle(.rowStrong, Theme.accent)
+                        .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(PressStyle())
+            }
+            .padding(.horizontal, 18)
+            .card(radius: 24)
+            copyPaste
+        }
+        .padding(.top, wide ? 44 : 32)
+    }
+
+    /// Moves shortcuts between installs (e.g. a TestFlight build and your own) as plain text on the clipboard.
+    private var copyPaste: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                if !shortcuts.isEmpty {
+                    Button("Copy all", systemImage: "doc.on.doc") {
+                        UIPasteboard.general.string = Shortcuts.text(shortcuts)
+                        copyNote = "Copied \(shortcuts.count) \(shortcuts.count == 1 ? "shortcut" : "shortcuts"). Tap Paste in the other noboard."
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                PasteButton(payloadType: String.self) { strings in
+                    let (added, updated) = Shortcuts.paste(strings.joined(separator: "\n"), into: &shortcuts)
+                    copyNote = added + updated == 0
+                        ? "Nothing new to paste. Paste lines like: next window = <C-b>n"
+                        : "Added \(added), updated \(updated)."
+                }
+            }
+            .buttonBorderShape(.capsule)
+            .tint(Theme.key)
+            Text(copyNote ?? "To move shortcuts to another install of noboard, copy them there and paste here.")
+                .textStyle(.caption, Theme.tertiary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, wide ? 0 : 8)
+        .padding(.top, 4)
+    }
+
     private var tips: some View {
         let items = [
             Tip(icon: AnyView(OrbDot(size: 22)), title: "Hold to talk", detail: "Let go and clean text is typed in."),
@@ -133,6 +215,8 @@ struct HomeView: View {
                 title: "Slide up to edit", detail: "\"Make it shorter\", \"turn into bullets\"."),
             Tip(icon: AnyView(TipIcon(symbol: "arrow.uturn.backward", color: .white, fill: Theme.field)),
                 title: "Undo an edit", detail: "Tap the bar within 5 seconds."),
+            Tip(icon: AnyView(TipIcon(symbol: "command", color: .white, fill: Theme.key)),
+                title: "Say a shortcut", detail: "One word types keys like Ctrl+B. Set them up above."),
         ]
         return VStack(alignment: .leading, spacing: wide ? 12 : 8) {
             Text("Tips").textStyle(.label, Theme.tertiary)

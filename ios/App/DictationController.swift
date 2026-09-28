@@ -3,7 +3,7 @@ import os
 import UIKit
 
 /// Keeps the mic on in the background and runs one dictation at a time when the wippr keyboard asks:
-/// mic → transcript → cleanup → keyboard (types it) + clipboard.
+/// mic → transcript → cleanup → keyboard (types it) + clipboard. A transcript that is a shortcut's phrase types its keys instead.
 @MainActor
 final class DictationController {
     typealias Phase = KeyboardHandoff.Phase
@@ -187,6 +187,10 @@ final class DictationController {
             let raw = try await transcriber.stop()
             switch command.mode ?? .dictate {
             case .dictate:
+                if let shortcut = Shortcuts.match(raw) {
+                    KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
+                    break
+                }
                 let text = await (cleaner ?? Cleaner()).clean(raw)
                 if !text.isEmpty {
                     KeyboardHandoff.send(text)

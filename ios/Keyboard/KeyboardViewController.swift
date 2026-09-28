@@ -33,6 +33,8 @@ final class KeyboardViewController: UIInputViewController {
     private var pending: (record: Bool, until: Date)?
     private var lastID = UserDefaults.standard.string(forKey: "lastID")
     private var poll: Timer?
+    /// Repeats delete while the key is held.
+    private var deleteRepeat: Timer?
     private let log = Logger(subsystem: "cx.immortal.wippr", category: "keyboard")
 
     override func viewDidLoad() {
@@ -69,7 +71,8 @@ final class KeyboardViewController: UIInputViewController {
         hold.accessibilityLabel = "Hold to talk"
         hold.accessibilityTraits = .button
 
-        delete = key("delete.left", #selector(deleteBackward))
+        delete = key("delete.left", #selector(deleteDown), for: .touchDown)
+        delete.addTarget(self, action: #selector(deleteUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         delete.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(delete)
         keys.addArrangedSubview(globe)
@@ -139,6 +142,7 @@ final class KeyboardViewController: UIInputViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         poll?.invalidate()
+        deleteUp()
         orb.pauseRendering()
     }
 
@@ -177,7 +181,7 @@ final class KeyboardViewController: UIInputViewController {
         UserDefaults.standard.set(lastID, forKey: "lastID")
         if latest.edit == true { return applyEdit(latest.text) }
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
-        let space = before.last.map { !$0.isWhitespace } ?? false
+        let space = latest.keys != true && before.last.map { !$0.isWhitespace } ?? false
         textDocumentProxy.insertText(space ? " " + latest.text : latest.text)
         buzz { notify.notificationOccurred(.success) }
         orb.flash()
@@ -218,10 +222,10 @@ final class KeyboardViewController: UIInputViewController {
         status.text = "Undone"
     }
 
-    private func key(_ symbol: String, _ action: Selector) -> UIButton {
+    private func key(_ symbol: String, _ action: Selector, for event: UIControl.Event = .touchUpInside) -> UIButton {
         let button = UIButton(configuration: .plain())
         button.setImage(UIImage(systemName: symbol), for: .normal)
-        button.addTarget(self, action: action, for: .touchUpInside)
+        button.addTarget(self, action: action, for: event)
         return button
     }
 
@@ -316,6 +320,19 @@ final class KeyboardViewController: UIInputViewController {
     /// Haptics need Full Access in a keyboard.
     private func buzz(_ haptic: () -> Void) { if hasFullAccess { haptic() } }
 
-    @objc private func deleteBackward() { textDocumentProxy.deleteBackward() }
+    /// Deletes on touch down, then, like the system keyboard, keeps deleting while held.
+    @objc private func deleteDown() {
+        textDocumentProxy.deleteBackward()
+        deleteRepeat?.invalidate()
+        deleteRepeat = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
+            self?.deleteRepeat = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in self?.textDocumentProxy.deleteBackward() }
+        }
+    }
+
+    @objc private func deleteUp() {
+        deleteRepeat?.invalidate()
+        deleteRepeat = nil
+    }
+
     @objc private func insertReturn() { textDocumentProxy.insertText("\n") }
 }
