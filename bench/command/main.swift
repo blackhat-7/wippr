@@ -35,8 +35,10 @@ let options = Dictionary(CommandLine.arguments.filter { $0.hasPrefix("--") }.map
 let arguments = CommandLine.arguments.dropFirst(2).filter { !$0.hasPrefix("--") }
 let asr = options["asr"] ?? "speech"
 let only = arguments.compactMap(Int.init)
+// --locale=en-US hears every voice with that locale instead of the voice's own (Apple recognizers only).
 let voices = [("Samantha", "en-US"), ("Reed", "en-US"), ("Aman", "en-IN"), ("Tara", "en-IN")]
     .filter { voice in !arguments.contains { Int($0) == nil } || arguments.contains(voice.0) }
+    .map { ($0.0, options["locale"] ?? $0.1) }
 
 func audio(_ c: Case, voice: String) throws -> URL {
     let url = audioDir.appendingPathComponent("\(voice)-\(c.id).aiff")
@@ -154,7 +156,7 @@ for (voice, locale) in voices {
     for c in cases where only.isEmpty || only.contains(c.id) {
         let url = try audio(c, voice: voice)
         // Transcripts are cached per recognizer setup, so a CommandWriter change re-scores in seconds.
-        let cache = here.appendingPathComponent(".build/heard/\(asr)-\(options["prompt"] ?? "none")\(options["ac"].map { "-ac\($0)" } ?? "")-\(ShellVocabulary.whisperPrompt.utf8.reduce(0) { ($0 &* 31) &+ Int($1) } & 0xFFFF)-\(url.deletingPathExtension().lastPathComponent).json")
+        let cache = here.appendingPathComponent(".build/heard/\(asr)-\(options["prompt"] ?? "none")\(options["ac"].map { "-ac\($0)" } ?? "")\(options["locale"].map { "-\($0)" } ?? "")-\(ShellVocabulary.whisperPrompt.utf8.reduce(0) { ($0 &* 31) &+ Int($1) } & 0xFFFF)-\(url.deletingPathExtension().lastPathComponent).json")
         // A recognizer error ("no speech") or hang counts as hearing nothing.
         let heard: [String] = await withCheckedContinuation { continuation in
             var done = false
