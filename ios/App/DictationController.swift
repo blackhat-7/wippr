@@ -209,7 +209,9 @@ final class DictationController {
                 // Apple's transcript stays as another hearing. Apple hearing nothing means silence,
                 // where Whisper tends to make up words.
                 var heard = [raw]
-                if !raw.isEmpty, let whispered = await CommandTranscriber.shared.transcribe(samples) {
+                // Far more words than Apple heard means Whisper made them up; Apple's transcript is used instead.
+                if !raw.isEmpty, let whispered = await CommandTranscriber.shared.transcribe(samples),
+                   whispered.split(separator: " ").count <= raw.split(separator: " ").count * 2 + 3 {
                     heard.insert(whispered, at: 0)
                 }
                 if let shortcut = Shortcuts.match(heard[0]) {

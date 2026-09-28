@@ -80,7 +80,9 @@ final class CommandTranscriber: @unchecked Sendable {
         params.single_segment = true
         params.suppress_blank = true
         params.suppress_nst = true
-        params.temperature_inc = 0 // no re-decoding at higher temperatures: it can double the time
+        // Whisper can get stuck repeating a word ("mic mic mic…"). Commands are short, so stop early; its temperature
+        // fallback (on by default) re-decodes such loops.
+        params.max_tokens = 48
         params.print_progress = false
         params.print_realtime = false
         params.print_timestamps = false
@@ -95,12 +97,28 @@ final class CommandTranscriber: @unchecked Sendable {
             log.error("whisper_full failed: \(status)")
             return nil
         }
-        let text = (0..<whisper_full_n_segments(context))
+        let text = Self.collapseRepeats((0..<whisper_full_n_segments(context))
             .compactMap { whisper_full_get_segment_text(context, $0).map { String(cString: $0) } }
             .joined()
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: .whitespacesAndNewlines))
         log.notice("\(seconds, format: .fixed(precision: 1)) s audio, ctx \(params.audio_ctx): \((ContinuousClock.now - start) / .milliseconds(1), format: .fixed(precision: 0)) ms")
         return text.isEmpty ? nil : text
+    }
+
+    /// Keeps one of a word or phrase (up to 4 words) repeated 3+ times in a row: "mic mic mic mic" → "mic".
+    static func collapseRepeats(_ text: String) -> String {
+        var words = text.split(separator: " ").map(String.init)
+        for size in 1...4 {
+            var i = 0
+            while i + size * 3 <= words.count {
+                let phrase = words[i..<i + size]
+                var end = i + size
+                while end + size <= words.count, words[end..<end + size] == phrase { end += size }
+                if (end - i) / size >= 3 { words.removeSubrange(i + size..<end) }
+                i += 1
+            }
+        }
+        return words.joined(separator: " ")
     }
 
     /// Loads the model the first time (and after a memory warning). On `queue` only.
