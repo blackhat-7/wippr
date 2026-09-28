@@ -34,6 +34,12 @@ final class CommandTranscriber: @unchecked Sendable {
         }
     }
 
+    /// Loads the model now, off the main thread, so the first command doesn't wait for it (25 s on an iPad 10th gen).
+    func preload() {
+        guard Self.isDownloaded else { return }
+        queue.async { _ = self.loadedContext() }
+    }
+
     /// Downloads the model into Application Support (not backed up). `progress` gets 0…1 on the main thread.
     static func download(progress: @escaping @MainActor (Double) -> Void) async throws {
         let file = modelFile

@@ -88,6 +88,7 @@ final class DictationController {
             Task { @MainActor in DictationController.shared.tick() }
         }
         log.notice("mic on")
+        CommandTranscriber.shared.preload()
     }
 
     private func stopMic() async {

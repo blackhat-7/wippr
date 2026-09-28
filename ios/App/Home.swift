@@ -308,6 +308,7 @@ private struct CommandModelCard: View {
             do {
                 try await CommandTranscriber.download { progress = $0 }
                 ready = true
+                CommandTranscriber.shared.preload()
             } catch {
                 failed = true
             }
