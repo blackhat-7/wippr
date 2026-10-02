@@ -9,7 +9,7 @@ import Foundation
 enum DictationHistory {
     private static let file = FileManager.default
         .containerURL(forSecurityApplicationGroupIdentifier: Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String)?
-        .appending(path: "dictation-history.jsonl")
+        .appending(path: "Library/dictation-history.jsonl") // devicectl can only read Library, Documents and tmp
     private static let queue = DispatchQueue(label: "cx.immortal.wippr.dictation-history")
     private static let maxBytes = 2 << 20
 
