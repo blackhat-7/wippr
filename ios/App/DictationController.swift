@@ -32,8 +32,19 @@ final class DictationController {
                      AVAudioSession.mediaServicesWereResetNotification] {
             NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { note in
                 let type = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
+                let info = note.userInfo.map { $0.map { "\($0.key)=\($0.value)" }.sorted().joined(separator: " ") } ?? ""
+                MicEvents.record("\(note.name.rawValue) \(info)")
                 guard type != AVAudioSession.InterruptionType.began.rawValue else { return }
                 Task { @MainActor in await DictationController.shared.restartMic() }
+            }
+        }
+        NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { note in
+            MicEvents.record("route change \(note.userInfo?[AVAudioSessionRouteChangeReasonKey] ?? "")")
+        }
+        for name in [UIApplication.didEnterBackgroundNotification, UIApplication.willEnterForegroundNotification,
+                     UIApplication.willTerminateNotification] {
+            NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { note in
+                MicEvents.record(note.name.rawValue)
             }
         }
         // Experimental models: Neural Engine memory counts against the app. On a warning, free the ones that
@@ -42,6 +53,7 @@ final class DictationController {
         NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main) { _ in
             Task { @MainActor in
                 DictationController.shared.log.notice("memory warning")
+                MicEvents.record("memory warning")
                 #if DEBUG
                 print("memory warning")
                 #endif
@@ -78,7 +90,10 @@ final class DictationController {
             self.pendingCopy = nil
         }
         if Self.micEnabled, phase == .off {
-            do { try await startMic() } catch { log.error("mic: \(error, privacy: .public)") }
+            do { try await startMic() } catch {
+                log.error("mic: \(error, privacy: .public)")
+                MicEvents.record("mic start failed: \(error)")
+            }
         }
     }
 
@@ -103,6 +118,7 @@ final class DictationController {
             Task { @MainActor in DictationController.shared.tick() }
         }
         log.notice("mic on")
+        MicEvents.record("mic on")
         CommandTranscriber.shared.preload()
     }
 
@@ -117,13 +133,17 @@ final class DictationController {
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         set(.off)
         log.notice("mic off")
+        MicEvents.record("mic off")
     }
 
     private func restartMic() async {
         // Starting the engine can itself post a configuration change.
-        guard phase != .off, Date.now.timeIntervalSince(micSince) > 2 else { return }
+        guard phase != .off, Date.now.timeIntervalSince(micSince) > 2 else { return MicEvents.record("restart skipped (\(phase))") }
         await stopMic()
-        do { try await startMic() } catch { log.error("restart mic: \(error, privacy: .public)") }
+        do { try await startMic() } catch {
+            log.error("restart mic: \(error, privacy: .public)")
+            MicEvents.record("restart failed: \(error)")
+        }
     }
 
     // MARK: Setup status and in-app practice (onboarding)
