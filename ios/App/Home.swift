@@ -332,6 +332,8 @@ struct HomeView: View {
             Tip(icon: AnyView(OrbDot(size: 22)), title: "Hold to talk", detail: "Let go and clean text is typed in."),
             Tip(icon: AnyView(TipIcon(symbol: "arrow.up", color: Theme.editStroke, fill: Theme.edit.opacity(0.16))),
                 title: "Slide up to edit", detail: "\"Make it shorter\", \"turn into bullets\"."),
+            Tip(icon: AnyView(TipIcon(symbol: "waveform", color: .white, fill: Theme.field)),
+                title: "Double-tap for voice mode", detail: "Hands-free: each phrase is typed when you pause. Tap to stop."),
             Tip(icon: AnyView(TipIcon(symbol: "arrow.uturn.backward", color: .white, fill: Theme.field)),
                 title: "Undo an edit", detail: "Tap the bar within 5 seconds."),
             Tip(icon: AnyView(TipIcon(symbol: "command", color: .white, fill: Theme.key)),

@@ -56,6 +56,8 @@ enum KeyboardHandoff {
         var mode: Mode?
         /// The text to edit (the selection, or the text before the cursor), or for `command` the text before the cursor.
         var text: String?
+        /// On a start: voice mode, where each phrase is handled as you pause (with this `mode` and `text`) until a stop.
+        var continuous: Bool?
     }
 
     /// The keyboard ignores text older than this.
@@ -125,8 +127,8 @@ enum KeyboardHandoff {
 
     // Keyboard → app
 
-    static func sendCommand(record: Bool, mode: Mode = .dictate, text: String? = nil) {
-        write(Command(id: UUID(), record: record, date: .now, mode: mode, text: text), to: "command")
+    static func sendCommand(record: Bool, mode: Mode = .dictate, text: String? = nil, continuous: Bool = false) {
+        write(Command(id: UUID(), record: record, date: .now, mode: mode, text: text, continuous: continuous), to: "command")
     }
 
     static func command() -> Command? { read(Command.self, from: "command") }

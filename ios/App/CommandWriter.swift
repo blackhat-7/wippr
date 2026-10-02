@@ -10,10 +10,12 @@ enum CommandWriter {
     /// The command to type, or nil when the speech is prose rather than a command.
     /// `heard`: the transcript, then the recognizer's alternatives. `screen`: text before the cursor, often the prompt.
     static func write(heard: [String], screen: String = "") async -> String? {
-        let spoken = SpokenSymbols.apply(heard.first ?? "")
+        // Commands in the other hearings: Apple heard "Claude" where Whisper heard "clod".
+        let hints = Set(heard.dropFirst().flatMap { SpokenSymbols.apply($0).split(separator: " ").map(String.init) })
+            .filter(ShellVocabulary.commands.contains)
+        let typed = command(heard.first ?? "", hints: hints)
         // Keystrokes ("control b percent" → Ctrl+B %) have no names to fix.
-        if spoken.unicodeScalars.contains(where: { $0.value < 32 }) { return spoken }
-        let typed = soundAlikeCommands(spoken)
+        if typed.unicodeScalars.contains(where: { $0.value < 32 }) { return typed }
         guard !typed.isEmpty, !isProse(typed) else { return nil }
         guard Cleaner.isAvailable, let fixed = await fixNames(typed, alternatives: heard.dropFirst().map(SpokenSymbols.apply), screen: screen),
               symbols(fixed) == symbols(typed), similarity(fixed.lowercased(), typed) >= 0.5, onlyFixesNames(typed, fixed)
@@ -21,10 +23,14 @@ enum CommandWriter {
         return fixed
     }
 
+    /// What was said, as a command, before the model: symbols as characters, misheard command names fixed.
+    /// `hints`: known commands another recognizer heard, taken first when one sounds like the word.
+    static func command(_ heard: String, hints: Set<String> = []) -> String { soundAlikeCommands(SpokenSymbols.apply(heard), hints: hints) }
+
     /// Replaces the word (or two words) in a command position (first, or after sudo, |, &&, ||, ;) with the known
     /// command it sounds like: "demux a" → "tmux a", "beat up" → "btop". The model keeps real words like "demux",
     /// so this runs first.
-    private static func soundAlikeCommands(_ command: String) -> String {
+    private static func soundAlikeCommands(_ command: String, hints: Set<String>) -> String {
         var words = command.split(separator: " ").map(String.init)
         var i = 0
         while i < words.count {
@@ -33,7 +39,9 @@ enum CommandWriter {
                 if let known = ShellVocabulary.commands.contains(joined) ? joined : ShellVocabulary.command(soundingLike: joined, maxDistance: 3),
                    known != words[i] { // "echo hi" sounds like "echo": not a join
                     words.replaceSubrange(i...i + 1, with: [known])
-                } else if let known = ShellVocabulary.command(soundingLike: words[i]) {
+                } else if !ShellVocabulary.commands.contains(words[i]),
+                          let known = hints.first(where: { ShellVocabulary.soundKey($0) == ShellVocabulary.soundKey(words[i]) })
+                            ?? ShellVocabulary.command(soundingLike: words[i]) {
                     words[i] = known
                 }
             }

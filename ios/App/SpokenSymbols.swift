@@ -4,7 +4,7 @@ import Foundation
 /// Symbols are a small closed set, so this is exact; CommandWriter's model then only fixes misheard names.
 enum SpokenSymbols {
     static func apply(_ transcript: String) -> String {
-        let words = tokens(transcript)
+        var words = tokens(transcript)
         var out: [String] = []
         /// Glue the next word onto the last one ("readme" + ".", then + "md").
         var glue = false
@@ -54,6 +54,8 @@ enum SpokenSymbols {
             case "control" where isControlKey(words, i), "ctrl" where isControlKey(words, i):
                 // "control b" → Ctrl+B, the byte a terminal gets (0x02), e.g. tmux's prefix.
                 push(String(UnicodeScalar(next!.first!.asciiValue! - 96))); glue = true; i += 1
+            case "capital" where next != nil: // "capital d" → "D", typed like any word
+                words[i + 1] = next!.prefix(1).uppercased() + next!.dropFirst()
             case "escape":
                 push("\u{1B}"); glue = true
             case "per" where next == "cent":
@@ -163,7 +165,7 @@ enum SpokenSymbols {
             .map { word in
                 var word = String(word)
                 while word.count > 1, let last = word.last, ".!?".contains(last) { word.removeLast() }
-                return word
+                return word == "hyphen" ? "dash" : word
             }
             .filter { !$0.isEmpty && $0 != "." }
     }

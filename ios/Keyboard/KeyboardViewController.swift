@@ -4,6 +4,7 @@ import UIKit
 /// A one-row keyboard: hold the button, speak, let go, and the text is typed into the focused field.
 /// Slide up while holding for edit mode: the speech becomes an instruction that rewrites the selection
 /// (or the text before the cursor), or writes something new in an empty field. A quick tap right after undoes an edit.
+/// Double-tap for voice mode: hands-free, each phrase is typed as you pause, until a tap or the keyboard closes.
 /// In a terminal the speech becomes a shell command instead (`isCommandField`).
 /// Keyboards can't use the mic, so the wippr app records and hands the text over (`KeyboardHandoff`).
 final class KeyboardViewController: UIInputViewController {
@@ -47,6 +48,11 @@ final class KeyboardViewController: UIInputViewController {
     /// A start or stop the app hasn't confirmed yet, shown optimistically until it does or it expires.
     private var pending: (record: Bool, until: Date)?
     private var poll: Timer?
+    /// Voice mode is on (`startVoiceMode`).
+    private var voiceMode = false
+    /// When the last quick tap ended, to spot a double-tap; and the undo that tap asked for, held back until then.
+    private var lastTap: Date?
+    private var pendingUndo: DispatchWorkItem?
     /// Repeats delete while the key is held.
     private var deleteRepeat: Timer?
     private let log = Logger(subsystem: "cx.immortal.wippr", category: "keyboard")
@@ -167,6 +173,8 @@ final class KeyboardViewController: UIInputViewController {
         super.viewWillDisappear(animated)
         poll?.invalidate()
         deleteUp()
+        // Nothing should be typed into a field that's gone.
+        if voiceMode { stopVoiceMode(cancel: true) }
         orb.pauseRendering()
     }
 
@@ -177,6 +185,7 @@ final class KeyboardViewController: UIInputViewController {
 
     private func update() {
         let real = KeyboardHandoff.status()
+        if voiceMode, pending == nil, real != .recording { voiceMode = false } // ended in the app (mic off, restart)
         if let pending, Date.now > pending.until || (real == .recording) == pending.record {
             self.pending = nil
             draw(real)
@@ -199,6 +208,7 @@ final class KeyboardViewController: UIInputViewController {
         status.text = switch phase {
         case .off: offHint
         case .ready: isCommandField ? "Hold to say a command" : "Hold to talk"
+        case .recording where voiceMode: isCommandField ? "Voice mode · commands · tap to stop" : "Voice mode · tap to stop"
         case .recording:
             editMode ? (editAvailable ? "Edit: say what to change" : "Edit needs Apple Intelligence · let go to cancel")
                 : isCommandField ? "Listening… (command)" : editAvailable ? "Listening…  ↑ slide up to edit" : "Listening…"
@@ -339,6 +349,17 @@ final class KeyboardViewController: UIInputViewController {
             UIView.animate(withDuration: 0.4) { self.status.alpha = 1 }
             return
         }
+        if voiceMode { // this press's release turns it off
+            pressedAt = .now
+            pressed(true)
+            return
+        }
+        if let lastTap, Date.now.timeIntervalSince(lastTap) < 0.35 {
+            self.lastTap = nil
+            pendingUndo?.cancel()
+            pendingUndo = nil
+            return startVoiceMode()
+        }
         pressedAt = .now
         editMode = false
         pressPoint = event.allTouches?.first?.location(in: view)
@@ -352,6 +373,7 @@ final class KeyboardViewController: UIInputViewController {
         guard let pressedAt else { return }
         self.pressedAt = nil
         pressed(false)
+        if voiceMode { return stopVoiceMode(cancel: false) }
         if cursorX != nil { // the recording was cancelled when the press became a cursor move
             cursorX = nil
             status.text = isCommandField ? "Hold to say a command" : "Hold to talk"
@@ -361,7 +383,11 @@ final class KeyboardViewController: UIInputViewController {
         let tap = Date.now.timeIntervalSince(pressedAt) < 0.3
         if tap, let undo, undo.until > .now {
             send(record: false, mode: .cancel)
-            undoEdit()
+            // Held back a moment: a second tap makes it a double-tap (voice mode) instead.
+            let work = DispatchWorkItem { [weak self] in self?.undoEdit() }
+            pendingUndo = work
+            lastTap = .now
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: work)
             return
         }
         if editMode, !editAvailable {
@@ -378,19 +404,43 @@ final class KeyboardViewController: UIInputViewController {
             send(record: false, mode: .edit, text: selected ?? before)
         } else if isCommandField {
             target = nil
-            send(record: false, mode: .command, text: String((textDocumentProxy.documentContextBeforeInput ?? "").suffix(300)))
+            send(record: false, mode: .command, text: commandContext)
         } else {
             target = nil
             send(record: false)
         }
         editMode = false
-        if tap { status.text = "Hold to talk" }
+        if tap {
+            status.text = "Hold to talk"
+            lastTap = .now
+        }
     }
+
+    /// Voice mode: the app keeps listening and handles each phrase as you pause, the way this field would a press.
+    private func startVoiceMode() {
+        voiceMode = true
+        editMode = false
+        buzz { notify.notificationOccurred(.success) }
+        if isCommandField {
+            send(record: true, mode: .command, text: commandContext, continuous: true)
+        } else {
+            send(record: true, continuous: true)
+        }
+    }
+
+    /// A cancel drops the phrase in progress; a stop still types it.
+    private func stopVoiceMode(cancel: Bool) {
+        voiceMode = false
+        send(record: false, mode: cancel ? .cancel : .dictate)
+    }
+
+    /// For commands: the text before the cursor, often the shell prompt.
+    private var commandContext: String { String((textDocumentProxy.documentContextBeforeInput ?? "").suffix(300)) }
 
     /// Sliding up out of the keyboard switches the press to edit mode; sliding back down returns to dictation.
     /// Sliding sideways moves the cursor instead, like the space bar's trackpad, and drops the recording.
     @objc private func dragged(_ control: UIControl, _ event: UIEvent) {
-        guard pressedAt != nil, let point = event.allTouches?.first?.location(in: view) else { return }
+        guard pressedAt != nil, !voiceMode, let point = event.allTouches?.first?.location(in: view) else { return }
         if let cursorX {
             moveCursor(from: cursorX, to: point.x)
             return
@@ -424,9 +474,9 @@ final class KeyboardViewController: UIInputViewController {
 
     /// Sends start or stop and shows its result straight away; `update()` falls back to the real phase
     /// once the app confirms, or after 3 s if it never does.
-    private func send(record: Bool, mode: KeyboardHandoff.Mode = .dictate, text: String? = nil) {
+    private func send(record: Bool, mode: KeyboardHandoff.Mode = .dictate, text: String? = nil, continuous: Bool = false) {
         let before = KeyboardHandoff.command()?.id
-        KeyboardHandoff.sendCommand(record: record, mode: mode, text: text)
+        KeyboardHandoff.sendCommand(record: record, mode: mode, text: text, continuous: continuous)
         let after = KeyboardHandoff.command()?.id
         log.notice("record \(record, privacy: .public) from \(self.phase?.rawValue ?? "nil", privacy: .public), command written \(after != nil && after != before, privacy: .public)")
         pending = (record, .now + 3)

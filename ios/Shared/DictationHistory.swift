@@ -23,6 +23,11 @@ enum DictationHistory {
         append(["event": kind, "id": id?.uuidString])
     }
 
+    /// Why a recognizer's result is missing from the next dictation ("whisper skipped: no speech detected").
+    static func note(_ text: String) {
+        append(["event": "note", "note": text])
+    }
+
     private static func append(_ fields: [String: String?]) {
         var fields = fields.compactMapValues { $0 }
         fields["date"] = Date.now.formatted(.iso8601)
