@@ -42,8 +42,8 @@ final class CommandTranscriber: @unchecked Sendable {
         queue.async { _ = self.loadedContext() }
     }
 
-    /// Frees the model when terminals stop using it (Terminal transcriber → Off).
-    func unload() { queue.async { self.free("when turned off") } }
+    /// Frees the model (Terminal transcriber → Off, or idle); the next command loads it again.
+    func unload() { queue.async { self.free("on request") } }
 
     /// On `queue` only.
     private func free(_ reason: StaticString) {

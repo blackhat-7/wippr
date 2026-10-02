@@ -25,6 +25,7 @@ final class DictationController {
     private var ticks = 0
     private var micSince = Date.distantPast
     private let log = Logger(subsystem: "cx.immortal.wippr", category: "dictation")
+    private var idleUnload: Task<Void, Never>?
 
     private init() {
         // Calls, Siri, route changes and media resets stop the engine; restart the mic afterwards.
@@ -119,7 +120,8 @@ final class DictationController {
         }
         log.notice("mic on")
         MicEvents.record("mic on")
-        CommandTranscriber.shared.preload()
+        loadPickedModels()
+        scheduleIdleUnload()
     }
 
     private func stopMic() async {
@@ -139,10 +141,18 @@ final class DictationController {
     private func restartMic() async {
         // Starting the engine can itself post a configuration change.
         guard phase != .off, Date.now.timeIntervalSince(micSince) > 2 else { return MicEvents.record("restart skipped (\(phase))") }
-        await stopMic()
-        do { try await startMic() } catch {
+        // Keep the session and restart only the engine: deactivating it and starting a new recording from the
+        // background is refused, which left the mic off for good after one interruption.
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+            mic.stop()
+            try mic.start()
+            micSince = .now
+            MicEvents.record("mic restarted")
+        } catch {
             log.error("restart mic: \(error, privacy: .public)")
             MicEvents.record("restart failed: \(error)")
+            await stopMic()
         }
     }
 
@@ -213,6 +223,7 @@ final class DictationController {
     /// `since`: when the key went down. The mic's pre-roll covers the time until the model is ready.
     private func startDictation(since: Date) async {
         set(.recording)
+        loadPickedModels() // freed while idle; reloading while the user speaks
         do {
             // Experimental, for testing: Parakeet once it has loaded; Apple's Transcriber otherwise (the default).
             let transcriber: any SpeechInput
@@ -297,6 +308,7 @@ final class DictationController {
         }
         cleaner = nil
         set(.ready)
+        scheduleIdleUnload()
     }
 
     /// Dictation: cleans the transcript, types it and copies it. The dates time the stages (`DictationTiming`).
@@ -310,6 +322,30 @@ final class DictationController {
             DictationTiming.record(released: released, picked: picked, transcribed: transcribed, cleaned: cleaned, id: id,
                                    asr: asr)
         }
+    }
+
+    /// Big models held by a background app are what iOS kills first when it needs memory, and the mic goes with the
+    /// app. So they're freed after two idle minutes and reloaded as soon as a press starts a dictation (cached, so
+    /// usually ready by the time it ends; Apple's model covers one that isn't).
+    private func scheduleIdleUnload() {
+        idleUnload?.cancel()
+        idleUnload = Task {
+            try? await Task.sleep(for: .seconds(120))
+            guard !Task.isCancelled, phase == .ready else { return }
+            NeuralEngine.cleaner.unload()
+            NeuralEngine.transcriber.unload()
+            CPUCleaner.shared.unload()
+            CommandTranscriber.shared.unload()
+            MicEvents.record("models freed (idle)")
+        }
+    }
+
+    private func loadPickedModels() {
+        idleUnload?.cancel()
+        if CleanupModel.current == .s1mini { NeuralEngine.cleaner.load() }
+        if CleanupModel.current == .s1miniCPU { CPUCleaner.shared.preload() }
+        if TranscriberModel.current == .parakeet { NeuralEngine.transcriber.load() }
+        CommandTranscriber.shared.preload() // only if Whisper is picked and stays loaded on this device
     }
 
     /// Clipboard fallback. iOS can refuse the write while the app is in the background; opening the app retries it.
