@@ -18,6 +18,7 @@ final class Cleaner {
         session?.prewarm()
         // Experimental models load in the background; Apple cleans until they're ready.
         if CleanupModel.current == .s1mini { NeuralEngine.cleaner.load() }
+        if CleanupModel.current == .s1miniCPU { CPUCleaner.shared.preload() }
     }
 
     func clean(_ raw: String) async -> String {
@@ -27,9 +28,10 @@ final class Cleaner {
         switch model {
         case .apple: break
         case .off: text = raw
-        case .s1mini where WritingStyle.current == .custom && !WritingStyle.customText.isEmpty && session != nil:
+        case _ where model.isS1mini && WritingStyle.current == .custom && !WritingStyle.customText.isEmpty && session != nil:
             break // S1-mini only knows its trained styles; Apple Intelligence follows a custom one
         case .s1mini: text = await NeuralEngine.clean(raw) // nil until loaded, or on failure
+        case .s1miniCPU: text = await CPUCleaner.shared.clean(raw)
         }
         if text == nil {
             model = session == nil ? .off : .apple

@@ -4,7 +4,7 @@ import Foundation
 /// Symbols are a small closed set, so this is exact; CommandWriter's model then only fixes misheard names.
 enum SpokenSymbols {
     static func apply(_ transcript: String) -> String {
-        let words = tokens(transcript)
+        var words = tokens(transcript)
         var out: [String] = []
         /// Glue the next word onto the last one ("readme" + ".", then + "md").
         var glue = false
@@ -35,6 +35,12 @@ enum SpokenSymbols {
                     letters += words[i + 1]; i += 1
                 }
                 if !letters.isEmpty { push(letters) }
+            case "backslash", "back" where next == "slash", "backward" where next == "slash":
+                if word != "backslash" { i += 1 }
+                push("\\", attach: !startsFresh()); glue = true
+            case "forward" where next == "slash":
+                i += 1
+                fallthrough
             case "slash", "/":
                 push("/", attach: !startsFresh()); glue = true
             case "dot", ".":
@@ -48,6 +54,8 @@ enum SpokenSymbols {
             case "control" where isControlKey(words, i), "ctrl" where isControlKey(words, i):
                 // "control b" → Ctrl+B, the byte a terminal gets (0x02), e.g. tmux's prefix.
                 push(String(UnicodeScalar(next!.first!.asciiValue! - 96))); glue = true; i += 1
+            case "capital" where next != nil: // "capital d" → "D", typed like any word
+                words[i + 1] = next!.prefix(1).uppercased() + next!.dropFirst()
             case "escape":
                 push("\u{1B}"); glue = true
             case "per" where next == "cent":
@@ -57,6 +65,12 @@ enum SpokenSymbols {
                 push("%", attach: glue)
             case "colon":
                 push(":", attach: glue); glue = true
+            case "open" where isBracket(next), "left" where isBracket(next):
+                push(brackets[next!]!.open); glue = true; i += 1 // "open paren": glued to what follows
+            case "close" where isBracket(next), "right" where isBracket(next):
+                push(brackets[next!]!.close, attach: true); i += 1
+            case "space" where !inQuote: // inside quotes it's the word: "free up space"
+                push(" ", attach: true); glue = true // a real space: "dot space close paren" → ". )"
             case "star", "asterisk":
                 push("*")
             case "at" where next.map(isHost) ?? false:
@@ -112,7 +126,7 @@ enum SpokenSymbols {
     }
 
     private static let symbolWords: Set = [
-        "dash", "slash", "dot", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
+        "dash", "slash", "backslash", "dot", "space", "tilde", "tilda", "tilder", "pipe", "star", "asterisk", "quote", "double", "colon",
         "percent", "percentage", "per", "escape", "underscore", "equals", "dollar", "plus", "semicolon", "ampersand",
         "and", "or", "greater", "less", "control", "ctrl",
     ]
@@ -128,18 +142,30 @@ enum SpokenSymbols {
         word.contains(".") && word.allSatisfy { $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" }
     }
 
+    private static func isBracket(_ word: String?) -> Bool { word.map(brackets.keys.contains) ?? false }
+
+    /// "paren", "bracket", "curly"… → their characters. "square" is [ ] ("square bracket", shortened in `tokens`).
+    private static let brackets: [String: (open: String, close: String)] = [
+        "paren": ("(", ")"), "parenthesis": ("(", ")"), "parentheses": ("(", ")"), "parens": ("(", ")"), "bracket": ("(", ")"),
+        "parent": ("(", ")"), "parents": ("(", ")"), // how speech recognition writes "paren"
+        "square": ("[", "]"), "brace": ("{", "}"), "curly": ("{", "}"),
+    ]
+
     private static let operators: Set = ["|", "&&", "||", ">", "<", ";"]
 
     /// Lowercased words, with the recognizer's punctuation dropped (it adds commas and a final full stop).
     private static func tokens(_ transcript: String) -> [String] {
         transcript.lowercased()
             .replacing(#/\b(?:ctrl|control)[-+]([a-z])\b/#) { "control \($0.1)" } // Whisper writes "Ctrl+B", "control-B"
+            // …and glues bracket words: "openparent", "close-paren".
+            .replacing(#/\b(open|close|left|right)-?(parenthesis|parentheses|parents|parent|parens|paren|bracket|brace|curly|square)/#) { "\($0.1) \($0.2)" }
+            .replacing("square bracket", with: "square").replacing("curly brace", with: "curly")
             .replacingOccurrences(of: ",", with: " ")
             .split(separator: " ")
             .map { word in
                 var word = String(word)
                 while word.count > 1, let last = word.last, ".!?".contains(last) { word.removeLast() }
-                return word
+                return word == "hyphen" ? "dash" : word
             }
             .filter { !$0.isEmpty && $0 != "." }
     }

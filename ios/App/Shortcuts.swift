@@ -28,6 +28,37 @@ enum Shortcuts {
         return all.first { normalize($0.phrase) == spoken }
     }
 
+    /// The shortcut whose phrase sounds like the transcript, at most one sound off, if no other phrase is as close:
+    /// in noise "teamworks attach" is "tmux attach". On noisy test speech it took shortcuts caught from 56% to 76%, with
+    /// no wrong or false triggers (learnings/bench-command.md).
+    static func soundAlike(_ transcript: String) -> Shortcut? {
+        let spoken = soundKeys(transcript)
+        let ranked = all.map { (distance: ShellVocabulary.editDistance(soundKeys($0.phrase), spoken), shortcut: $0) }
+            .sorted { $0.distance < $1.distance }
+        guard let best = ranked.first, best.distance <= 1, ranked.count < 2 || ranked[1].distance > best.distance else { return nil }
+        return best.shortcut
+    }
+
+    /// How each word sounds (`ShellVocabulary.soundKey`): "tmux attach" → "tmks atk". An r after a vowel is dropped,
+    /// as many accents do: "Teamworks" and "T-Marks" are then one sound from "tmux".
+    private static func soundKeys(_ text: String) -> String {
+        text.lowercased().split { !$0.isLetter && !$0.isNumber }
+            .map { ShellVocabulary.soundKey(String($0).replacing(#/([aeiouy])r/#) { String($0.1) }) }
+            .joined(separator: " ")
+    }
+
+    /// A key named alone, "enter", "press tab" or "down arrow": a built-in shortcut (commands are typed without pressing a key).
+    /// The key's name must be heard exactly; "arrow" only has to sound like it (speech writes "Down, Aru").
+    static func key(_ transcript: String) -> Shortcut? {
+        var words = transcript.lowercased().split { !$0.isLetter }.map(String.init)
+        if words.first == "press" { words.removeFirst() }
+        if words.count == 2, ShellVocabulary.editDistance(ShellVocabulary.soundKey(words[1]), ShellVocabulary.soundKey("arrow")) <= 1 {
+            words.removeLast()
+        }
+        guard words.count == 1, let name = keyNames.first(where: { $0.lowercased() == words[0] }) else { return nil }
+        return Shortcut(phrase: name, keys: "<\(name)>")
+    }
+
     /// One shortcut per line, `next window = <C-b>n`: for copying shortcuts to another install of noboard.
     static func text(_ shortcuts: [Shortcut]) -> String {
         shortcuts.map { "\($0.phrase) = \($0.keys)" }.joined(separator: "\n")
@@ -87,7 +118,7 @@ enum Shortcuts {
             switch part {
             case .ctrl(let letter): String(UnicodeScalar(letter.asciiValue! - 96)) // Ctrl+A is 0x01 … Ctrl+Z is 0x1A
             case .key(let name): codes[name]!
-            case .text(let text): text
+            case .text(let text): text.replacing(#/[\u{201C}\u{201D}]/#, with: "\"").replacing(#/[\u{2018}\u{2019}]/#, with: "'") // iOS types smart quotes
             }
         }.joined()
     }

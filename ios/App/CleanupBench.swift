@@ -7,7 +7,7 @@ import UIKit
 /// Debug builds only: benches on the device, reading inputs from Documents and writing results next to them.
 ///
 /// - `-cleanupBench apple|s1mini [background]`: `bench-in.json` ({"id": "raw ASR text"}) through `Cleaner`.
-/// - `-asrBench apple|parakeet|whisper [realtime]`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
+/// - `-asrBench apple|parakeet [realtime]`: every `asr/<id>.wav` through the transcriber, as if spoken into the mic.
 /// - `-editBench apple`: `edit-in.json` ([{"id", "text", "instruction"}]) through `Editor`.
 /// - `-editBench neural:<folder>`: the same cases through a Core AI model in `Application Support/<folder>`, with
 ///   Apple's edit instructions and message format (or `edit-prompt.json` if present), for picking an editor.
@@ -176,7 +176,6 @@ enum CleanupBench {
                 let format = file.processingFormat
                 let transcriber: any SpeechInput
                 if model == "parakeet", let parakeet = ParakeetTranscriber() { transcriber = parakeet }
-                else if model == "whisper", let whisper = WhisperTranscriber() { transcriber = whisper }
                 else { transcriber = try await Transcriber() }
                 let start = Date.now
                 let sink = try await transcriber.start(micFormat: format)

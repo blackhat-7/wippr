@@ -1,5 +1,17 @@
 import Foundation
 
+/// A model the app downloads on request. Home's menus list it as "Name (download · size)"; picking it starts the
+/// download, and a progress line shows under the menu until it's done.
+@MainActor
+protocol DownloadableModel: AnyObject {
+    var isInstalled: Bool { get }
+    /// 0…1 while downloading.
+    var downloadProgress: Double? { get }
+    var downloadError: String? { get }
+    var downloadSize: Int64 { get }
+    func startDownload()
+}
+
 /// Where an experimental model's Core AI bundle is hosted: our converted copies on Hugging Face, pinned to a
 /// revision (licences and attribution in each repo's model card). The app downloads them on request (Home →
 /// Experimental), since they're too big to ship inside it.
@@ -25,6 +37,10 @@ struct ModelSource: Sendable {
             ("tokenizer/tokenizer_config.json", 694),
         ])
 
+    /// The same S1-mini as a 4-bit GGUF for llama.cpp on the CPU (`CPUCleaner`), from Superwhisper's own repo.
+    static let s1miniGGUF = ModelSource(
+        name: "S1-mini (CPU)", repo: "superwhisper/s1-mini-GGUF", revision: "34add00a48a2e5d24e5a4ee5405a99620a3a240c",
+        files: [("s1-mini-q4_k_m.gguf", 484_219_808)])
     /// NVIDIA Parakeet TDT 0.6B v2 (CC BY 4.0), streaming float16.
     static let parakeet = ModelSource(
         name: "Parakeet", repo: "satuke/parakeet-tdt-0.6b-v2-coreai-ios", revision: "b879351a2c9f52e5948114d54f9d50b228b5dd4a",

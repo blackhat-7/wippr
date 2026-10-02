@@ -51,7 +51,7 @@ enum ShellVocabulary {
         return key
     }
 
-    private static func editDistance(_ a: String, _ b: String) -> Int {
+    static func editDistance(_ a: String, _ b: String) -> Int {
         let a = Array(a), b = Array(b)
         var row = Array(0...b.count)
         for i in a.indices {

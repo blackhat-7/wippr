@@ -11,6 +11,7 @@ struct HomeView: View {
     @AppStorage(WritingStyle.customKey) private var customStyle = ""
     @AppStorage(CleanupModel.key) private var cleanupModel = CleanupModel.apple
     @AppStorage(TranscriberModel.key) private var transcriberModel = TranscriberModel.apple
+    @AppStorage(TerminalTranscriber.key) private var terminalTranscriber = TerminalTranscriber.current
     /// When the keyboard typed the last dictation; read when Home comes back to the foreground.
     @State private var typed: KeyboardHandoff.Typed?
     @State private var shortcuts = Shortcuts.all
@@ -38,8 +39,6 @@ struct HomeView: View {
                 problems(status)
                 styleSection(status)
                 shortcutList
-                CommandModelCard()
-                    .padding(.top, wide ? 44 : 32)
                 tips
                 experimental
             }
@@ -62,10 +61,13 @@ struct HomeView: View {
         // Experimental models load in the background when picked, and free their memory when not.
         .onChange(of: cleanupModel, initial: true) { _, model in
             if model == .s1mini { NeuralEngine.cleaner.load() } else { NeuralEngine.cleaner.unload() }
+            if model == .s1miniCPU { CPUCleaner.shared.preload() } else { CPUCleaner.shared.unload() }
+        }
+        .onChange(of: terminalTranscriber) { _, choice in
+            if choice == .whisper { CommandTranscriber.shared.preload() } else { CommandTranscriber.shared.unload() }
         }
         .onChange(of: transcriberModel, initial: true) { _, model in
             if model == .parakeet { NeuralEngine.transcriber.load() } else { NeuralEngine.transcriber.unload() }
-            if model == .whisper { CommandTranscriber.shared.preload() }
         }
         .onChange(of: buttonPosition, initial: true) { _, position in
             KeyboardHandoff.setButtonPosition(KeyboardHandoff.ButtonPosition(rawValue: position) ?? .center)
@@ -201,7 +203,7 @@ struct HomeView: View {
                          : "Custom styles need Apple Intelligence, which isn't on here, so Standard is used.")
                         .textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                } else if !status.cleanupAvailable, cleanupModel != .s1mini {
+                } else if !status.cleanupAvailable, !cleanupModel.isS1mini {
                     Text("Styles apply when text is cleaned up, which needs Apple Intelligence or S1-mini (Experimental).")
                         .textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -308,9 +310,10 @@ struct HomeView: View {
                     .textStyle(.caption, Theme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.vertical, 12)
-                ModelRow(title: "Transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber],
-                         unavailable: CommandTranscriber.isDownloaded ? [:] : [.whisper: "Download it under Terminal commands"])
-                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner])
+                ModelRow(title: "Dictation transcriber", selection: $transcriberModel, slots: [.parakeet: NeuralEngine.transcriber])
+                ModelRow(title: "Terminal transcriber", selection: $terminalTranscriber, downloads: [.whisper: WhisperModel.shared])
+                ModelRow(title: "Cleanup model", selection: $cleanupModel, slots: [.s1mini: NeuralEngine.cleaner],
+                         downloads: [.s1miniCPU: CPUCleaner.shared])
                 ForEach(timing, id: \.self) { line in
                     Text(line).textStyle(.caption, Theme.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -329,6 +332,8 @@ struct HomeView: View {
             Tip(icon: AnyView(OrbDot(size: 22)), title: "Hold to talk", detail: "Let go and clean text is typed in."),
             Tip(icon: AnyView(TipIcon(symbol: "arrow.up", color: Theme.editStroke, fill: Theme.edit.opacity(0.16))),
                 title: "Slide up to edit", detail: "\"Make it shorter\", \"turn into bullets\"."),
+            Tip(icon: AnyView(TipIcon(symbol: "waveform", color: .white, fill: Theme.field)),
+                title: "Double-tap for voice mode", detail: "Hands-free: each phrase is typed when you pause. Tap to stop."),
             Tip(icon: AnyView(TipIcon(symbol: "arrow.uturn.backward", color: .white, fill: Theme.field)),
                 title: "Undo an edit", detail: "Tap the bar within 5 seconds."),
             Tip(icon: AnyView(TipIcon(symbol: "command", color: .white, fill: Theme.key)),
@@ -371,66 +376,6 @@ struct HomeView: View {
     }
 }
 
-/// Downloads Whisper for command mode (`CommandTranscriber`). Never automatic: it's 264 MB.
-private struct CommandModelCard: View {
-    @Environment(\.wide) private var wide
-    @State private var ready = CommandTranscriber.isDownloaded
-    /// 0…1 while downloading.
-    @State private var progress: Double?
-    @State private var failed = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: wide ? 12 : 8) {
-            Text("Terminal commands").textStyle(.label, Theme.tertiary)
-                .padding(.horizontal, wide ? 0 : 8)
-            HStack(spacing: 14) {
-                Text(failed ? "Download failed. Check your connection and try again."
-                     : "A 264 MB on-device model makes dictated commands much more accurate.")
-                    .textStyle(.caption, Theme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-                if ready {
-                    HStack(spacing: 6) {
-                        StatusBadge(ok: true, size: 18)
-                        Text("Ready").textStyle(.rowStrong)
-                    }
-                } else if let progress {
-                    Text(progress, format: .percent.precision(.fractionLength(0)))
-                        .textStyle(.rowStrong, Theme.secondary)
-                        .monospacedDigit()
-                } else {
-                    Button("Download", action: download)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .tint(Theme.key)
-                }
-            }
-            .padding(18)
-            .overlay(alignment: .bottom) {
-                if let progress, !ready {
-                    ProgressView(value: progress).tint(Theme.accent).padding(.horizontal, 18).padding(.bottom, 8)
-                }
-            }
-            .card(radius: 24)
-        }
-    }
-
-    private func download() {
-        failed = false
-        progress = 0
-        Task {
-            do {
-                try await CommandTranscriber.download { progress = $0 }
-                ready = true
-                CommandTranscriber.shared.preload()
-            } catch {
-                failed = true
-            }
-            progress = nil
-        }
-    }
-}
-
 private struct Tip: Identifiable {
     var icon: AnyView
     var title: String
@@ -465,10 +410,11 @@ private struct ModelRow<Choice: CaseIterable & Identifiable & RawRepresentable &
 where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
     let title: String
     @Binding var selection: Choice
-    /// The Neural Engine options and their models: each disabled, with the reason, when it can't run here.
-    let slots: [Choice: NeuralSlot]
-    /// Other options that can't be picked yet, with the reason (Whisper before its download).
-    var unavailable: [Choice: String] = [:]
+    /// The Neural Engine options and their models: disabled, with the reason, when they can't run here yet, and
+    /// hidden where they never can (too little memory).
+    var slots: [Choice: NeuralSlot] = [:]
+    /// Other options the app downloads on request.
+    var downloads: [Choice: any DownloadableModel] = [:]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -476,17 +422,18 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                 Text(title).textStyle(.rowStrong)
                 Spacer(minLength: 8)
                 Menu {
-                    ForEach(Choice.allCases) { choice in
+                    ForEach(Choice.allCases.filter(isOffered)) { choice in
                         Button {
                             selection = choice
+                            if let model = download(choice), !model.isInstalled { model.startDownload() }
                         } label: {
-                            if choice == selection { Label(name(choice), systemImage: "checkmark") } else { Text(name(choice)) }
+                            if choice == selection { Label(label(choice), systemImage: "checkmark") } else { Text(label(choice)) }
                         }
-                        .disabled(slots[choice]?.unavailableReason != nil || unavailable[choice] != nil)
+                        .disabled(reason(choice) != nil)
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(name(selection)).lineLimit(1)
+                        Text(reason(selection).map { "\(name(selection)) (\($0))" } ?? name(selection)).lineLimit(1)
                         Image(systemName: "chevron.up.chevron.down").font(.system(size: 11, weight: .semibold))
                     }
                     .textStyle(.rowStrong, Theme.accent)
@@ -494,8 +441,8 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
                     .contentShape(.rect)
                 }
             }
-            ForEach(slots.keys.sorted { $0.rawValue < $1.rawValue }, id: \.self) { choice in
-                if let slot = slots[choice], slot.source != nil { downloadRow(choice, slot) }
+            ForEach(Choice.allCases.filter(isOffered)) { choice in
+                if let model = download(choice) { progress(choice, model) }
             }
             if let note {
                 Text(note).textStyle(.caption, Theme.secondary)
@@ -506,48 +453,50 @@ where Choice.AllCases: RandomAccessCollection, Choice.RawValue == String {
         .overlay(alignment: .bottom) { Theme.border.frame(height: 1) }
     }
 
-    /// A Neural Engine model that isn't on the phone yet: download it from Hugging Face, with progress, or retry.
-    @ViewBuilder private func downloadRow(_ choice: Choice, _ slot: NeuralSlot) -> some View {
-        let size = ByteCountFormatter.string(fromByteCount: slot.source?.size ?? 0, countStyle: .file)
-        switch slot.download {
-        case .running(let fraction):
+    /// Only while a download runs or after it failed: a thin progress bar, or a retry.
+    @ViewBuilder private func progress(_ choice: Choice, _ model: any DownloadableModel) -> some View {
+        if let fraction = model.downloadProgress {
             VStack(alignment: .leading, spacing: 4) {
                 ProgressView(value: fraction).tint(Theme.accent)
-                Text("Downloading \(name(choice)) · \(Int(fraction * 100))% of \(size). Keep noboard open.")
-                    .textStyle(.caption, Theme.secondary)
+                Text("\(name(choice)) · \(Int(fraction * 100))%. Keep noboard open.").textStyle(.caption, Theme.secondary)
             }
             .padding(.bottom, 6)
-        case .failed(let error):
-            Button("Download failed (\(error)). Try again", systemImage: "arrow.clockwise") { slot.startDownload() }
+        } else if model.downloadError != nil {
+            Button("\(name(choice)) didn't download. Try again", systemImage: "arrow.clockwise") { model.startDownload() }
                 .textStyle(.caption, Theme.accent)
                 .padding(.bottom, 6)
-        case .none:
-            if !slot.isInstalled, slot.unavailableReason == "Model not installed" {
-                Button("Download \(name(choice)) (\(size), Wi-Fi recommended)", systemImage: "arrow.down.circle") {
-                    slot.startDownload()
-                }
-                .textStyle(.caption, Theme.accent)
-                .padding(.bottom, 6)
-            }
         }
+    }
+
+    private func isOffered(_ choice: Choice) -> Bool { slots[choice] == nil || NeuralSlot.fitsThisDevice }
+
+    /// The model to download for `choice`, if it has one (a Neural Engine model, or one in `downloads`).
+    private func download(_ choice: Choice) -> (any DownloadableModel)? {
+        downloads[choice] ?? slots[choice].flatMap { $0.source == nil ? nil : $0 }
+    }
+
+    /// Why `choice` can't be picked, shown with it; a model that only needs downloading can be picked.
+    private func reason(_ choice: Choice) -> String? {
+        guard let reason = slots[choice]?.unavailableReason, reason != "Model not installed" else { return nil }
+        return reason
+    }
+
+    private func label(_ choice: Choice) -> String {
+        if let reason = reason(choice) { return "\(name(choice)) (\(reason))" }
+        guard let model = download(choice), !model.isInstalled else { return name(choice) }
+        return "\(name(choice)) (download · \(ByteCountFormatter.string(fromByteCount: model.downloadSize, countStyle: .file)))"
     }
 
     private func name(_ choice: Choice) -> String {
-        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? choice.rawValue
+        (choice as? CleanupModel)?.name ?? (choice as? TranscriberModel)?.name ?? (choice as? TerminalTranscriber)?.name ?? choice.rawValue
     }
 
+    /// The picked Neural Engine model's load state.
     private var note: String? {
-        guard let slot = slots[selection] else {
-            // A missing model gets a Download button instead of a note.
-            let reasons = slots.compactMap { choice, slot in
-                slot.unavailableReason.flatMap { $0 == "Model not installed" && slot.source != nil ? nil : "\(name(choice)): \($0)." }
-            }
-            let other = unavailable.map { choice, reason in "\(name(choice)): \(reason)." }
-            return (reasons + other).isEmpty ? nil : (reasons + other).sorted().joined(separator: " ")
-        }
+        guard let slot = slots[selection] else { return nil }
         switch slot.state {
         case .loading: return "Loading… Apple's model is used until it's ready. The first load can take many minutes."
-        case .failed(let error): return "Didn't load (\(error)), so Apple's model is used."
+        case .failed(let error): return error == "Model not installed" ? nil : "Didn't load (\(error)), so Apple's model is used."
         case .idle, .ready: return nil
         }
     }

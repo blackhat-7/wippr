@@ -33,6 +33,8 @@ enum KeyboardHandoff {
         var command: Bool?
         /// When the key was let go (the stop command's date), so the keyboard can time the whole dictation.
         var released: Date?
+        /// A spoken delete ("delete word"): the keyboard deletes instead of typing `text` (empty).
+        var delete: SpokenDelete?
     }
 
     /// When the keyboard typed a text, so the app can show how long the last dictation took end to end.
@@ -54,6 +56,8 @@ enum KeyboardHandoff {
         var mode: Mode?
         /// The text to edit (the selection, or the text before the cursor), or for `command` the text before the cursor.
         var text: String?
+        /// On a start: voice mode, where each phrase is handled as you pause (with this `mode` and `text`) until a stop.
+        var continuous: Bool?
     }
 
     /// The keyboard ignores text older than this.
@@ -63,9 +67,10 @@ enum KeyboardHandoff {
 
     @discardableResult
     static func send(_ text: String, edit: Bool = false, keys: Bool = false, command: Bool = false,
-                     released: Date? = nil) -> UUID {
+                     released: Date? = nil, delete: SpokenDelete? = nil) -> UUID {
         let id = UUID()
-        write(Text(id: id, text: text, date: .now, edit: edit, keys: keys, command: command, released: released), to: "text")
+        write(Text(id: id, text: text, date: .now, edit: edit, keys: keys, command: command, released: released, delete: delete),
+              to: "text")
         return id
     }
 
@@ -122,8 +127,8 @@ enum KeyboardHandoff {
 
     // Keyboard → app
 
-    static func sendCommand(record: Bool, mode: Mode = .dictate, text: String? = nil) {
-        write(Command(id: UUID(), record: record, date: .now, mode: mode, text: text), to: "command")
+    static func sendCommand(record: Bool, mode: Mode = .dictate, text: String? = nil, continuous: Bool = false) {
+        write(Command(id: UUID(), record: record, date: .now, mode: mode, text: text, continuous: continuous), to: "command")
     }
 
     static func command() -> Command? { read(Command.self, from: "command") }

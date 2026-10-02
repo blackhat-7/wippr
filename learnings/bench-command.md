@@ -15,7 +15,13 @@
 - **Whisper's prompt is what wins.** Without a prompt Whisper small scores 30–45%. A prompt written in the spoken style ("git pull dash dash rebase and and git log. cd tilde slash projects…") plus command names makes it write symbols as words (which `SpokenSymbols` then spaces correctly) and hear names: 53–66% at full precision. Parakeet hears better raw but has no prompt.
 - **Prose in terminals** (prompts for Claude Code): a rule, not the model. ≥ 4 words, ≥ 2 English function words, no symbols → typed as normal dictation. All 8 prompt cases pass, including "make sure…" and "find where…". Asking the model to classify (a Bool in the guided output) called commands prose and was 3–4× slower.
 
+## Noise (2026-10-02, iPad 10th gen + Mac test clips)
+- **Sound-alike shortcut matching** (`Shortcuts.soundAlike`): words → `soundKey` (plus r after a vowel dropped), at most one sound off, no tie. 1,768 clips (macOS voices; fan, traffic, babble at 0–10 dB SNR): tmux shortcuts caught 56% → 76%, 0 wrong, 0 false triggers on 1,152 non-shortcut clips. Catches 13 of 20 real iPad mishearings ("Teamworks attach", "T-Marks attach"). Distance 2 or joining words gave false triggers; on short delete phrases it picked the wrong delete, so deletes stay exact.
+- **Voice detector (Silero via whisper.cpp)** stops Whisper's phantom words ("you") on silence, taps and breaths, but missed real speech over a fan 14 times, so it only runs when Apple heard nothing.
+
 ## Dropped
+- **Apple voice processing** (`setVoiceProcessingEnabled`, FaceTime's noise suppression): no better with a fan or a video playing nearby; on with the video, Whisper got worse.
+- **Scoring shortcut phrases against the audio** (Whisper teacher-forced log-probability vs its free transcript): +1–3 points at safe cutoffs, dozens of false triggers at useful ones. In noise every phrase scores badly; when the audio is clear, the free transcript already has it.
 - **Apple custom language models** (`SFCustomLanguageModelData`, templates + X-SAMPA pronunciations, prepared on device in ~6 s): 2–13% with SFSpeechRecognizer, weight default or 1.0. Only DictationTranscriber/SFSpeechRecognizer take them, and both hear commands worse than SpeechTranscriber (DictationTranscriber 0–6%).
 - **Recognizer alternatives** didn't help (±4 points).
 - **Command list in the model's instructions**: ~150 names made each call slower than the 3 s timeout.
