@@ -37,8 +37,9 @@ final class KeyboardViewController: UIInputViewController {
     private var target: (selected: String?, before: String)?
     /// The last edit or command, undoable with a quick tap for a few seconds.
     private var undo: (inserted: String, original: String, until: Date)?
-    /// What noboard typed last, for "delete that".
+    /// What noboard typed last, for "delete that", and its id (Debug builds note corrections against it).
     private var lastTyped: String?
+    private var lastTypedID: UUID?
     /// What's drawn; nil until the first update so it always draws once.
     private var phase: KeyboardHandoff.Phase?
     /// Whether the drawn status is for a terminal field.
@@ -222,6 +223,7 @@ final class KeyboardViewController: UIInputViewController {
         // and each would otherwise type the same text.
         guard let latest = KeyboardHandoff.latestText(), latest.id.uuidString != UserDefaults.standard.string(forKey: "lastID") else { return }
         UserDefaults.standard.set(latest.id.uuidString, forKey: "lastID")
+        if latest.delete == nil { lastTypedID = latest.id }
         if latest.edit == true { return applyEdit(latest.text) }
         if latest.command == true { return insertCommand(latest.text) }
         if let delete = latest.delete { return applyDelete(delete) }
@@ -287,7 +289,12 @@ final class KeyboardViewController: UIInputViewController {
             }
         }
         for _ in 0..<count { textDocumentProxy.deleteBackward() }
-        if delete == .that { lastTyped = nil }
+        if delete == .that {
+            lastTyped = nil
+            #if DEBUG
+            if count > 0 { DictationHistory.correction("delete that", id: lastTypedID) }
+            #endif
+        }
         undo = nil // what it would undo may be gone
         guard count > 0 || (before.isEmpty && isCommandField && delete != .that) else {
             buzz { notify.notificationOccurred(.error) }
@@ -304,6 +311,9 @@ final class KeyboardViewController: UIInputViewController {
         guard let undo else { return }
         self.undo = nil
         lastTyped = nil
+        #if DEBUG
+        DictationHistory.correction("undo", id: lastTypedID)
+        #endif
         for _ in undo.inserted { textDocumentProxy.deleteBackward() }
         textDocumentProxy.insertText(undo.original)
         buzz { letGo.impactOccurred() }

@@ -259,18 +259,19 @@ final class DictationController {
             switch command.mode ?? .dictate {
             case .dictate:
                 if let shortcut = Shortcuts.match(raw) {
-                    KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
+                    remember(KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true), "shortcut", heard: raw, typed: shortcut.keys)
                     break
                 }
                 if let delete = SpokenDelete.match(raw) {
-                    KeyboardHandoff.send("", delete: delete)
+                    remember(KeyboardHandoff.send("", delete: delete), "delete", heard: raw, typed: delete.rawValue)
                     break
                 }
                 await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
-                                  asr: TranscriberModel.of(transcriber))
+                                  asr: TranscriberModel.of(transcriber), mode: "dictate")
             case .edit:
                 // Empty text tells the keyboard the edit failed, so it leaves the field alone.
-                KeyboardHandoff.send(await Editor.edit(command.text ?? "", instruction: raw) ?? "", edit: true)
+                let edited = await Editor.edit(command.text ?? "", instruction: raw) ?? ""
+                remember(KeyboardHandoff.send(edited, edit: true), "edit", heard: raw, typed: edited)
             case .command:
                 // Apple's transcript stays as another hearing. It often misses a short word ("exit"), so Whisper runs
                 // even when Apple heard nothing. Whisper is for commands, which are short: on long speech it can
@@ -284,21 +285,24 @@ final class DictationController {
                     heard.insert(whispered, at: 0)
                 }
                 if let shortcut = Shortcuts.match(heard[0]) {
-                    KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true)
+                    remember(KeyboardHandoff.send(Shortcuts.expand(shortcut.keys), keys: true), "shortcut", heard: raw,
+                             whisper: whispered, typed: shortcut.keys)
                     break
                 }
                 if let delete = SpokenDelete.match(heard[0]) ?? SpokenDelete.match(raw) {
-                    KeyboardHandoff.send("", delete: delete)
+                    remember(KeyboardHandoff.send("", delete: delete), "delete", heard: raw, whisper: whispered, typed: delete.rawValue)
                     break
                 }
                 // Nil means prose (e.g. a prompt for an agent in the terminal): typed like dictation, from Apple's
                 // transcript, which hears prose better than the shell-primed Whisper.
                 guard let written = await CommandWriter.write(heard: heard, screen: command.text ?? "") else {
                     await typeCleaned(raw, released: released, picked: picked, transcribed: transcribed,
-                                      asr: TranscriberModel.of(transcriber))
+                                      asr: TranscriberModel.of(transcriber), mode: "terminal prose", whisper: whispered)
                     break
                 }
-                if !written.isEmpty { KeyboardHandoff.send(written, command: true) }
+                if !written.isEmpty {
+                    remember(KeyboardHandoff.send(written, command: true), "command", heard: raw, whisper: whispered, typed: written)
+                }
             case .cancel:
                 break
             }
@@ -313,15 +317,23 @@ final class DictationController {
 
     /// Dictation: cleans the transcript, types it and copies it. The dates time the stages (`DictationTiming`).
     private func typeCleaned(_ raw: String, released: Date, picked: Date, transcribed: Date,
-                             asr: TranscriberModel) async {
+                             asr: TranscriberModel, mode: String, whisper: String? = nil) async {
         let text = await (cleaner ?? Cleaner()).clean(raw)
         let cleaned = Date.now
         if !text.isEmpty {
             let id = KeyboardHandoff.send(text, released: released)
+            remember(id, mode, heard: raw, whisper: whisper, typed: text, cleanup: CleanupModel.last?.model.rawValue)
             copy(text)
             DictationTiming.record(released: released, picked: picked, transcribed: transcribed, cleaned: cleaned, id: id,
                                    asr: asr)
         }
+    }
+
+    /// Debug builds keep this device's dictations for tuning (`DictationHistory`); release builds have no such code.
+    private func remember(_ id: UUID, _ mode: String, heard: String, whisper: String? = nil, typed: String, cleanup: String? = nil) {
+        #if DEBUG
+        DictationHistory.dictation(id: id, mode: mode, heard: heard, whisper: whisper, typed: typed, cleanup: cleanup)
+        #endif
     }
 
     /// Big models held by a background app are what iOS kills first when it needs memory, and the mic goes with the
