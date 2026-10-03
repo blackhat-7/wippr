@@ -20,6 +20,7 @@
 - **Voice detector (Silero via whisper.cpp)** stops Whisper's phantom words ("you") on silence, taps and breaths, but missed real speech over a fan 14 times, so it only runs when Apple heard nothing.
 
 ## Dropped
+- **Other open recognizers via audio.cpp** (2026-10-03, Metal, the same 1,768 noisy clips, scored through the app's matching): Whisper small.en + shell prompt 75% shortcuts / 45% exact commands; Qwen3-ASR-0.6B (1.15 GB) 59% / 31%, with the shell prompt as context 58% / 44% and 2 false triggers; Parakeet-TDT 0.6B v3 47% / 34% (multilingual, drifts to Russian in noise); Nemotron 3.5 ASR 0.6B (en-US) 45% / 22%; Moonshine medium 46% / 28%; Canary 180M aborted the batch (max tokens on noise). Whisper stays.
 - **Apple voice processing** (`setVoiceProcessingEnabled`, FaceTime's noise suppression): no better with a fan or a video playing nearby; on with the video, Whisper got worse.
 - **Scoring shortcut phrases against the audio** (Whisper teacher-forced log-probability vs its free transcript): +1–3 points at safe cutoffs, dozens of false triggers at useful ones. In noise every phrase scores badly; when the audio is clear, the free transcript already has it.
 - **Apple custom language models** (`SFCustomLanguageModelData`, templates + X-SAMPA pronunciations, prepared on device in ~6 s): 2–13% with SFSpeechRecognizer, weight default or 1.0. Only DictationTranscriber/SFSpeechRecognizer take them, and both hear commands worse than SpeechTranscriber (DictationTranscriber 0–6%).
