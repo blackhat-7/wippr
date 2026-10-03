@@ -48,7 +48,12 @@ final class DictationController {
             }
         }
         NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { note in
-            MicEvents.record("route change \(note.userInfo?[AVAudioSessionRouteChangeReasonKey] ?? "")")
+            let reason = note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt
+            MicEvents.record("route change \(reason.map(String.init) ?? "")")
+            // The mic went away, e.g. AirPods switched to another device. iOS interrupts the session for that and may
+            // never say the interruption ended, which left the mic off until the app was opened.
+            guard reason == AVAudioSession.RouteChangeReason.oldDeviceUnavailable.rawValue else { return }
+            Task { @MainActor in await DictationController.shared.restartMic() }
         }
         for name in [UIApplication.didEnterBackgroundNotification, UIApplication.willEnterForegroundNotification,
                      UIApplication.willTerminateNotification] {
@@ -369,6 +374,8 @@ final class DictationController {
             // Apple's transcript stays as another hearing. It often misses a short word ("exit"), so Whisper runs
             // even when Apple heard nothing. Whisper is for commands, which are short: on long speech it can
             // return one letter ("p"), so it's skipped there, and its words must roughly match Apple's count.
+            // Whisper's hearing comes first only when it reads as a command: primed for shells, it turns everyday
+            // words into nonsense ("Thank you" → "aim to", "Local llama" → "nope lama"), which Apple hears right.
             var heard = [raw]
             let useWhisper = TerminalTranscriber.current == .whisper && Double(samples.count) <= 6 * CommandTranscriber.sampleRate
             let whispered = useWhisper ? await CommandTranscriber.shared.transcribe(samples, checkSpeech: raw.isEmpty) : nil
@@ -378,7 +385,7 @@ final class DictationController {
             let appleWords = raw.split(separator: " ").count
             if let whispered, case let words = whispered.split(separator: " ").count,
                words <= appleWords * 2 + 3, appleWords < 4 || words * 2 >= appleWords {
-                heard.insert(whispered, at: 0)
+                heard.insert(whispered, at: raw.isEmpty || CommandWriter.looksLikeCommand(whispered) ? 0 : 1)
             }
             // What either recognizer heard, also as a command ("demux find" → "tmux find"); a key named alone
             // ("enter") is a built-in shortcut.
