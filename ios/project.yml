@@ -115,6 +115,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).llamacleaner
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "5.0"
+        # Library evolution, so the app never loads `llama` through this framework (`internal import` alone still
+        # does): a compile that loads both llama and whisper fails on their two ggml.h copies.
+        BUILD_LIBRARY_FOR_DISTRIBUTION: YES
 
   NeuralCleaner:
     type: framework

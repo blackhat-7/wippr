@@ -69,11 +69,23 @@ enum CommandWriter {
     /// Short instructions too: a command starts with a known command ("now check the logs" doesn't).
     static func isProse(_ typed: String) -> Bool {
         let words = typed.split(separator: " ").map(String.init)
-        // Shell symbols or a flag make it a command; apostrophes and hyphens in words ("didn't", "t-mux") don't.
-        let shell = typed.contains { "/~|&><$*=\";`\\".contains($0) } || words.contains { $0.hasPrefix("-") }
-        guard !shell, let first = words.first else { return false }
+        guard !hasShellSyntax(typed), let first = words.first else { return false }
         let small = words.filter(functionWords.contains).count
         return (words.count >= 4 && small >= 2) || (words.count >= 3 && !ShellVocabulary.commands.contains(first))
+    }
+
+    /// Whether a transcript reads as a shell command: a known command first (after name fixes), shell symbols, a flag,
+    /// or a key ("control c").
+    static func looksLikeCommand(_ heard: String) -> Bool {
+        let typed = command(heard)
+        guard let first = typed.split(separator: " ").first else { return false }
+        return ShellVocabulary.commands.contains(String(first)) || hasShellSyntax(typed)
+            || typed.unicodeScalars.contains { $0.value < 32 }
+    }
+
+    /// Shell symbols or a flag; apostrophes and hyphens in words ("didn't", "t-mux") don't count.
+    private static func hasShellSyntax(_ typed: String) -> Bool {
+        typed.contains { "/~|&><$*=\";`\\".contains($0) } || typed.split(separator: " ").contains { $0.hasPrefix("-") }
     }
 
     private static let functionWords: Set = [
